@@ -534,12 +534,17 @@
      Photos: collage parallax, masked reveals, slow zooms
      --------------------------------------------------------- */
   if (!reduced) {
-    $$('.ph').forEach(f => {
-      const sp = +f.dataset.speed || 0;
-      const img = f.querySelector('img');
-      gsap.fromTo(f, { y: () => -sp * innerHeight }, { y: () => sp * innerHeight, ease: 'none', scrollTrigger: { trigger: '.night', start: 'top bottom', end: 'bottom top', scrub: true, invalidateOnRefresh: true } });
-      gsap.from(f, { clipPath: 'inset(100% 0% 0% 0%)', duration: 1.6, ease: 'expo.inOut', scrollTrigger: { trigger: f, start: 'top 95%' } });
-      gsap.fromTo(img, { scale: 1.35 }, { scale: 1.05, ease: 'none', scrollTrigger: { trigger: '.night', start: 'top bottom', end: 'bottom top', scrub: true } });
+    // the strip rises panel by panel; each photo drifts inside its frame
+    const panels = $$('.ph');
+    gsap.from(panels, {
+      clipPath: 'inset(100% 0% 0% 0%)', duration: 1.5, ease: 'expo.inOut', stagger: .09,
+      scrollTrigger: { trigger: '.night', start: 'top 80%' }
+    });
+    panels.forEach(f => {
+      gsap.fromTo(f.querySelector('img'), { yPercent: -6, scale: 1.18 }, {
+        yPercent: 6, scale: 1.06, ease: 'none',
+        scrollTrigger: { trigger: '.night', start: 'top bottom', end: 'bottom top', scrub: true }
+      });
     });
     gsap.fromTo('.apply__photo img', { yPercent: -8 }, { yPercent: 8, ease: 'none', scrollTrigger: { trigger: '.apply', start: 'top bottom', end: 'bottom top', scrub: true } });
     $$('.side__photo img').forEach(img => gsap.fromTo(img, { yPercent: -8, scale: 1.1 }, { yPercent: 8, scale: 1, ease: 'none', scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } }));
@@ -595,7 +600,7 @@
      Scroll velocity bends the photos; nav links scramble on hover
      --------------------------------------------------------- */
   if (!reduced) {
-    const bendEls = $$('.ph, .side__photo, .poster');
+    const bendEls = $$('.side__photo, .poster');
     const benders = bendEls.map(el => gsap.quickTo(el, 'skewY', { duration: .6, ease: 'power3.out' }));
     let settle;
     ScrollTrigger.create({
