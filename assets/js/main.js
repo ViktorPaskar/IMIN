@@ -547,7 +547,7 @@
   });
 
   /* ---------------------------------------------------------
-     Cursor + magnetic buttons
+     Cursor
      --------------------------------------------------------- */
   if (finePointer && !reduced) {
     const cursor = $('.cursor');
@@ -573,16 +573,6 @@
       vibes[(i + 1) % vibes.length].click();
     });
 
-    $$('.magnetic').forEach(el => {
-      const mx = gsap.quickTo(el, 'x', { duration: .6, ease: 'elastic.out(1, .4)' });
-      const my = gsap.quickTo(el, 'y', { duration: .6, ease: 'elastic.out(1, .4)' });
-      el.addEventListener('pointermove', e => {
-        const r = el.getBoundingClientRect();
-        mx((e.clientX - r.left - r.width / 2) * .3);
-        my((e.clientY - r.top - r.height / 2) * .4);
-      });
-      el.addEventListener('pointerleave', () => { mx(0); my(0); });
-    });
 
     // drag the horizontal product track (maps to page scroll)
     const hs = $('.hscroll');
@@ -720,7 +710,7 @@
         setStatus(msg || 'You’re in. Expect a reply within 48 hours.', 'ok');
         $('span', btn).textContent = 'You’re in';
         btn.disabled = false;
-        if (hasGSAP && !reduced) gsap.fromTo(btn, { scale: .94 }, { scale: 1, duration: .8, ease: 'elastic.out(1, .4)' });
+
       }
     });
 
