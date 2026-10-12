@@ -506,8 +506,7 @@ main { overflow-x: clip; }
 .person--open:hover { background: var(--midnight-2); }
 
 /* ---------- Apply ---------- */
-.apply { position: relative; padding: clamp(80px, 9vw, 136px) 0 clamp(110px, 11vw, 170px); overflow: hidden; }
-.apply__beat { position: absolute; left: 0; right: 0; bottom: 0; height: 140px; opacity: .8; }
+.apply { position: relative; padding: clamp(80px, 9vw, 136px) 0; overflow: hidden; }
 .apply__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 110px); align-items: start; }
 .apply__copy { display: flex; flex-direction: column; gap: 28px; position: sticky; top: calc(var(--header-h) + 24px); }
 .apply__title { font-size: clamp(40px, 4.8vw, 80px); }
