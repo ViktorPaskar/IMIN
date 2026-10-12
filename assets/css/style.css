@@ -713,7 +713,7 @@ img.is-missing { visibility: hidden; }
 /* Hero photograph */
 .hero__media { position: absolute; inset: 0; z-index: 0; will-change: transform; }
 .hero__photo { position: absolute; inset: 0; overflow: hidden; background: var(--midnight); will-change: clip-path, transform; }
-.hero__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; transform-origin: 45% 40%; will-change: transform; }
+.hero__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; transform-origin: 45% 40%; will-change: transform; filter: grayscale(1) contrast(1.12) brightness(.92); }
 .hero__shade {
   position: absolute; inset: 0;
   background:
