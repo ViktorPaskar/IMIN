@@ -726,3 +726,5 @@ img.is-missing { visibility: hidden; }
   .hero__shade { background: linear-gradient(180deg, rgba(11, 10, 20, .5) 0%, rgba(11, 10, 20, .45) 22%, rgba(11, 10, 20, .72) 45%, rgba(11, 10, 20, .9) 70%, var(--midnight) 100%); }
   .hero__photo img { object-position: 38% 40%; }
 }
+.ph--2 img { object-position: 62% 40%; }
+.ph--4 img { object-position: 50% 70%; }
