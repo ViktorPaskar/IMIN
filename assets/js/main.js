@@ -267,34 +267,39 @@
     lenis?.stop();
     const bar = buildBeat($('.loader__bar'), { rows: 1, bars: 1, exact: true, preserve: 'xMidYMid meet' });
     const ss = bar.strokes.map(s => s.node);
-    // the strokes shimmer through the brand colours, left to right,
-    // with a soft neon bloom in the same colours
-    const NSs = SVGNS, mk = (t, at = {}, parent) => { const n = document.createElementNS(NSs, t); for (const k in at) n.setAttribute(k, at[k]); parent?.appendChild(n); return n; };
+    // light chase: every stroke has its own colour, and the brand colours
+    // hand over from stroke to stroke, left to right; soft neon bloom
+    const mk = (t, at = {}, parent) => { const n = document.createElementNS(SVGNS, t); for (const k in at) n.setAttribute(k, at[k]); parent?.appendChild(n); return n; };
     const defs = mk('defs');
-    const SPAN = 2600;
-    const gr = mk('linearGradient', { id: 'loaderShine', gradientUnits: 'userSpaceOnUse', spreadMethod: 'reflect', x1: 0, y1: 0, x2: SPAN, y2: 0 }, defs);
-    [[0, '#4B2BFF'], [.22, '#7A63FF'], [.4, '#9C8CFF'], [.52, '#F4EFE7'], [.64, '#9C8CFF'], [.82, '#16B877'], [1, '#4B2BFF']]
-      .forEach(([o, c]) => mk('stop', { offset: o, 'stop-color': c }, gr));
     const glow = mk('filter', { id: 'loaderGlow', x: '-30%', y: '-40%', width: '160%', height: '180%' }, defs);
-    mk('feGaussianBlur', { in: 'SourceGraphic', stdDeviation: 34, result: 'b' }, glow);
-    mk('feColorMatrix', { in: 'b', type: 'matrix', values: '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 .75 0', result: 'g' }, glow);
+    mk('feGaussianBlur', { in: 'SourceGraphic', stdDeviation: 26, result: 'b' }, glow);
+    mk('feColorMatrix', { in: 'b', type: 'matrix', values: '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 .6 0', result: 'g' }, glow);
     const merge = mk('feMerge', {}, glow);
     mk('feMergeNode', { in: 'g' }, merge); mk('feMergeNode', { in: 'SourceGraphic' }, merge);
     bar.svg.prepend(defs);
     bar.rows[0].setAttribute('filter', 'url(#loaderGlow)');
     bar.svg.style.overflow = 'visible';
-    ss.forEach(n => n.style.fill = 'url(#loaderShine)');
-    // slight diagonal sweep, slow and continuous; reflect makes the loop seamless
-    const shine = { x: 0 };
-    gsap.to(shine, { x: SPAN * 2, duration: 3.2, ease: 'none', repeat: -1, onUpdate: () => {
-      gr.setAttribute('gradientTransform', `translate(${shine.x - SPAN * 2} 0) rotate(-18 887 400)`);
-    } });
+    const RAMP = [[0, [75, 43, 255]], [.25, [156, 140, 255]], [.5, [244, 239, 231]], [.75, [22, 184, 119]], [1, [75, 43, 255]]];
+    const colourAt = t => {
+      for (let i = 1; i < RAMP.length; i++) if (t <= RAMP[i][0]) {
+        const [p0, c0] = RAMP[i - 1], [p1, c1] = RAMP[i], k = (t - p0) / (p1 - p0);
+        return `rgb(${c0.map((v, j) => Math.round(v + (c1[j] - v) * k)).join(',')})`;
+      }
+      return 'rgb(75,43,255)';
+    };
+    const chase = () => {
+      const t = gsap.ticker.time;
+      ss.forEach((n, i) => { n.style.fill = colourAt((((t * .45 - i * .09) % 1) + 1) % 1); });
+    };
+    chase();
+    gsap.ticker.add(chase);
     const count = $('.loader__count');
     const c = { v: 0 };
     gsap.set(ss, { transformOrigin: '50% 50%' });
 
     const tl = gsap.timeline({
       onComplete: () => {
+        gsap.ticker.remove(chase);
         loader.remove();
         body.classList.remove('is-loading');
         lenis?.start();
