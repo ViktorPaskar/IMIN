@@ -212,26 +212,32 @@
             <h3 class="display feat__title">Forecast</h3>
             <p>IMIN flags a weak night about two weeks out, so you can act before the ad budget is spent.</p>
           </div>
-          <div class="feat__visual card">
-            <div class="card__head">
-              <span>Ticket pace · Sat 23:00</span>
-              <span class="badge badge--warn"><svg class="i"><use href="#i-bell"/></svg>14 days out</span>
+          <div class="feat__visual card fc">
+            <div class="fc__top">
+              <div class="fc__name">
+                <span>Warehouse 02 · Sat 23:00</span>
+                <b>Ticket pace</b>
+              </div>
+              <span class="fc__status"><i></i>At risk · 14 days out</span>
             </div>
-            <svg class="forecast" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true">
-              <g class="forecast__grid">
-                <line x1="0" y1="50" x2="400" y2="50"/><line x1="0" y1="100" x2="400" y2="100"/><line x1="0" y1="150" x2="400" y2="150"/>
-              </g>
-              <path class="forecast__target" d="M0 190 C 90 175, 170 140, 240 95 S 360 25, 400 15"/>
-              <path class="forecast__actual" d="M0 192 C 60 186, 110 176, 160 166 S 220 150, 240 146"/>
-              <path class="forecast__proj" d="M240 146 C 290 136, 340 128, 400 118"/>
-              <circle class="forecast__dot" cx="240" cy="146" r="6"/>
-            </svg>
-            <div class="card__legend">
-              <span><i class="lg lg--target"></i>Target pace</span>
-              <span><i class="lg lg--actual"></i>Actual</span>
-              <span><i class="lg lg--proj"></i>Projected</span>
+            <div class="fc__kpis">
+              <div class="fc__kpi"><span>Sold</span><b class="display" data-count="238">238</b></div>
+              <div class="fc__kpi"><span>Target today</span><b class="display">289</b></div>
+              <div class="fc__kpi fc__kpi--proj"><span>Projected</span><b class="display"><span data-count="412">412</span><small>/600</small></b></div>
             </div>
-            <p class="card__alert"><svg class="i"><use href="#i-lightning"/></svg>Below pace, two weeks out.</p>
+            <div class="fc__plot">
+              <svg class="fc__chart" viewBox="0 0 560 260" role="img" aria-label="Ticket sales against target pace: 238 sold with 14 days to go, projected 412 of 600"></svg>
+              <div class="fc__tip" aria-hidden="true"></div>
+            </div>
+            <div class="fc__legend">
+              <span><i class="fc__sw fc__sw--target"></i>Target pace</span>
+              <span><i class="fc__sw fc__sw--actual"></i>Sold</span>
+              <span><i class="fc__sw fc__sw--proj"></i>Projected</span>
+            </div>
+            <div class="fc__actions">
+              <div class="fc__action"><svg class="i"><use href="#i-globe"/></svg><div><b>Boost Meta Ads</b><span>Lookalike of past buyers</span></div><em>+60</em></div>
+              <div class="fc__action"><svg class="i"><use href="#i-chat-circle"/></svg><div><b>SMS drop</b><span>To last night’s buyers</span></div><em>+35</em></div>
+            </div>
             <span class="demo-note">Illustrative data</span>
           </div>
         </article>

@@ -98,6 +98,109 @@
   });
 
   /* ---------------------------------------------------------
+     FORECAST — a real chart: 42 days of ticket sales against a
+     back-loaded target curve, today at 14 days out, a projection
+     with its uncertainty, and a hover read-out for every day.
+     --------------------------------------------------------- */
+  const FC = (() => {
+    const svg = $('.fc__chart');
+    if (!svg) return null;
+    const W = 560, H = 260, m = { l: 40, r: 52, t: 22, b: 30 };
+    const CAP = 600, START = -42, TODAY = -14;
+    const x = d => m.l + (d - START) / -START * (W - m.l - m.r);
+    const y = v => H - m.b - v / CAP * (H - m.t - m.b);
+    const target = d => CAP * Math.pow((d - START) / -START, 1.8);
+    const sold = [];
+    for (let d = START, prev = 0; d <= TODAY; d++) {
+      const u = (d - START) / -START;
+      const v = Math.max(prev, CAP * .893 * u * u + 3 * Math.sin(d * 1.3));
+      sold.push([d, Math.round(v)]); prev = v;
+    }
+    sold[sold.length - 1][1] = 238;
+    const last = 238, FINAL = 412;
+    const proj = d => last + (FINAL - last) * Math.pow((d - TODAY) / -TODAY, 1.1);
+    const spread = d => 52 * ((d - TODAY) / -TODAY);
+    const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+    const line = pts => pts.map((p, i) => `${i ? 'L' : 'M'}${x(p[0]).toFixed(1)} ${y(p[1]).toFixed(1)}`).join('');
+    const NS = 'http://www.w3.org/2000/svg';
+    const el = (tag, attrs, parent = svg) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); parent.appendChild(n); return n; };
+
+    const defs = el('defs', {});
+    const g1 = el('linearGradient', { id: 'fcSold', x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
+    el('stop', { offset: 0, 'stop-color': '#9C8CFF', 'stop-opacity': .38 }, g1);
+    el('stop', { offset: 1, 'stop-color': '#9C8CFF', 'stop-opacity': 0 }, g1);
+    const clip = el('clipPath', { id: 'fcReveal' }, defs);
+    const clipRect = el('rect', { x: 0, y: 0, width: W, height: H }, clip);
+
+    // grid + axes
+    const grid = el('g', { class: 'fc__grid' });
+    [0, 200, 400, 600].forEach(v => {
+      el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), class: v === CAP ? 'cap' : '' }, grid);
+      el('text', { x: m.l - 8, y: y(v) + 4, 'text-anchor': 'end' }, grid).textContent = v;
+    });
+    el('text', { x: m.l, y: y(CAP) - 8, 'text-anchor': 'start', class: 'fc__caplabel' }, grid).textContent = 'Capacity';
+    [[-42, '6 wks'], [-28, '4 wks'], [-14, '2 wks'], [0, 'Doors']].forEach(([d, t]) => {
+      el('text', { x: x(d), y: H - 6, 'text-anchor': d === START ? 'start' : d === 0 ? 'end' : 'middle' }, grid).textContent = t;
+    });
+
+    const plot = el('g', { 'clip-path': 'url(#fcReveal)' });
+    // target corridor + line
+    const all = range(START, 0);
+    const band = all.map(d => [d, target(d) + 22]).concat(all.slice().reverse().map(d => [d, Math.max(0, target(d) - 22)]));
+    el('path', { d: line(band) + 'Z', class: 'fc__band' }, plot);
+    el('path', { d: line(all.map(d => [d, target(d)])), class: 'fc__target' }, plot);
+    // sold
+    el('path', { d: line(sold) + `L${x(TODAY)} ${y(0)}L${x(START)} ${y(0)}Z`, class: 'fc__area', fill: 'url(#fcSold)' }, plot);
+    el('path', { d: line(sold), class: 'fc__sold' }, plot);
+    // projection cone + line
+    const fut = range(TODAY, 0);
+    const cone = fut.map(d => [d, proj(d) + spread(d)]).concat(fut.slice().reverse().map(d => [d, proj(d) - spread(d)]));
+    const proj_g = el('g', { class: 'fc__projg' }, plot);
+    el('path', { d: line(cone) + 'Z', class: 'fc__cone' }, proj_g);
+    el('path', { d: line(fut.map(d => [d, proj(d)])), class: 'fc__proj' }, proj_g);
+    const endDot = el('circle', { cx: x(0), cy: y(FINAL), r: 4, class: 'fc__end' }, proj_g);
+    const endLabel = el('text', { x: x(0) + 8, y: y(FINAL) + 4, class: 'fc__endlabel' }, proj_g);
+    endLabel.textContent = FINAL;
+    // gap to target at doors
+    const gap = el('g', { class: 'fc__gap' });
+    el('line', { x1: x(0) + 14, x2: x(0) + 14, y1: y(CAP), y2: y(FINAL) + 10 }, gap);
+    el('text', { x: x(0) + 22, y: (y(CAP) + y(FINAL)) / 2 + 4 }, gap).textContent = '−188';
+
+    // today
+    const today = el('g', { class: 'fc__today' });
+    el('line', { x1: x(TODAY), x2: x(TODAY), y1: m.t, y2: H - m.b }, today);
+    const pill = el('g', { transform: `translate(${x(TODAY)} ${m.t - 2})` }, today);
+    el('rect', { x: -26, y: -14, width: 52, height: 22, rx: 11 }, pill);
+    el('text', { x: 0, y: 2, 'text-anchor': 'middle' }, pill).textContent = 'Today';
+    const ring = el('circle', { cx: x(TODAY), cy: y(last), r: 5, class: 'fc__ring' });
+    const dot = el('circle', { cx: x(TODAY), cy: y(last), r: 5, class: 'fc__dot' });
+
+    // hover read-out
+    const guide = el('line', { y1: m.t, y2: H - m.b, class: 'fc__guide' });
+    const probe = el('circle', { r: 4, class: 'fc__probe' });
+    const tip = $('.fc__tip');
+    const soldAt = d => (sold.find(p => p[0] === d) || [0, 0])[1];
+    svg.addEventListener('pointermove', e => {
+      const r = svg.getBoundingClientRect();
+      const sx = (e.clientX - r.left) / r.width * W;
+      const d = Math.max(START, Math.min(0, Math.round(START + (sx - m.l) / (W - m.l - m.r) * -START)));
+      const past = d <= TODAY;
+      const v = past ? soldAt(d) : Math.round(proj(d));
+      guide.setAttribute('x1', x(d)); guide.setAttribute('x2', x(d));
+      probe.setAttribute('cx', x(d)); probe.setAttribute('cy', y(v));
+      probe.classList.toggle('is-proj', !past);
+      const when = d === 0 ? 'Doors' : `${-d} days out`;
+      tip.innerHTML = `<b>${when}</b><span>${past ? 'Sold' : 'Projected'} <em>${v}</em></span><span>Target <em>${Math.round(target(d))}</em></span>`;
+      tip.style.left = `${x(d) / W * 100}%`;
+      tip.style.top = `${y(v) / H * 100}%`;
+      svg.parentElement.classList.add('is-hover');
+    });
+    svg.addEventListener('pointerleave', () => svg.parentElement.classList.remove('is-hover'));
+
+    return { svg, clipRect, W, todayX: x(TODAY), proj_g, endDot, endLabel, gap, today, dot, ring, grid };
+  })();
+
+  /* ---------------------------------------------------------
      Without GSAP (blocked CDN etc.) — keep a fully readable page
      --------------------------------------------------------- */
   if (!hasGSAP) {
@@ -318,18 +421,20 @@
     tl.from(f.querySelectorAll('.feat__copy > *'), { y: 40, opacity: 0, stagger: .07, duration: 1 })
       .from(f.querySelector('.feat__visual'), { y: 60, opacity: 0, scale: .96, duration: 1.2 }, '<.1');
 
-    // forecast lines draw
-    const fc = f.querySelector('.forecast');
-    if (fc) {
-      const actual = fc.querySelector('.forecast__actual');
-      const L = actual.getTotalLength();
-      gsap.set(actual, { strokeDasharray: `${L} ${L}`, strokeDashoffset: L });
-      tl.from(fc.querySelector('.forecast__target'), { opacity: 0, duration: .8 }, '<.3')
-        .to(actual, { strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut' }, '<')
-        .from(fc.querySelector('.forecast__dot'), { scale: 0, transformOrigin: '50% 50%', duration: .6, ease: 'back.out(3)' }, '-=.2')
-        .from(fc.querySelector('.forecast__proj'), { opacity: 0, x: -20, duration: .8 }, '<')
-        .from(f.querySelector('.card__alert'), { y: 20, opacity: 0, duration: .8 }, '<.2');
-      gsap.to(fc.querySelector('.forecast__dot'), { scale: 1.5, transformOrigin: '50% 50%', repeat: -1, yoyo: true, duration: .8, ease: 'sine.inOut', delay: 3 });
+    // forecast: grid settles, sales draw up to today, the projection fans out
+    if (FC && f.contains(FC.svg)) {
+      const card = f.querySelector('.fc');
+      gsap.set(FC.clipRect, { attr: { width: 0 } });
+      tl.from(card.querySelectorAll('.fc__top > *, .fc__kpi'), { y: 16, opacity: 0, stagger: .06, duration: .9 }, '<.25')
+        .from(FC.grid.children, { opacity: 0, duration: .8, stagger: .015 }, '<.1')
+        .to(FC.clipRect, { attr: { width: FC.todayX }, duration: 1.6, ease: 'power2.inOut' }, '<.2')
+        .from(FC.today, { opacity: 0, y: -10, duration: .7 }, '-=.3')
+        .from([FC.dot, FC.ring], { scale: 0, transformOrigin: 'center', duration: .6, ease: 'back.out(2.5)' }, '<')
+        .to(FC.clipRect, { attr: { width: FC.W }, duration: 1.2, ease: 'power2.out' }, '-=.1')
+        .from(FC.proj_g, { opacity: 0, duration: 1 }, '<')
+        .from(FC.gap, { opacity: 0, x: -6, duration: .7 }, '-=.4')
+        .from(card.querySelectorAll('.fc__legend, .fc__action'), { y: 14, opacity: 0, stagger: .08, duration: .8 }, '-=.5');
+      gsap.fromTo(FC.ring, { scale: 1, opacity: .7 }, { scale: 3.2, opacity: 0, transformOrigin: 'center', duration: 1.8, ease: 'power2.out', repeat: -1, delay: 3.5 });
     }
 
     // counters + bars
@@ -567,6 +672,11 @@
       el.addEventListener('pointerenter', () => { label.textContent = text; cursor.classList.add('is-label'); });
       el.addEventListener('pointerleave', () => cursor.classList.remove('is-label'));
     });
+    // the chart has its own read-out: hide the custom cursor over it
+    if (FC) {
+      FC.svg.addEventListener('pointerenter', () => cursor.classList.add('is-off'));
+      FC.svg.addEventListener('pointerleave', () => cursor.classList.remove('is-off'));
+    }
     $('.posters')?.addEventListener('click', () => {
       const vibes = $$('.vibe');
       const i = vibes.findIndex(v => v.classList.contains('is-active'));
@@ -579,7 +689,7 @@
     if (hs) {
       let dragging = false, startX = 0, startScroll = 0;
       hs.addEventListener('pointerdown', e => {
-        if (e.target.closest('button, a, .posters') || innerWidth <= 820) return;
+        if (e.target.closest('button, a, .posters, .fc__chart') || innerWidth <= 820) return;
         dragging = true; startX = e.clientX; startScroll = lenis ? lenis.scroll : scrollY;
         hs.setPointerCapture(e.pointerId);
       });
