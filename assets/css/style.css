@@ -973,3 +973,5 @@ img.is-missing { visibility: hidden; }
 }
 @media (prefers-reduced-motion: reduce) { .xmap__halo { animation: none; } }
 .xmap__country:nth-child(3) .xmap__ring.is-on circle { fill: #CFC6FF; }
+.footer__small { color: var(--paper-40); text-decoration: underline; text-decoration-color: var(--paper-14); text-underline-offset: 2px; }
+.footer__small:hover { color: var(--paper); }
