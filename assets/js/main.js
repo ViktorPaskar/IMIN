@@ -19,29 +19,33 @@
   let scrollToTarget = null;
 
   /* ---------------------------------------------------------
-     THE BEAT — IMIN taken apart into the strokes of its letters.
-     One bar: I | M (| \ / |) | I | N (| \ |)
-     Every second row shifts by half a bar.
-     One Doorlight stroke per crop.
+     THE BEAT — the original IMIN pattern (Group 1.svg):
+     IMIN taken apart into the rounded strokes of its letters.
+     One bar: I | M (| \ / |) | I | N (| \ |) — 1815 units wide, 800 tall.
+     Every second row shifts by half a bar. One accent stroke per crop.
      --------------------------------------------------------- */
-  const BAR = ['v', 'v', 'b', 'f', 'v', 'v', 'v', 'b', 'v'];
-  const SW = 17;          // stroke width
-  const VP = 28;          // pitch of a vertical stroke
-  const DP = 46;          // pitch of a diagonal stroke
-  const SLANT = 28;       // horizontal travel of a diagonal
-  const BAR_W = BAR.reduce((w, t) => w + (t === 'v' ? VP : DP), 0);
+  const BAR_W = 1815;
+  const ROW_H = 800;
+  const ROW_GAP = 120;
+  const D_BACK = 'M292.215 52.8235C285.967 25.8047 306.486 0 334.218 0C354.056 0 371.334 13.5391 376.078 32.8025L550.268 740.176C557.762 770.606 534.728 800 503.389 800C480.916 800 461.414 784.494 456.351 762.598L292.215 52.8235Z';
+  const D_FWD = 'M877.785 52.8235C884.033 25.8047 863.514 0 835.782 0C815.944 0 798.666 13.5391 793.922 32.8025L619.732 740.176C612.238 770.606 635.272 800 666.611 800C689.084 800 708.586 784.494 713.649 762.598L877.785 52.8235Z';
+  const BAR = [
+    { k: 'v', x: 0 }, { k: 'v', x: 140 },          // I  M(stem)
+    { k: 'b', x: 0 }, { k: 'f', x: 0 },             // M diagonals
+    { k: 'v', x: 930 }, { k: 'v', x: 1070 },        // M(stem)  I
+    { k: 'v', x: 1210 }, { k: 'b', x: 1070 },       // N(stem)  N diagonal
+    { k: 'v', x: 1675 }                             // N(stem)
+  ];
 
   function buildBeat(el, opts = {}) {
     const rows = opts.rows || +el.dataset.rows || 3;
     const light = opts.light ?? el.dataset.light === '1';
-    const rowH = opts.rowH || 112;
-    const gapY = opts.gapY || 16;
-    const bars = opts.bars || Math.ceil(2400 / BAR_W) + 1;
-    const width = bars * BAR_W;
-    const height = rows * rowH + (rows - 1) * gapY;
+    const exact = !!opts.exact;
+    const bars = opts.bars || 10;
+    const height = rows * ROW_H + (rows - 1) * ROW_GAP;
 
     const svg = document.createElementNS(SVGNS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${width - BAR_W} ${height}`);
+    svg.setAttribute('viewBox', exact ? `0 0 1775 ${height}` : `0 0 ${(bars - 1) * BAR_W} ${height}`);
     svg.setAttribute('preserveAspectRatio', opts.preserve || 'xMidYMax slice');
     svg.setAttribute('aria-hidden', 'true');
 
@@ -50,30 +54,27 @@
     for (let r = 0; r < rows; r++) {
       const g = document.createElementNS(SVGNS, 'g');
       g.setAttribute('class', 'row');
-      const y = r * (rowH + gapY);
-      let x = r % 2 ? -BAR_W / 2 : -BAR_W / 4;
-      for (let b = 0; b < bars + 1; b++) {
+      const y = r * (ROW_H + ROW_GAP);
+      const start = exact ? 0 : (r % 2 ? -BAR_W * 0.75 : -BAR_W * 0.25);
+      for (let b = 0; b < (exact ? bars : bars + 1); b++) {
+        const bx = start + b * BAR_W;
         for (const t of BAR) {
           let node;
-          if (t === 'v') {
+          if (t.k === 'v') {
             node = document.createElementNS(SVGNS, 'rect');
-            node.setAttribute('x', x.toFixed(1));
+            node.setAttribute('x', (bx + t.x).toFixed(1));
             node.setAttribute('y', y);
-            node.setAttribute('width', SW);
-            node.setAttribute('height', rowH);
-            x += VP;
+            node.setAttribute('width', 100);
+            node.setAttribute('height', ROW_H);
+            node.setAttribute('rx', 50);
           } else {
-            node = document.createElementNS(SVGNS, 'polygon');
-            const x0 = x, x1 = x + SLANT;
-            const pts = t === 'b'
-              ? [[x0, y], [x0 + SW, y], [x1 + SW, y + rowH], [x1, y + rowH]]   // "\"
-              : [[x1, y], [x1 + SW, y], [x0 + SW, y + rowH], [x0, y + rowH]]; // "/"
-            node.setAttribute('points', pts.map(p => p.map(n => n.toFixed(1)).join(',')).join(' '));
-            x += DP;
+            node = document.createElementNS(SVGNS, 'path');
+            node.setAttribute('d', t.k === 'b' ? D_BACK : D_FWD);
+            node.setAttribute('transform', `translate(${(bx + t.x).toFixed(1)} ${y})`);
           }
           node.setAttribute('class', 's');
           g.appendChild(node);
-          strokes.push({ node, row: r, kind: t });
+          strokes.push({ node, row: r, kind: t.k });
         }
       }
       svg.appendChild(g);
@@ -99,7 +100,7 @@
 
   // Poster & phone artwork: smaller crops of the same beat
   $$('.poster__beat').forEach((el, i) => {
-    const b = buildBeat(el, { rows: 5, rowH: 112, light: true, bars: 4, preserve: 'xMidYMid slice' });
+    const b = buildBeat(el, { rows: 5, light: true, bars: 3, preserve: 'xMidYMid slice' });
     if (i % 3 === 1) b.svg.style.transform = 'scaleX(-1)';
   });
 
@@ -145,7 +146,8 @@
 
   function heroIntro(delay = 0) {
     const tl = gsap.timeline({ delay });
-    tl.from(heroLines, { yPercent: 110, rotate: 3, duration: 1.4, stagger: .09, ease: 'expo.out' })
+    tl.from('.hero__photo', { opacity: 0, scale: 1.08, duration: 2.4, ease: 'power2.out' })
+      .from(heroLines, { yPercent: 110, rotate: 3, duration: 1.4, stagger: .09, ease: 'expo.out' }, 0)
       .from('.hero__eyebrow', { y: 20, opacity: 0, duration: 1 }, '<.2')
       .from('.hero__lead, .hero__actions > *', { y: 30, opacity: 0, stagger: .08, duration: 1.1 }, '<.15')
       .from('.hero__beat .row', { yPercent: 40, opacity: 0, stagger: .08, duration: 1.6 }, '<')
@@ -157,11 +159,8 @@
   if (loader && !reduced) {
     body.classList.add('is-loading');
     lenis?.stop();
-    const bar = buildBeat($('.loader__bar'), { rows: 1, bars: 1, light: false, preserve: 'xMidYMid meet' });
-    bar.svg.setAttribute('viewBox', `0 0 ${BAR_W} 112`);
-    bar.rows[0].setAttribute('transform', `translate(${BAR_W / 4} 0)`);
-    const ss = bar.strokes.slice(0, BAR.length).map(s => s.node);
-    bar.strokes.slice(BAR.length).forEach(s => s.node.remove());
+    const bar = buildBeat($('.loader__bar'), { rows: 1, bars: 1, exact: true, light: false, preserve: 'xMidYMid meet' });
+    const ss = bar.strokes.map(s => s.node);
     ss.forEach(n => n.style.fill = 'var(--paper)');
     const count = $('.loader__count');
     const c = { v: 0 };
@@ -176,7 +175,7 @@
     });
     tl.from(ss, { scaleY: 0, transformOrigin: '50% 100%', duration: .7, stagger: .055, ease: 'expo.out' })
       .to(c, { v: 100, duration: 1.1, ease: 'power2.inOut', onUpdate: () => { count.textContent = String(Math.round(c.v)).padStart(2, '0'); } }, 0)
-      .to(ss[4], { fill: '#FF9E1B', duration: .25, ease: 'none' }, '-=.2')
+      .to(ss[4], { fill: '#16B877', duration: .25, ease: 'none' }, '-=.2')
       .to(ss, { scaleY: () => gsap.utils.random(.2, 1), transformOrigin: '50% 100%', duration: .18, repeat: 3, yoyo: true, stagger: .02, ease: 'sine.inOut' })
       .to(loader, { clipPath: 'inset(0 0 100% 0)', duration: 1.1, ease: 'expo.inOut' }, '+=.05')
       .add(heroIntro(), '-=.55');
@@ -208,7 +207,7 @@
     // rows drift in opposite directions while scrolling
     heroBeat.rows.forEach((row, i) => {
       gsap.to(row, {
-        x: (i % 2 ? 1 : -1) * (120 + i * 40),
+        x: (i % 2 ? 1 : -1) * BAR_W * (.4 + i * .13),
         ease: 'none',
         scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
       });
@@ -446,8 +445,24 @@
   if (!reduced) {
     gsap.from('.wedge', { clipPath: 'inset(12% 6% 12% 6% round 8px)', ease: 'none', scrollTrigger: { trigger: '.wedge', start: 'top bottom', end: 'top 30%', scrub: true } });
     wedgeBeat?.rows.forEach((row, i) => {
-      gsap.fromTo(row, { x: (i % 2 ? -1 : 1) * 160 }, { x: (i % 2 ? 1 : -1) * 160, ease: 'none', scrollTrigger: { trigger: '.wedge', start: 'top bottom', end: 'bottom top', scrub: true } });
+      gsap.fromTo(row, { x: (i % 2 ? -1 : 1) * BAR_W * .5 }, { x: (i % 2 ? 1 : -1) * BAR_W * .5, ease: 'none', scrollTrigger: { trigger: '.wedge', start: 'top bottom', end: 'bottom top', scrub: true } });
     });
+  }
+
+  /* ---------------------------------------------------------
+     Photos: collage parallax, masked reveals, slow zooms
+     --------------------------------------------------------- */
+  if (!reduced) {
+    $$('.ph').forEach(f => {
+      const sp = +f.dataset.speed || 0;
+      const img = f.querySelector('img');
+      gsap.fromTo(f, { y: () => -sp * innerHeight }, { y: () => sp * innerHeight, ease: 'none', scrollTrigger: { trigger: '.night', start: 'top bottom', end: 'bottom top', scrub: true, invalidateOnRefresh: true } });
+      gsap.from(f, { clipPath: 'inset(100% 0% 0% 0%)', duration: 1.6, ease: 'expo.inOut', scrollTrigger: { trigger: f, start: 'top 95%' } });
+      gsap.fromTo(img, { scale: 1.35 }, { scale: 1.05, ease: 'none', scrollTrigger: { trigger: '.night', start: 'top bottom', end: 'bottom top', scrub: true } });
+    });
+    gsap.to('.hero__photo img', { yPercent: 16, scale: 1.12, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+    gsap.fromTo('.apply__photo img', { yPercent: -8 }, { yPercent: 8, ease: 'none', scrollTrigger: { trigger: '.apply', start: 'top bottom', end: 'bottom top', scrub: true } });
+    $$('.side__photo img').forEach(img => gsap.fromTo(img, { yPercent: -8, scale: 1.1 }, { yPercent: 8, scale: 1, ease: 'none', scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } }));
   }
 
   /* ---------------------------------------------------------
@@ -488,11 +503,11 @@
      --------------------------------------------------------- */
   const applyBeat = beats.get($('.apply__beat'));
   if (!reduced && applyBeat) {
-    applyBeat.rows.forEach((row, i) => gsap.fromTo(row, { x: (i % 2 ? 1 : -1) * 120 }, { x: 0, ease: 'none', scrollTrigger: { trigger: '.apply', start: 'top bottom', end: 'bottom bottom', scrub: true } }));
+    applyBeat.rows.forEach((row, i) => gsap.fromTo(row, { x: (i % 2 ? 1 : -1) * BAR_W * .4 }, { x: 0, ease: 'none', scrollTrigger: { trigger: '.apply', start: 'top bottom', end: 'bottom bottom', scrub: true } }));
   }
   if (!reduced) {
-    gsap.from('.footer__svg', { yPercent: 40, opacity: 0, duration: 1.6, scrollTrigger: { trigger: '.footer__mark', start: 'top 95%' } });
-    gsap.from('.footer__word span', { yPercent: 100, opacity: 0, stagger: .12, duration: 1.6, scrollTrigger: { trigger: '.footer__mark', start: 'top 95%' } });
+    const footBeat = beats.get($('.footer__beat'));
+    footBeat?.rows.forEach((row, i) => gsap.fromTo(row, { x: (i % 2 ? -1 : 1) * BAR_W * .5 }, { x: 0, ease: 'none', scrollTrigger: { trigger: '.footer', start: 'top bottom', end: 'bottom bottom', scrub: true } }));
     gsap.from('.footer__claim', { y: 40, opacity: 0, duration: 1.2, scrollTrigger: { trigger: '.footer', start: 'top 85%' } });
   }
 
@@ -585,6 +600,13 @@
      --------------------------------------------------------- */
   function initBasics() {
     $$('[data-year]').forEach(n => n.textContent = new Date().getFullYear());
+
+    // a photo that fails to load leaves the toned background, not a broken icon
+    $$('img').forEach(img => {
+      const fail = () => img.classList.add('is-missing');
+      if (img.complete && img.naturalWidth === 0) fail();
+      img.addEventListener('error', fail);
+    });
 
     // in-page links
     $$('a[href^="#"]').forEach(a => a.addEventListener('click', e => {

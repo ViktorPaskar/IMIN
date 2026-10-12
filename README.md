@@ -28,11 +28,11 @@ assets/img/             favicon.svg, og.png (превью для соцсете�
 | Paper       | `#F4EFE7` | текст на тёмном, светлые секции |
 | Ultra       | `#4B2BFF` | один блок на экран (Wedge/Moat, карточка «Your audience») |
 | Haze        | `#9C8CFF` | цветной текст и ссылки на тёмном |
-| Doorlight   | `#FF9E1B` | одно действие на экран (кнопка «Let’s talk» / «I’m in») |
+| Accent (green) | `#16B877` | одно действие на экран (кнопка «Let’s talk» / «I’m in»); заменил Doorlight `#FF9E1B` |
 
 Шрифты — Barlow Condensed 700/800 (заголовки, всегда капсом) и DM Sans 400–700 (текст), из Google Fonts.
 Иконки — Phosphor Light, встроены SVG-спрайтом. Логотип перенесён из брендбука векторно, без перерисовки.
-Паттерн The Beat генерируется в коде из штрихов I/M/I/N: каждый второй ряд сдвинут на полтакта, в каждом кадре один штрих Doorlight.
+Паттерн The Beat собирается в коде из оригинальных скруглённых штрихов (Group 1.svg): каждый второй ряд сдвинут на полтакта, в каждом кадре горит один зелёный штрих.
 
 ## Анимации
 
@@ -62,3 +62,8 @@ assets/img/             favicon.svg, og.png (превью для соцсете�
 - `data-email` / `data-endpoint` формы;
 - `og:image` указывает на `https://imin.wtf/assets/img/og.png`;
 - цифры в карточках продукта (412/600, €6,180 и т.п.) помечены как *Illustrative data*: это демо интерфейса, не реальные показатели.
+
+## Фотографии
+
+Сайт ждёт файлы в `assets/img/photos/`: `hero.jpg`, `crowd.jpg`, `dj.jpg`, `dancefloor.jpg`, `friends.jpg`, `lights.jpg`, `organizer.jpg`, `guests.jpg`, `metz.jpg`, `apply.jpg`.
+Если файла нет, вместо него остаётся тонированный фон, а не битая картинка.

@@ -105,6 +105,7 @@
 
   <!-- ============ HERO ============ -->
   <section class="hero" id="top">
+    <div class="hero__photo" aria-hidden="true"><img src="assets/img/photos/hero.jpg" alt="" fetchpriority="high"></div>
     <div class="hero__beat beat" data-beat data-rows="4" data-light="1" data-eq="1" aria-hidden="true"></div>
     <div class="hero__glow" aria-hidden="true"></div>
 
@@ -134,33 +135,19 @@
   <!-- ============ MARQUEE ============ -->
   <div class="marquee" aria-hidden="true">
     <div class="marquee__track">
-      <span>Two sides</span><b></b><span>One night</span><b></b><span>Doors at midnight</span><b></b><span class="door-word">I’m in</span><b></b>
-      <span>Two sides</span><b></b><span>One night</span><b></b><span>Doors at midnight</span><b></b><span class="door-word">I’m in</span><b></b>
+      <span>Organizers</span><b></b><span>Guests</span><b></b><span class="door-word">The two-sided platform for nightlife</span><b></b>
+      <span>Organizers</span><b></b><span>Guests</span><b></b><span class="door-word">The two-sided platform for nightlife</span><b></b>
     </div>
   </div>
 
-  <!-- ============ IDEA (paper) ============ -->
-  <section class="idea paper" aria-labelledby="idea-title">
-    <div class="wrap">
-      <div class="sec-head">
-        <span class="sec-num">00 — The idea</span>
-      </div>
-      <h2 class="visually-hidden" id="idea-title">The idea</h2>
-      <p class="idea__text" data-words>IMIN serves both sides of the same room: the organizer who runs the night, and the guest looking for where to go and who with.</p>
-      <div class="idea__cols">
-        <div class="idea__col" data-reveal>
-          <span class="label">Audience</span>
-          <p>Organizers of independent nights. Guests who want an event and someone to go with.</p>
-        </div>
-        <div class="idea__col" data-reveal>
-          <span class="label">Character</span>
-          <p>Daring. Honest. Premium.</p>
-        </div>
-        <div class="idea__col" data-reveal>
-          <span class="label">Voice</span>
-          <p>Like asking a friend out tonight. No expectations, no strings.</p>
-        </div>
-      </div>
+  <!-- ============ THE NIGHT (photo collage) ============ -->
+  <section class="night" aria-label="Nightlife">
+    <div class="night__grid">
+      <figure class="ph ph--1" data-speed="-.12"><img src="assets/img/photos/crowd.jpg" alt="A crowd with hands up under stage lights" loading="lazy"></figure>
+      <figure class="ph ph--2" data-speed=".18"><img src="assets/img/photos/dj.jpg" alt="A DJ playing a set" loading="lazy"></figure>
+      <figure class="ph ph--3" data-speed="-.06"><img src="assets/img/photos/dancefloor.jpg" alt="A packed dance floor" loading="lazy"></figure>
+      <figure class="ph ph--4" data-speed=".24"><img src="assets/img/photos/friends.jpg" alt="Friends on a night out" loading="lazy"></figure>
+      <figure class="ph ph--5" data-speed="-.2"><img src="assets/img/photos/lights.jpg" alt="Club lights and haze" loading="lazy"></figure>
     </div>
   </section>
 
@@ -178,11 +165,11 @@
             <span class="side__tag"><i class="sq sq--ultra"></i>Side A · The organizer</span>
             <svg class="i i--lg"><use href="#i-megaphone"/></svg>
           </div>
-          <h3 class="display side__title">A two-person crew vs. a marketing team.</h3>
+          <figure class="side__photo"><img src="assets/img/photos/organizer.jpg" alt="An organizer behind the decks" loading="lazy"></figure>
+          <h3 class="display side__title">A 2-person crew vs. a marketing team.</h3>
           <ul class="side__list">
             <li><span>01</span>A 2-person crew can’t run ads, email, SMS and design like a company with a marketing team.</li>
-            <li><span>02</span>A weak night shows up too late — when the ad budget is already spent.</li>
-            <li><span>03</span>Ticketing, ads, posters and audiences live in five different tools.</li>
+            <li><span>02</span>A weak night shows up too late, when the ad budget is already spent.</li>
           </ul>
         </article>
 
@@ -193,11 +180,11 @@
             <span class="side__tag"><i class="sq sq--door"></i>Side B · The guest</span>
             <svg class="i i--lg"><use href="#i-users"/></svg>
           </div>
-          <h3 class="display side__title">Somewhere to go. Nobody to go with.</h3>
+          <figure class="side__photo"><img src="assets/img/photos/guests.jpg" alt="Guests dancing together" loading="lazy"></figure>
+          <h3 class="display side__title">An event. And someone to go with.</h3>
           <ul class="side__list">
-            <li><span>01</span>The night is out there — finding the right one nearby is the hard part.</li>
-            <li><span>02</span>Friends are busy, tired or out of town. The plan dies in the group chat.</li>
-            <li><span>03</span>You want company for a night out, not a match. Dating apps don’t fit.</li>
+            <li><span>01</span>Find an event nearby, and someone to go with.</li>
+            <li><span>02</span>Company for a night out, not a romantic match. Dating apps don’t fit.</li>
           </ul>
         </article>
       </div>
@@ -211,7 +198,7 @@
         <span class="sec-num">02 — Product · Side A</span>
         <h2 class="display sec-title" id="product-title" data-split>The operating system<br>that runs the night.</h2>
       </div>
-      <p class="lead product__lead" data-reveal>Tickets, forecast, marketing and posters in one place — built on your own buyer data. Live today for organizers.</p>
+      <p class="lead product__lead" data-reveal>For organizers. Live today at <a class="haze-link" href="https://dashboard.imin.wtf" target="_blank" rel="noopener">dashboard.imin.wtf</a>.</p>
     </div>
 
     <div class="hscroll">
@@ -223,7 +210,7 @@
             <span class="feat__num">01</span>
             <span class="feat__icon"><svg class="i i--lg"><use href="#i-chart-line-up"/></svg></span>
             <h3 class="display feat__title">Forecast</h3>
-            <p>IMIN flags a weak night about two weeks out — so you act before the ad budget is spent, not after.</p>
+            <p>IMIN flags a weak night about two weeks out, so you can act before the ad budget is spent.</p>
           </div>
           <div class="feat__visual card">
             <div class="card__head">
@@ -244,7 +231,7 @@
               <span><i class="lg lg--actual"></i>Actual</span>
               <span><i class="lg lg--proj"></i>Projected</span>
             </div>
-            <p class="card__alert"><svg class="i"><use href="#i-lightning"/></svg>Below pace. Boost Meta Ads and send an SMS drop?</p>
+            <p class="card__alert"><svg class="i"><use href="#i-lightning"/></svg>Below pace, two weeks out.</p>
             <span class="demo-note">Illustrative data</span>
           </div>
         </article>
@@ -255,7 +242,7 @@
             <span class="feat__num">02</span>
             <span class="feat__icon"><svg class="i i--lg"><use href="#i-ticket"/></svg></span>
             <h3 class="display feat__title">Live dashboard</h3>
-            <p>A live overview of every event: tickets sold, revenue and cycle metrics, updated as the doors get closer.</p>
+            <p>A live event overview: tickets sold, revenue and cycle metrics.</p>
           </div>
           <div class="feat__visual card">
             <div class="card__head"><span>Event overview</span><span class="badge"><span class="live"></span>Live</span></div>
@@ -282,11 +269,11 @@
             <p>Meta Ads, email, SMS and AI posters — built from your own buyer data and launched from the same place you sell tickets.</p>
           </div>
           <div class="feat__visual card channels">
-            <div class="card__head"><span>Campaign · Warehouse 02</span><span class="badge">Ready</span></div>
-            <div class="channel"><svg class="i i--lg"><use href="#i-globe"/></svg><div><b>Meta Ads</b><span>Lookalike of 1,240 buyers</span></div><i class="toggle on"></i></div>
-            <div class="channel"><svg class="i i--lg"><use href="#i-envelope"/></svg><div><b>Email</b><span>“Doors at midnight.”</span></div><i class="toggle on"></i></div>
-            <div class="channel"><svg class="i i--lg"><use href="#i-chat-circle"/></svg><div><b>SMS</b><span>Last 40 tickets — tonight only</span></div><i class="toggle on"></i></div>
-            <div class="channel"><svg class="i i--lg"><use href="#i-image"/></svg><div><b>AI poster</b><span>3 variants · export-ready</span></div><i class="toggle on"></i></div>
+            <div class="card__head"><span>Campaign</span><span class="badge">Ready</span></div>
+            <div class="channel"><svg class="i i--lg"><use href="#i-globe"/></svg><div><b>Meta Ads</b><span>From your buyer data</span></div><i class="toggle on"></i></div>
+            <div class="channel"><svg class="i i--lg"><use href="#i-envelope"/></svg><div><b>Email</b><span>From your buyer data</span></div><i class="toggle on"></i></div>
+            <div class="channel"><svg class="i i--lg"><use href="#i-chat-circle"/></svg><div><b>SMS</b><span>From your buyer data</span></div><i class="toggle on"></i></div>
+            <div class="channel"><svg class="i i--lg"><use href="#i-image"/></svg><div><b>AI poster</b><span>3 export-ready variants</span></div><i class="toggle on"></i></div>
             <span class="demo-note">Illustrative data</span>
           </div>
         </article>
@@ -297,7 +284,7 @@
             <span class="feat__num">04</span>
             <span class="feat__icon"><svg class="i i--lg"><use href="#i-sparkle"/></svg></span>
             <h3 class="display feat__title">Poster Studio</h3>
-            <p>Describe the night, pick a vibe matched to the genre, and get three on-brand, export-ready variants. No designer on call.</p>
+            <p>Describe the night, pick a vibe matched to the genre, and get three on-brand, export-ready variants.</p>
           </div>
           <div class="feat__visual studio">
             <div class="studio__prompt">
@@ -311,9 +298,9 @@
               <button class="vibe" data-vibe="hiphop">Hip-hop</button>
             </div>
             <div class="posters" data-vibe-current="techno">
-              <div class="poster poster--1"><div class="poster__beat"></div><span class="poster__date">SAT · 23:00</span><b class="poster__title">Warehouse<br>02</b><span class="poster__foot">IMIN presents</span></div>
-              <div class="poster poster--2"><div class="poster__beat"></div><span class="poster__date">SAT · 23:00</span><b class="poster__title">Doors at<br>midnight</b><span class="poster__foot">Metz · FR</span></div>
-              <div class="poster poster--3"><div class="poster__beat"></div><span class="poster__date">SAT · 23:00</span><b class="poster__title">No<br>phones</b><span class="poster__foot">Strobes only</span></div>
+              <div class="poster poster--1"><img class="poster__img" src="assets/img/photos/crowd.jpg" alt="" loading="lazy"><div class="poster__beat"></div><span class="poster__date">SAT · 23:00</span><b class="poster__title">Warehouse<br>02</b><span class="poster__foot">IMIN presents</span></div>
+              <div class="poster poster--2"><img class="poster__img" src="assets/img/photos/dj.jpg" alt="" loading="lazy"><div class="poster__beat"></div><span class="poster__date">SAT · 23:00</span><b class="poster__title">Doors at<br>midnight</b><span class="poster__foot">Metz · FR</span></div>
+              <div class="poster poster--3"><img class="poster__img" src="assets/img/photos/lights.jpg" alt="" loading="lazy"><div class="poster__beat"></div><span class="poster__date">SAT · 23:00</span><b class="poster__title">No<br>phones</b><span class="poster__foot">Strobes only</span></div>
             </div>
           </div>
         </article>
@@ -345,20 +332,20 @@
           <span class="sec-num">03 — Product · Side B</span>
           <h2 class="display sec-title" id="app-title" data-split>Find an event.<br>And someone<br>to go with.</h2>
         </div>
-        <p class="lead" data-reveal>The app for the other side of the room. Not a dating app — company for a night out, with no expectations and no strings.</p>
+        <p class="lead" data-reveal>Not a dating app. Company for a night out.</p>
 
         <ol class="app__list">
           <li data-reveal>
             <svg class="i i--lg"><use href="#i-map-pin"/></svg>
-            <div><h3>Find an event nearby</h3><p>The nights around you tonight, from organizers who run them on IMIN.</p></div>
+            <div><h3>Find an event nearby</h3></div>
           </li>
           <li data-reveal>
             <svg class="i i--lg"><use href="#i-users"/></svg>
-            <div><h3>Find someone to go with</h3><p>See who else is going and say “I’m in”. A plan, not a match.</p></div>
+            <div><h3>Find someone to go with</h3></div>
           </li>
           <li data-reveal>
             <svg class="i i--lg"><use href="#i-money"/></svg>
-            <div><h3>Earn</h3><p>Host exclusive experiences and get paid for the nights you make happen.</p></div>
+            <div><h3>Earn</h3><p>Host exclusive experiences and get paid.</p></div>
           </li>
         </ol>
       </div>
@@ -373,25 +360,24 @@
               <svg class="i"><use href="#i-magnifying-glass"/></svg>
             </div>
             <div class="ev ev--hero">
-              <div class="ev__art"><div class="poster__beat"></div></div>
+              <div class="ev__art"><img src="assets/img/photos/dancefloor.jpg" alt="" loading="lazy"></div>
               <div class="ev__meta"><b>Warehouse 02</b><span>Techno · 1.2 km · 23:00</span></div>
               <div class="ev__going"><i></i><i></i><i></i><span>+18 going</span></div>
             </div>
             <div class="ev">
-              <div class="ev__thumb ev__thumb--h"></div>
+              <div class="ev__thumb"><img src="assets/img/photos/dj.jpg" alt="" loading="lazy"></div>
               <div class="ev__meta"><b>Rooftop House</b><span>House · 2.4 km · 22:00</span></div>
               <svg class="i"><use href="#i-heart"/></svg>
             </div>
             <div class="ev">
-              <div class="ev__thumb ev__thumb--p"></div>
+              <div class="ev__thumb"><img src="assets/img/photos/lights.jpg" alt="" loading="lazy"></div>
               <div class="ev__meta"><b>Disco Basement</b><span>Disco · 3.1 km · 00:00</span></div>
               <svg class="i"><use href="#i-heart"/></svg>
             </div>
             <div class="phone__cta">I’m in</div>
           </div>
         </div>
-        <div class="float float--1" data-depth="0.6"><svg class="i"><use href="#i-chat-circle"/></svg><span><b>Léa</b> is going too. Meet at the door?</span></div>
-        <div class="float float--2" data-depth="0.9"><span class="float__i"></span><span>Someone just said <b>“I’m in”</b></span></div>
+        <div class="float float--1" data-depth="0.6"><svg class="i"><use href="#i-chat-circle"/></svg><span><b>Léa</b> is going too</span></div>
         <div class="float float--3" data-depth="0.45"><svg class="i"><use href="#i-ticket"/></svg><span>Ticket saved · Sat 23:00</span></div>
       </div>
     </div>
@@ -418,17 +404,18 @@
     <div class="wrap">
       <div class="sec-head">
         <span class="sec-num">04 — Proof</span>
-        <h2 class="display sec-title" id="proof-title" data-split>Built in the room.<br>Not in a deck.</h2>
+        <h2 class="display sec-title" id="proof-title" data-split>Where we are.</h2>
       </div>
       <div class="proof__grid">
         <div class="tile tile--big" data-reveal>
+          <img class="tile__photo" src="assets/img/photos/metz.jpg" alt="A house and techno night" loading="lazy">
           <svg class="i i--lg"><use href="#i-equalizer"/></svg>
           <span class="tile__k display">Customer zero</span>
-          <p>Our founder’s own house &amp; techno night in Metz runs on IMIN — every feature is tested on a real dance floor first.</p>
+          <p>Our founder’s own house &amp; techno night in Metz runs on IMIN.</p>
         </div>
         <div class="tile" data-reveal>
           <span class="tile__k display">’24 <i>&amp;</i> ’25</span>
-          <p>Tested at Web Summit, two years in a row.</p>
+          <p>Tested at Web Summit.</p>
         </div>
         <div class="tile" data-reveal>
           <span class="tile__k display">Winner</span>
@@ -440,7 +427,7 @@
         </div>
         <div class="tile tile--live" data-reveal>
           <span class="tile__k display">Live</span>
-          <p>The organizer product runs today at <a class="haze-link" href="https://dashboard.imin.wtf" target="_blank" rel="noopener">dashboard.imin.wtf</a>.</p>
+          <p>The organizer product is live today at <a class="haze-link" href="https://dashboard.imin.wtf" target="_blank" rel="noopener">dashboard.imin.wtf</a>.</p>
         </div>
       </div>
     </div>
@@ -451,9 +438,9 @@
     <div class="wrap">
       <div class="sec-head">
         <span class="sec-num">05 — Vision</span>
-        <h2 class="display sec-title" id="vision-title" data-split>France first.<br>Then the south.</h2>
+        <h2 class="display sec-title" id="vision-title" data-split>France.<br>Spain. Portugal.</h2>
       </div>
-      <p class="lead vision__lead" data-reveal>We’re raising our first round — to build the consumer app and grow the organizer cohort across France, then Spain and Portugal.</p>
+      <p class="lead vision__lead" data-reveal>We’re raising our first round to build the consumer app and grow the organizer cohort across France, Spain and Portugal.</p>
 
       <div class="route">
         <svg class="route__line" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true">
@@ -465,22 +452,20 @@
             <span class="stop__code display">FR</span>
             <span class="stop__dot"></span>
             <h3>France</h3>
-            <p>The beachhead. Starting from Metz, organizer by organizer.</p>
+            <p>The beachhead.</p>
             <span class="stop__tag">Now</span>
           </div>
           <div class="stop">
             <span class="stop__code display">ES</span>
             <span class="stop__dot"></span>
             <h3>Spain</h3>
-            <p>Independent nights, a cohort at a time.</p>
-            <span class="stop__tag">Next</span>
+                        <span class="stop__tag">Next</span>
           </div>
           <div class="stop">
             <span class="stop__code display">PT</span>
             <span class="stop__dot"></span>
             <h3>Portugal</h3>
-            <p>Where the organizer OS meets the consumer app.</p>
-            <span class="stop__tag">Next</span>
+                        <span class="stop__tag">Next</span>
           </div>
         </div>
       </div>
@@ -492,26 +477,25 @@
     <div class="wrap">
       <div class="sec-head">
         <span class="sec-num">06 — Team</span>
-        <h2 class="display sec-title" id="team-title" data-split>People who<br>live in the night.</h2>
+        <h2 class="display sec-title" id="team-title" data-split>Team.</h2>
       </div>
       <div class="team__grid">
         <article class="person" data-reveal>
-          <div class="avatar avatar--dark"><svg class="mark" aria-hidden="true"><use href="#mark"/></svg></div>
+          <div class="avatar avatar--dark" aria-hidden="true"><span>BS</span></div>
           <span class="person__role">CEO / Founder</span>
           <h3 class="display person__name">Bohdan Shostak</h3>
-          <p>Serial founder with a background in marketing. Lives in nightlife and knows the organizer’s pain firsthand. Self-taught — built the first app alone in 2024.</p>
+          <p>Serial founder with a background in marketing. Lives in nightlife and knows the organizer’s pain firsthand. Taught himself and built the first app alone in 2024.</p>
         </article>
         <article class="person" data-reveal>
-          <div class="avatar avatar--line"><svg class="mark" aria-hidden="true"><use href="#mark"/></svg></div>
+          <div class="avatar avatar--line" aria-hidden="true"><span>I</span></div>
           <span class="person__role">CTO / Co-founder</span>
           <h3 class="display person__name">Ivan</h3>
-          <p>Leads the platform: the organizer OS live today, and the consumer app next.</p>
         </article>
         <article class="person person--open" data-reveal>
           <div class="avatar avatar--open"><span>?</span></div>
           <span class="person__role">Growth / Co-founder</span>
           <h3 class="display person__name">Open role</h3>
-          <p>We’re looking for a growth co-founder to take IMIN across France, Spain and Portugal.</p>
+          <p>We’re looking for a growth co-founder.</p>
           <a class="arrow-link" href="#apply" data-topic="team">Is it you? Let’s talk<svg class="i"><use href="#i-arrow-right"/></svg></a>
         </article>
       </div>
@@ -520,16 +504,16 @@
 
   <!-- ============ APPLY / CONTACT ============ -->
   <section class="apply" id="apply" aria-labelledby="apply-title">
+    <div class="apply__photo" aria-hidden="true"><img src="assets/img/photos/apply.jpg" alt="" loading="lazy"></div>
     <div class="apply__beat beat" data-beat data-rows="3" data-light="1" aria-hidden="true"></div>
     <div class="wrap apply__grid">
       <div class="apply__copy">
         <span class="sec-num">07 — Let’s talk</span>
         <h2 class="display apply__title" id="apply-title" data-split>Join the<br>founding<br>cohort.</h2>
-        <p class="lead">We’re admitting a small founding cohort of organizers across <b>FR · ES · PT</b>. Every application is read by hand — expect a reply within 48 hours.</p>
+        <p class="lead">We’re admitting a small founding cohort across <b>FR · ES · PT</b>. Every application is read by hand. Expect a reply within 48 hours.</p>
         <ul class="apply__points">
           <li><svg class="i"><use href="#i-clock"/></svg>Reply within 48 hours</li>
-          <li><svg class="i"><use href="#i-user"/></svg>Read by a human, not a funnel</li>
-          <li><svg class="i"><use href="#i-download-simple"/></svg>Your buyer data stays yours</li>
+          <li><svg class="i"><use href="#i-user"/></svg>Every application read by hand</li>
         </ul>
       </div>
 
@@ -582,7 +566,7 @@
 <!-- ============ FOOTER ============ -->
 <footer class="footer">
   <div class="wrap footer__top">
-    <p class="display footer__claim">Two sides.<br>One night.</p>
+    <p class="display footer__claim">The two-sided<br>platform for nightlife.</p>
     <nav class="footer__nav" aria-label="Footer">
       <div>
         <span class="label">Site</span>
@@ -595,10 +579,7 @@
       </div>
     </nav>
   </div>
-  <div class="footer__mark" aria-hidden="true">
-    <svg class="footer__svg" viewBox="0 0 169.58 224.95"><use href="#mark"/></svg>
-    <div class="footer__word display"><span>I’m</span><span>in.</span></div>
-  </div>
+  <div class="footer__beat beat" data-beat data-rows="2" data-light="1" aria-hidden="true"></div>
   <div class="wrap footer__bottom">
     <span>© <span data-year>2026</span> IMIN</span>
     <span>imin.wtf</span>
