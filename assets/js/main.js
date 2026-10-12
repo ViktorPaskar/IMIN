@@ -655,17 +655,95 @@
   }
 
   /* ---------------------------------------------------------
-     Vision: route draws, stops appear
+     Vision: a dot map of France, Spain and Portugal. The section
+     pins; Metz lights up, France fills in a wave from Metz, then the
+     route arcs to Spain and Portugal and each country fills in turn.
      --------------------------------------------------------- */
-  const route = $('.route__draw');
-  if (route) {
-    const L = route.getTotalLength();
-    gsap.set(route, { strokeDasharray: L, strokeDashoffset: reduced ? 0 : L });
-    if (!reduced) {
-      gsap.to(route, { strokeDashoffset: 0, ease: 'none', scrollTrigger: { trigger: '.route', start: 'top 80%', end: 'bottom 60%', scrub: true } });
-      gsap.from('.stop', { y: 60, opacity: 0, stagger: .15, duration: 1.2, scrollTrigger: { trigger: '.route', start: 'top 75%' } });
-      gsap.from('.stop__code', { yPercent: 40, stagger: .15, duration: 1.6, scrollTrigger: { trigger: '.route', start: 'top 75%' } });
+  const XMAP = (() => {
+    const svg = $('.xmap');
+    if (!svg) return null;
+    const NSv = 'http://www.w3.org/2000/svg';
+    const el = (t, at = {}, p = svg) => { const n = document.createElementNS(NSv, t); for (const k in at) n.setAttribute(k, at[k]); p.appendChild(n); return n; };
+    const COS = Math.cos(44 * Math.PI / 180), K = 40;
+    const LON0 = -10, LAT0 = 51.6;
+    const P = ([lon, lat]) => [(lon - LON0) * COS * K, (LAT0 - lat) * K];
+    const FR = [[-1.8,43.4],[-1.3,44.6],[-1.2,46.2],[-2.2,47.1],[-4.7,47.9],[-4.6,48.6],[-3.0,48.8],[-1.6,48.7],[-1.3,49.7],[0.2,49.7],[1.6,50.4],[2.6,51.1],[4.2,50.0],[5.8,49.5],[8.2,49.0],[7.6,47.6],[6.9,47.4],[6.0,46.2],[6.8,46.0],[7.0,45.3],[6.6,45.1],[7.0,44.2],[7.5,43.8],[6.6,43.2],[5.0,43.4],[4.0,43.5],[3.1,42.5],[1.7,42.5],[-0.3,42.8]];
+    const ES = [[-1.8,43.4],[-0.3,42.8],[1.7,42.5],[3.2,42.0],[3.2,41.8],[1.0,41.0],[0.0,40.0],[-0.3,39.4],[0.2,38.7],[-0.7,37.6],[-1.6,37.0],[-2.1,36.7],[-4.4,36.7],[-5.6,36.0],[-6.3,36.6],[-7.4,37.2],[-7.0,38.0],[-7.3,39.5],[-6.9,40.3],[-6.8,41.0],[-6.2,41.6],[-8.1,41.8],[-8.9,42.1],[-9.3,42.9],[-8.0,43.7],[-5.8,43.6],[-4.0,43.4]];
+    const PT = [[-8.9,42.1],[-8.1,41.8],[-6.2,41.6],[-6.8,41.0],[-6.9,40.3],[-7.3,39.5],[-7.0,38.0],[-7.4,37.2],[-8.0,37.0],[-9.0,37.0],[-8.8,38.0],[-9.5,38.7],[-9.0,39.5],[-8.7,40.6]];
+    const inside = (x, y, poly) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
+    const METZ = [6.18, 49.12], MADRID = [-3.7, 40.42], LISBON = [-9.14, 38.72];
+    const [W, H] = P([8.6, 35.8]);
+    svg.setAttribute('viewBox', `-10 -10 ${W + 20} ${H + 20}`);
+
+    const STEP = .36, BUCKETS = 12;
+    const countries = [[FR, METZ], [ES, MADRID], [PT, LISBON]].map(([poly, origin]) => {
+      const g = el('g', { class: 'xmap__country' });
+      const groups = Array.from({ length: BUCKETS }, () => el('g', { class: 'xmap__ring' }, g));
+      const pts = [];
+      for (let lat = 36; lat <= 51.3; lat += STEP) {
+        for (let lon = -9.6; lon <= 8.4; lon += STEP / COS * .9) {
+          if (inside(lon, lat, poly)) pts.push([lon, lat]);
+        }
+      }
+      const [ox, oy] = P(origin);
+      const dists = pts.map(p => { const [x, y] = P(p); return Math.hypot(x - ox, y - oy); });
+      const max = Math.max(...dists) || 1;
+      pts.forEach((p, i) => {
+        const [x, y] = P(p);
+        el('circle', { cx: x.toFixed(1), cy: y.toFixed(1), r: 3.4 }, groups[Math.min(BUCKETS - 1, Math.floor(dists[i] / max * BUCKETS))]);
+      });
+      return { g, groups };
+    });
+
+    // route arcs
+    const arc = (a, b, lift) => {
+      const [x1, y1] = P(a), [x2, y2] = P(b);
+      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2 - lift;
+      return el('path', { d: `M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}`, class: 'xmap__arc' });
+    };
+    const arcs = [arc(METZ, MADRID, 120), arc(MADRID, LISBON, 70)];
+    arcs.forEach(p => { const L = p.getTotalLength(); p.style.strokeDasharray = `${L} ${L}`; p.style.strokeDashoffset = reduced ? 0 : L; p.dataset.len = L; });
+
+    const pin = (c, cls, label) => {
+      const [x, y] = P(c);
+      const g = el('g', { class: `xmap__pin ${cls}`, transform: `translate(${x} ${y})` });
+      el('circle', { r: 16, class: 'xmap__halo' }, g);
+      el('circle', { r: 7, class: 'xmap__core' }, g);
+      if (label) { const t = el('text', { x: 14, y: -14, class: 'xmap__label' }, g); t.textContent = label; }
+      return g;
+    };
+    const pins = [pin(METZ, 'is-home', 'Metz'), pin(MADRID, ''), pin(LISBON, '')];
+
+    const steps = $$('.xstep');
+    let lastStep = -1;
+    function set(p) { // p: 0..3
+      countries.forEach((c, i) => {
+        const local = Math.min(1, Math.max(0, p - i));
+        const n = Math.round(local * BUCKETS);
+        c.groups.forEach((g, k) => g.classList.toggle('is-on', k < n));
+        pins[i].classList.toggle('is-on', local > 0);
+      });
+      arcs.forEach((a, i) => { const local = Math.min(1, Math.max(0, (p - (i + 1)) * 2.2)); a.style.strokeDashoffset = a.dataset.len * (1 - local); });
+      steps.forEach((s, i) => { s.querySelector('.xstep__bar b').style.transform = `scaleX(${Math.min(1, Math.max(0, p - i))})`; });
+      const cur = Math.min(2, Math.floor(p * .999));
+      if (cur !== lastStep) { steps.forEach((s, i) => s.classList.toggle('is-active', i === cur)); lastStep = cur; }
     }
+    set(reduced ? 3 : 0);
+    return { set };
+  })();
+
+  if (XMAP && !reduced) {
+    const prog = { p: 0 };
+    mm.add('(min-width: 821px)', () => {
+      gsap.timeline({ scrollTrigger: { trigger: '.expand', start: 'center center', end: '+=160%', pin: '.vision', pinSpacing: true, scrub: .8, anticipatePin: 1 } })
+        .fromTo(prog, { p: 0 }, { p: 3, ease: 'none', onUpdate: () => XMAP.set(prog.p) });
+    });
+    mm.add('(max-width: 820px)', () => {
+      gsap.timeline({ scrollTrigger: { trigger: '.expand', start: 'top 70%', end: 'bottom 40%', scrub: .6 } })
+        .fromTo(prog, { p: 0 }, { p: 3, ease: 'none', onUpdate: () => XMAP.set(prog.p) });
+    });
+    gsap.from('.expand__steps', { x: -30, opacity: 0, duration: 1.1, clearProps: 'transform,opacity', scrollTrigger: { trigger: '.vision', start: 'top 60%' } });
+    gsap.from('.expand__map', { opacity: 0, scale: .96, duration: 1.4, clearProps: 'transform,opacity', scrollTrigger: { trigger: '.vision', start: 'top 60%' } });
   }
 
   /* ---------------------------------------------------------

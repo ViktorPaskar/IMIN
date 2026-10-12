@@ -449,31 +449,38 @@
       </div>
       <p class="lead vision__lead" data-reveal>We’re raising our first round to build the consumer app and grow the organizer cohort across France, Spain and Portugal.</p>
 
-      <div class="route">
-        <svg class="route__line" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true">
-          <path class="route__base" d="M20 60 C 200 10, 320 110, 500 60 S 800 10, 980 60"/>
-          <path class="route__draw" d="M20 60 C 200 10, 320 110, 500 60 S 800 10, 980 60"/>
-        </svg>
-        <div class="route__stops">
-          <div class="stop stop--now">
-            <span class="stop__code display">FR</span>
-            <span class="stop__dot"></span>
-            <h3>France</h3>
-            <p>The beachhead.</p>
-            <span class="stop__tag">Now</span>
-          </div>
-          <div class="stop">
-            <span class="stop__code display">ES</span>
-            <span class="stop__dot"></span>
-            <h3>Spain</h3>
-                        <span class="stop__tag">Next</span>
-          </div>
-          <div class="stop">
-            <span class="stop__code display">PT</span>
-            <span class="stop__dot"></span>
-            <h3>Portugal</h3>
-                        <span class="stop__tag">Next</span>
-          </div>
+      <div class="expand">
+        <ol class="expand__steps">
+          <li class="xstep is-active" data-step="0">
+            <span class="xstep__code display">FR</span>
+            <div class="xstep__body">
+              <h3>France</h3>
+              <p>The beachhead. Starting from Metz.</p>
+            </div>
+            <span class="xstep__tag">Now</span>
+            <i class="xstep__bar"><b></b></i>
+          </li>
+          <li class="xstep" data-step="1">
+            <span class="xstep__code display">ES</span>
+            <div class="xstep__body">
+              <h3>Spain</h3>
+              <p>Founding cohort.</p>
+            </div>
+            <span class="xstep__tag">Next</span>
+            <i class="xstep__bar"><b></b></i>
+          </li>
+          <li class="xstep" data-step="2">
+            <span class="xstep__code display">PT</span>
+            <div class="xstep__body">
+              <h3>Portugal</h3>
+              <p>Founding cohort.</p>
+            </div>
+            <span class="xstep__tag">Next</span>
+            <i class="xstep__bar"><b></b></i>
+          </li>
+        </ol>
+        <div class="expand__map">
+          <svg class="xmap" role="img" aria-label="Map of France, Spain and Portugal with a route from Metz to Spain and Portugal"></svg>
         </div>
       </div>
     </div>
