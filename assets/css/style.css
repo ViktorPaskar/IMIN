@@ -656,10 +656,7 @@ img.is-missing { visibility: hidden; }
 
 
 .side__photo { position: relative; margin: 0; height: clamp(180px, 20vw, 260px); overflow: hidden; border-radius: 2px; background: var(--midnight-3); }
-.side__photo img { width: 100%; height: 120%; margin-top: -10%; object-fit: cover; filter: grayscale(.2) contrast(1.05) brightness(.85); }
-.side__photo::after { content: ""; position: absolute; inset: 0; mix-blend-mode: soft-light; opacity: .6; }
-.side--a .side__photo::after { background: var(--ultra); }
-.side--b .side__photo::after { background: var(--door); }
+.side__photo img { width: 100%; height: 120%; margin-top: -10%; object-fit: cover; }
 
 .poster { isolation: isolate; }
 .poster__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; mix-blend-mode: luminosity; opacity: .6; z-index: 0; }
@@ -840,3 +837,5 @@ img.is-missing { visibility: hidden; }
   :root { --max: 1520px; }
 }
 .ph.is-active img { filter: grayscale(0) brightness(1) saturate(1.05); }
+.side--a .side__photo img { object-position: 50% 30%; }
+.side--b .side__photo img { object-position: 50% 60%; }
