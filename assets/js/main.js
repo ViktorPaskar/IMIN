@@ -770,7 +770,7 @@
   }
 
   /* ---------------------------------------------------------
-     Scroll velocity bends the photos; nav links scramble on hover
+     Scroll velocity bends the photos
      --------------------------------------------------------- */
   if (!reduced) {
     const bendEls = $$('.side__photo, .poster');
@@ -785,22 +785,6 @@
       }
     });
 
-    const GLYPHS = 'IMN/\\|';
-    $$('.nav a, .footer__nav a').forEach(a => {
-      const text = a.textContent;
-      let raf = 0;
-      a.addEventListener('pointerenter', () => {
-        cancelAnimationFrame(raf);
-        const t0 = performance.now();
-        const step = now => {
-          const p = Math.min(1, (now - t0) / 420);
-          const keep = Math.floor(p * text.length);
-          a.textContent = text.split('').map((ch, i) => (i < keep || ch === ' ' ? ch : GLYPHS[(Math.random() * GLYPHS.length) | 0])).join('');
-          if (p < 1) raf = requestAnimationFrame(step); else a.textContent = text;
-        };
-        raf = requestAnimationFrame(step);
-      });
-    });
   }
 
   /* ---------------------------------------------------------
