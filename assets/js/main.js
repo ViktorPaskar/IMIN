@@ -132,39 +132,141 @@
   initBasics();
 
   /* ---------------------------------------------------------
-     HERO FIELD — the original beat pattern drawn on a canvas.
-     · intro: strokes grow out from the centre with an elastic snap
-     · idle: an equalizer wave that kicks at 124 BPM
-     · pointer: strokes light up and lean away, like a crowd parting
-     · scroll: the hero pins and the pattern opens like two doors,
-       letting a beam of light through
+     HERO — the beat pattern as a sound wave.
+     Every stroke of the original pattern is a bar of a waveform:
+     it stretches out from its row's centre line by the amplitude
+     at its position. The strokes are windows onto the night:
+     they are filled with the party photo.
+     · intro: a playhead sweeps across and "plays" the silence
+       (a grid of dots) into a waveform
+     · idle: a travelling waveform with a 124 BPM kick
+     · sound on: a synthesised 124 BPM groove drives the bars live
+     · pointer: turns the volume up around the cursor
+     · scroll: the wave hits full level, the strokes widen until
+       they merge, and the photo takes the whole screen
      --------------------------------------------------------- */
+  const BPM = 124;
+
+  function createGroove() {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    let ac, master, analyser, noise, timer = 0, step = 0, nextTime = 0, on = false;
+    const freq = new Uint8Array(128);
+    const spb = 60 / BPM / 4; // a 16th note
+    const BASS = [0, 0, 45, 0, 0, 0, 45, 0, 0, 0, 48, 0, 0, 0, 43, 0];
+
+    function init() {
+      ac = new AC();
+      master = ac.createGain(); master.gain.value = .55;
+      analyser = ac.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = .72;
+      master.connect(analyser); analyser.connect(ac.destination);
+      noise = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
+      const d = noise.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    function kick(t) {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + .14);
+      g.gain.setValueAtTime(1, t); g.gain.exponentialRampToValueAtTime(.001, t + .45);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t + .5);
+    }
+    function hiss(t, type, f, len, vol) {
+      const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain();
+      s.buffer = noise; fl.type = type; fl.frequency.value = f;
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + len);
+      s.connect(fl); fl.connect(g); g.connect(master); s.start(t); s.stop(t + len + .02);
+    }
+    function bass(t, midi) {
+      const o = ac.createOscillator(), fl = ac.createBiquadFilter(), g = ac.createGain();
+      o.type = 'sawtooth'; o.frequency.value = 440 * Math.pow(2, (midi - 69) / 12);
+      fl.type = 'lowpass'; fl.frequency.setValueAtTime(900, t); fl.frequency.exponentialRampToValueAtTime(140, t + .18);
+      g.gain.setValueAtTime(.32, t); g.gain.exponentialRampToValueAtTime(.001, t + .22);
+      o.connect(fl); fl.connect(g); g.connect(master); o.start(t); o.stop(t + .25);
+    }
+    function schedule() {
+      while (nextTime < ac.currentTime + .12) {
+        const s = step % 16;
+        if (s % 4 === 0) kick(nextTime);
+        if (s % 4 === 2) hiss(nextTime, 'highpass', 8000, .06, .22);
+        if (s % 2 === 1) hiss(nextTime, 'highpass', 10000, .025, .07);
+        if (s === 4 || s === 12) hiss(nextTime, 'bandpass', 1600, .16, .35);
+        if (BASS[s]) bass(nextTime, BASS[s]);
+        nextTime += spb; step++;
+      }
+    }
+    return {
+      get on() { return on; },
+      toggle() {
+        if (!ac) init();
+        on = !on;
+        if (on) {
+          ac.resume(); nextTime = ac.currentTime + .05; step = 0;
+          master.gain.setTargetAtTime(.55, ac.currentTime, .05);
+          timer = setInterval(schedule, 25);
+        } else {
+          clearInterval(timer);
+          master.gain.setTargetAtTime(0, ac.currentTime, .08);
+        }
+        return on;
+      },
+      level(x) { // x: 0..1 across the screen → spectrum level 0..1
+        if (!on) return 0;
+        analyser.getByteFrequencyData(freq);
+        const bin = Math.min(100, Math.floor(Math.pow(x, 1.6) * 100) + 1);
+        return freq[bin] / 255;
+      },
+      refresh() { if (on) analyser.getByteFrequencyData(freq); }
+    };
+  }
+
   function createHeroField(canvas) {
     if (!canvas) return null;
     const ctx = canvas.getContext('2d');
-    const state = { intro: reduced ? 1 : 0, open: 0 };
+    const state = { play: reduced ? 1.2 : -.15, level: 0, widen: 0, glow: 0 };
     const mouse = { x: -9999, y: -9999, on: 0 };
-    const elastic = gsap.parseEase('elastic.out(1, 0.55)');
-    // centre-lines of the original strokes: top x (x0) → bottom x (x1), 800 units tall
+    const elastic = gsap.parseEase('elastic.out(1, 0.6)');
     const SHAPES = [
       { x0: 50, x1: 50 }, { x0: 190, x1: 190 },
       { x0: 334, x1: 503 }, { x0: 836, x1: 666 },
       { x0: 980, x1: 980 }, { x0: 1120, x1: 1120 }, { x0: 1260, x1: 1260 },
       { x0: 1404, x1: 1573 }, { x0: 1725, x1: 1725 }
     ];
-    let W = 0, H = 0, dpr = 1, strokes = [], running = true;
+    let W = 0, H = 0, dpr = 1, strokes = [], running = true, groove = null;
+    let fill = null;            // the photo, toned to paper, sized to cover the hero
+    const photo = new Image();
+    photo.src = $('.hero__photo img')?.getAttribute('src') || '';
+    photo.onload = () => { toneFill(); };
+
+    function toneFill() {
+      if (!photo.naturalWidth || !W) return;
+      const c = document.createElement('canvas');
+      c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+      const x = c.getContext('2d');
+      const s = Math.max(c.width / photo.naturalWidth, c.height / photo.naturalHeight);
+      const w = photo.naturalWidth * s, h = photo.naturalHeight * s;
+      x.drawImage(photo, (c.width - w) / 2, (c.height - h) / 2, w, h);
+      // duotone: midnight-violet shadows → paper highlights
+      const img = x.getImageData(0, 0, c.width, c.height), d = img.data;
+      for (let i = 0; i < d.length; i += 4) {
+        let v = (d[i] * .3 + d[i + 1] * .59 + d[i + 2] * .11) / 255;
+        v = Math.min(1, .3 + Math.pow(v, .8) * .95);
+        d[i] = 60 + (244 - 60) * v; d[i + 1] = 52 + (239 - 52) * v; d[i + 2] = 110 + (231 - 110) * v;
+      }
+      x.putImageData(img, 0, 0);
+      fill = c;
+    }
 
     function layout() {
       const r = canvas.getBoundingClientRect();
       W = r.width; H = r.height;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, 1.75);
       canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
-      const sc = Math.max(56, Math.min(140, H * .15)) / 800;
-      const pitchY = (800 + 120) * sc, barPx = BAR_W * sc;
+      const sc = Math.max(54, Math.min(130, H * .14)) / 800;
+      const pitchY = (800 + 140) * sc, barPx = BAR_W * sc;
       const rows = Math.ceil(H / pitchY) + 1;
       strokes = [];
       for (let row = 0; row < rows; row++) {
-        const y = row * pitchY - pitchY * .3;
+        const y = row * pitchY - pitchY * .25;
         const start = (row % 2 ? -.75 : -.25) * barPx;
         const bars = Math.ceil((W - start) / barPx) + 1;
         for (let b = 0; b < bars; b++) {
@@ -172,68 +274,87 @@
             const x0 = start + b * barPx + sh.x0 * sc;
             const x1 = start + b * barPx + sh.x1 * sc;
             const cx = (x0 + x1) / 2;
-            if (cx < -60 || cx > W + 60) continue;
-            const dc = Math.abs(cx - W / 2) / (W / 2);
+            if (cx < -80 || cx > W + 80) continue;
             strokes.push({
-              x0, x1, yT: y + 50 * sc, yB: y + 750 * sc, cx, cy: y + 400 * sc,
+              cx, cy: y + 400 * sc,
+              hx: (x0 - x1) / 2, hy: -350 * sc,            // half-vector centre → top
               w: (sh.x0 === sh.x1 ? 100 : 84) * sc,
-              side: cx < W / 2 ? -1 : 1, dc, row,
-              delay: dc * .55 + Math.random() * .3 + row * .025,
-              f: 0
+              xn: cx / W, row,
+              om: 5 + Math.random() * 9, ph: Math.random() * 6.28, // shimmer of this bar
+              boost: 0
             });
           }
         }
       }
+      fill = null; toneFill();
     }
 
-    function draw(time) {
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, W, H);
-      const open = state.open;
-
-      // light through the open doors
-      if (open > .002) {
-        const bw = W * (.06 + .7 * open);
-        const g = ctx.createLinearGradient(W / 2 - bw / 2, 0, W / 2 + bw / 2, 0);
-        g.addColorStop(0, 'rgba(244,239,231,0)');
-        g.addColorStop(.5, `rgba(244,239,231,${(.16 * Math.min(1, open * 1.4)).toFixed(3)})`);
-        g.addColorStop(1, 'rgba(244,239,231,0)');
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, W, H);
+    function amplitude(st, t, kick) {
+      if (groove?.on) {
+        const live = groove.level(st.xn);
+        return .06 + .94 * live * (.75 + .25 * Math.sin(t * st.om + st.ph));
       }
+      const x = st.xn * 6.283 + st.row * .7;
+      const env = (.6 + .4 * Math.sin(x * .9 - t * 1.25)) * (.72 + .28 * Math.sin(x * 2.3 + t * .8 + st.row));
+      const shimmer = .62 + .38 * Math.sin(t * st.om + st.ph);
+      return Math.min(1, .12 + .88 * env * shimmer + .2 * kick * env);
+    }
 
-      const beat = 60 / 124;
-      const kick = Math.exp(-((time % beat) / beat) * 4.5);
-      const R = Math.max(120, W * .12);
+    function draw(t) {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.clearRect(0, 0, W, H);
+      const beat = 60 / BPM;
+      const kick = reduced ? 0 : Math.exp(-((t % beat) / beat) * 5);
+      const R = Math.max(140, W * .14);
+      const widen = 1 + state.widen * 2.6;
+      const floor = state.level;
+      groove?.refresh();
       ctx.lineCap = 'round';
 
       for (const st of strokes) {
-        let ip = (state.intro * 2.2 - st.delay) / 1.1;
-        if (ip <= 0) continue;
-        ip = ip >= 1 ? 1 : elastic(ip);
+        // has the playhead reached this bar yet?
+        let wake = (state.play - st.xn) / .14;
+        wake = wake <= 0 ? 0 : wake >= 1 ? 1 : elastic(wake);
 
         const dx = st.cx - mouse.x, dy = st.cy - mouse.y;
-        const target = mouse.on * Math.exp(-(dx * dx + dy * dy) / (2 * R * R));
-        st.f += (target - st.f) * .1;
+        const near = mouse.on * Math.exp(-(dx * dx + dy * dy) / (2 * R * R));
+        st.boost += (near - st.boost) * .12;
 
-        const wave = reduced ? 0 : .5 + .5 * Math.sin(time * 2.4 + st.cx * .011 + st.row * .9);
-        const len = ip * (1 - .3 * wave * (.4 + .6 * kick) + .18 * st.f);
-        const ease = open * open;
-        const shift = st.side * ease * W * .6 * (1.15 - st.dc * .3);
-        const lean = st.f * .3 * Math.sign(dx || 1) + st.side * ease * .35;
+        let a = reduced ? .55 : amplitude(st, t, kick);
+        a = Math.min(1, a + st.boost * .45);
+        a = a + (1 - a) * floor;
+        const len = a * wake;
 
-        const bx = st.x1 + shift, by = st.yB;
-        const vx = (st.x0 - st.x1) * len, vy = (st.yT - st.yB) * len;
-        const c = Math.cos(lean), sn = Math.sin(lean);
-        const tx = bx + vx * c - vy * sn, ty = by + vx * sn + vy * c;
-
-        const alpha = .07 + .42 * st.f + .1 * open;
-        ctx.strokeStyle = `rgba(244,239,231,${alpha.toFixed(3)})`;
-        ctx.lineWidth = st.w;
+        ctx.globalAlpha = (wake > 0 ? .5 + .5 * Math.max(st.boost, floor) : .22) * (.88 + .12 * kick);
+        ctx.lineWidth = st.w * widen;
         ctx.beginPath();
-        ctx.moveTo(bx, by);
-        ctx.lineTo(tx, ty);
+        ctx.moveTo(st.cx - st.hx * len, st.cy - st.hy * len);
+        ctx.lineTo(st.cx + st.hx * len, st.cy + st.hy * len);
+        ctx.strokeStyle = '#F4EFE7';
         ctx.stroke();
+      }
+
+      // fill the strokes with the night
+      ctx.globalAlpha = 1;
+      if (fill) {
+        ctx.globalCompositeOperation = 'source-in';
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.drawImage(fill, 0, 0);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.globalCompositeOperation = 'source-over';
+      }
+
+      // the playhead
+      if (state.glow > .01) {
+        const px = state.play * W;
+        const g = ctx.createLinearGradient(px - 140, 0, px + 40, 0);
+        g.addColorStop(0, 'rgba(244,239,231,0)');
+        g.addColorStop(.78, `rgba(244,239,231,${(.18 * state.glow).toFixed(3)})`);
+        g.addColorStop(1, 'rgba(244,239,231,0)');
+        ctx.fillStyle = g; ctx.fillRect(px - 140, 0, 180, H);
+        ctx.fillStyle = `rgba(244,239,231,${(.9 * state.glow).toFixed(3)})`;
+        ctx.fillRect(px - 1, 0, 2, H);
       }
     }
 
@@ -247,9 +368,16 @@
 
     return {
       state,
-      intro() { if (!reduced) gsap.to(state, { intro: 1, duration: 2.6, ease: 'none' }); },
-      pointer(x, y) { mouse.x = x; mouse.y = y; gsap.to(mouse, { on: 1, duration: .4, overwrite: 'auto' }); },
-      leave() { gsap.to(mouse, { on: 0, duration: .8, overwrite: 'auto' }); }
+      setGroove(g) { groove = g; },
+      intro() {
+        if (reduced) return;
+        gsap.timeline()
+          .to(state, { glow: 1, duration: .3, ease: 'power1.out' }, 0)
+          .to(state, { play: 1.15, duration: 2.1, ease: 'power2.inOut' }, 0)
+          .to(state, { glow: 0, duration: .5 }, 1.75);
+      },
+      pointer(x, y) { mouse.x = x; mouse.y = y; gsap.to(mouse, { on: 1, duration: .5, overwrite: 'auto' }); },
+      leave() { gsap.to(mouse, { on: 0, duration: 1, overwrite: 'auto' }); }
     };
   }
 
@@ -259,28 +387,45 @@
   const loader = $('.loader');
   const hero = $('.hero');
   const heroField = createHeroField($('.hero__canvas'));
-  const heroChars = [];
-  $$('.hero__title .line > span').forEach(el => {
-    heroChars.push(...SplitText.create(el, { type: 'chars', charsClass: 'ch' }).chars);
+  const hazeEl = $('.hero__title .haze');
+  const hazeText = hazeEl ? hazeEl.textContent : '';
+  const plainChars = [];
+  $$('.hero__title .line > span:not(.haze)').forEach(el => {
+    plainChars.push(...SplitText.create(el, { type: 'chars', charsClass: 'ch' }).chars);
   });
-  const hazeChars = $$('.hero__title .haze .ch');
-  const plainChars = heroChars.filter(c => !hazeChars.includes(c));
+
+  // "We solve both." decodes out of the pattern's own strokes
+  function decode(el, text, duration = 1.1) {
+    const GLY = 'I|/\\MN';
+    const o = { p: 0 };
+    return gsap.to(o, {
+      p: 1, duration, ease: 'none',
+      onUpdate: () => {
+        const n = text.length;
+        el.textContent = text.split('').map((ch, i) => {
+          if (ch === ' ' || ch === '.') return ch;
+          const lock = (i / n) * .7 + .25;
+          return o.p >= lock ? ch : GLY[(Math.random() * GLY.length) | 0];
+        }).join('');
+      },
+      onComplete: () => { el.textContent = text; }
+    });
+  }
 
   function heroIntro(delay = 0) {
     const tl = gsap.timeline({ delay });
-    tl.from('.hero__photo', { opacity: 0, scale: 1.14, duration: 2.8, ease: 'power2.out' }, 0)
-      .add(() => heroField?.intro(), 0)
-      .from(plainChars, { yPercent: 120, rotateX: -100, opacity: 0, duration: 1.2, stagger: .018, ease: 'expo.out' }, .1)
-      .from(hazeChars, { yPercent: 120, rotateX: -100, duration: 1.2, stagger: .025, ease: 'expo.out' }, .5)
-      .fromTo(hazeChars, { opacity: 0 }, {
-        keyframes: { opacity: [0, 1, .1, .85, .2, 1], easeEach: 'none' },
-        duration: .9, stagger: { each: .035, from: 'random' }
-      }, .55)
-      .add(() => { $('.hero__title .haze')?.classList.add('is-lit'); $('.hero__title')?.classList.add('is-done'); }, 1.4)
+    if (hazeEl) hazeEl.textContent = ' ';
+    tl.add(() => heroField?.intro(), 0)
+      .fromTo('.hero__photo', { opacity: 0 }, { opacity: 1, duration: 2.4, ease: 'power2.out' }, .4)
+      .from(plainChars, { yPercent: 105, opacity: 0, filter: 'blur(10px)', duration: 1.1, stagger: .022, ease: 'expo.out' }, .35)
+      .set(hazeEl, { opacity: 1 }, 1.0)
+      .add(() => hazeEl && decode(hazeEl, hazeText, 1.1), 1.0)
+      .add(() => hazeEl?.classList.add('is-lit'), 2.0)
+      .add(() => $('.hero__title')?.classList.add('is-done'), 2.0)
       .from('.hero__eyebrow', { y: 20, opacity: 0, duration: 1 }, .3)
-      .from('.hero__lead, .hero__actions > *', { y: 30, opacity: 0, stagger: .08, duration: 1.1 }, .7)
-      .from('.hero__foot > *', { y: 16, opacity: 0, stagger: .06, duration: .9 }, .9)
-      .from('.header__inner', { y: -30, opacity: 0, duration: 1 }, .9);
+      .from('.hero__lead, .hero__actions > *', { y: 30, opacity: 0, stagger: .08, duration: 1.1 }, 1.3)
+      .from('.hero__foot > *', { y: 16, opacity: 0, stagger: .06, duration: .9 }, 1.6)
+      .from('.header__inner', { y: -30, opacity: 0, duration: 1 }, 1.4);
     return tl;
   }
 
@@ -292,6 +437,7 @@
     ss.forEach(n => n.style.fill = 'var(--paper)');
     const count = $('.loader__count');
     const c = { v: 0 };
+    gsap.set(ss, { transformOrigin: '50% 50%' });
 
     const tl = gsap.timeline({
       onComplete: () => {
@@ -301,48 +447,61 @@
         ScrollTrigger.refresh();
       }
     });
-    tl.from(ss, { scaleY: 0, transformOrigin: '50% 100%', duration: .7, stagger: .055, ease: 'expo.out' })
+    tl.from(ss, { scaleY: 0, duration: .7, stagger: .05, ease: 'expo.out' })
       .to(c, { v: 100, duration: 1.1, ease: 'power2.inOut', onUpdate: () => { count.textContent = String(Math.round(c.v)).padStart(2, '0'); } }, 0)
-      .to(ss, { scaleY: () => gsap.utils.random(.2, 1), transformOrigin: '50% 100%', duration: .18, repeat: 3, yoyo: true, stagger: .02, ease: 'sine.inOut' })
-      .to(ss, { x: (i) => (i < 4 ? -1 : i > 4 ? 1 : 0) * 600, opacity: 0, duration: .8, ease: 'expo.in' }, '+=.05')
-      .to(loader, { clipPath: 'inset(0 0 100% 0)', duration: 1.1, ease: 'expo.inOut' }, '-=.3')
-      .add(heroIntro(), '-=.6');
+      .to(ss, { scaleY: () => gsap.utils.random(.15, 1), duration: .16, repeat: 5, yoyo: true, stagger: { each: .02, from: 'center' }, ease: 'sine.inOut' })
+      .to(ss, { scaleY: .06, duration: .35, ease: 'power3.in' })
+      .to(loader, { opacity: 0, duration: .6, ease: 'power2.inOut' }, '-=.05')
+      .add(heroIntro(), '-=.45');
   } else {
     loader?.remove();
     if (!reduced) heroIntro(.1);
   }
 
-  /* Hero: pointer light, title parallax, and the scroll-pinned "doors" */
+  /* Sound toggle: a synthesised 124 BPM groove that drives the wave */
+  const soundBtn = $('.sound');
+  if (soundBtn && heroField) {
+    let groove = null;
+    soundBtn.addEventListener('click', () => {
+      groove = groove || createGroove();
+      if (!groove) { soundBtn.hidden = true; return; }
+      heroField.setGroove(groove);
+      const on = groove.toggle();
+      soundBtn.setAttribute('aria-pressed', String(on));
+      soundBtn.querySelector('.sound__label').textContent = on ? 'Sound off' : 'Sound on';
+    });
+  }
+
+  /* Hero: pointer volume, title parallax, and the scroll-pinned reveal */
   if (!reduced) {
     if (finePointer) {
       const glowX = gsap.quickTo('.hero__glow', 'x', { duration: 1.6, ease: 'power3.out' });
       const glowY = gsap.quickTo('.hero__glow', 'y', { duration: 1.6, ease: 'power3.out' });
-      const titleX = gsap.quickTo('.hero__title', 'x', { duration: 1.2, ease: 'power3.out' });
-      const titleY = gsap.quickTo('.hero__title', 'y', { duration: 1.2, ease: 'power3.out' });
+      const titleX = gsap.quickTo('.hero__title', 'x', { duration: 1.4, ease: 'power3.out' });
+      const titleY = gsap.quickTo('.hero__title', 'y', { duration: 1.4, ease: 'power3.out' });
       hero.addEventListener('pointermove', e => {
         const r = hero.getBoundingClientRect();
         heroField?.pointer(e.clientX - r.left, e.clientY - r.top);
         const nx = e.clientX / innerWidth - .5, ny = e.clientY / innerHeight - .5;
-        glowX(nx * -180); glowY(ny * -140); titleX(nx * -18); titleY(ny * -10);
+        glowX(nx * -180); glowY(ny * -140); titleX(nx * -14); titleY(ny * -8);
       });
       hero.addEventListener('pointerleave', () => heroField?.leave());
     }
 
-    const doors = gsap.timeline({
-      scrollTrigger: { trigger: hero, start: 'top top', end: '+=85%', pin: true, scrub: .8, anticipatePin: 1, invalidateOnRefresh: true }
+    const reveal = gsap.timeline({
+      scrollTrigger: { trigger: hero, start: 'top top', end: '+=110%', pin: true, scrub: .9, anticipatePin: 1 }
     });
-    if (heroField) doors.to(heroField.state, { open: 1, ease: 'none' }, 0);
-    doors
-      .to(heroChars, {
-        x: (i, el) => { const r = el.getBoundingClientRect(); return (r.left + r.width / 2 - innerWidth / 2) * .8; },
-        rotateY: (i, el) => { const r = el.getBoundingClientRect(); return (r.left + r.width / 2 < innerWidth / 2 ? 1 : -1) * 35; },
-        ease: 'power2.in'
-      }, 0)
-      .to('.hero__inner', { opacity: 0, scale: .94, ease: 'power1.in' }, .15)
-      .to('.hero__foot', { opacity: 0, y: 20, ease: 'none' }, 0)
-      .to('.hero__photo img', { scale: 1.25, ease: 'none' }, 0)
-      .to('.hero__photo', { opacity: .35, ease: 'none' }, 0)
-      .to('.hero__glow', { opacity: 0, ease: 'none' }, 0);
+    if (heroField) {
+      reveal.to(heroField.state, { level: 1, ease: 'power2.in', duration: .45 }, 0)
+        .to(heroField.state, { widen: 1, ease: 'power2.in', duration: .55 }, .35);
+    }
+    reveal
+      .to('.hero__inner', { yPercent: -12, opacity: 0, filter: 'blur(8px)', ease: 'power1.in', duration: .5 }, .05)
+      .to('.hero__foot', { opacity: 0, y: 20, ease: 'none', duration: .3 }, 0)
+      .to('.hero__photo', { '--veil': 0, ease: 'none', duration: .4 }, .6)
+      .to('.hero__canvas', { opacity: 0, ease: 'none', duration: .25 }, .75)
+      .fromTo('.hero__photo img', { scale: 1.04 }, { scale: 1.18, ease: 'none', duration: 1 }, 0)
+      .to('.hero__glow', { opacity: 0, ease: 'none', duration: .3 }, 0);
   }
 
   /* ---------------------------------------------------------

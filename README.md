@@ -65,5 +65,6 @@ assets/img/             favicon.svg, og.png (превью для соцсете�
 
 ## Фотографии
 
-Сайт ждёт файлы в `assets/img/photos/`: `hero.jpg`, `crowd.jpg`, `dj.jpg`, `dancefloor.jpg`, `friends.jpg`, `lights.jpg`, `organizer.jpg`, `guests.jpg`, `metz.jpg`, `apply.jpg`.
-Если файла нет, вместо него остаётся тонированный фон, а не битая картинка.
+Фото лежат в `assets/img/photos/`: `hero.jpg`, `crowd.jpg`, `dj.jpg`, `dancefloor.jpg`, `friends.jpg`, `lights.jpg`, `organizer.jpg`, `guests.jpg`, `metz.jpg`, `apply.jpg`.
+Сейчас это фото с Flickr из датасета Google Open Images под лицензией CC BY 2.0. Лицензия требует указывать авторов, поэтому они перечислены в футере.
+Чтобы заменить фото своими, положите файл с тем же именем. Если файла нет, блок с ним просто скрывается.
