@@ -64,6 +64,7 @@
   </div>
 </div>
 
+<div class="wipe" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 <div class="cursor" aria-hidden="true"><span class="cursor__label"></span></div>
 <div class="progress" aria-hidden="true"><span></span></div>
@@ -251,7 +252,8 @@
             <h3 class="display feat__title">Live dashboard</h3>
             <p>A live event overview: tickets sold, revenue and cycle metrics.</p>
           </div>
-          <div class="feat__visual card">
+          <div class="feat__visual card live-card">
+            <div class="toast" aria-hidden="true"><svg class="i"><use href="#i-ticket"/></svg><span>+1 ticket · Tier 2</span></div>
             <div class="card__head"><span>Event overview</span><span class="badge"><span class="live"></span>Live</span></div>
             <div class="stats">
               <div class="stat"><span class="stat__label">Tickets sold</span><span class="stat__val display"><span data-count="412">0</span><small>/600</small></span></div>
@@ -262,7 +264,7 @@
               <span style="--h:.32"></span><span style="--h:.45"></span><span style="--h:.38"></span><span style="--h:.56"></span><span style="--h:.5"></span><span style="--h:.64"></span><span style="--h:.6"></span><span style="--h:.72"></span><span style="--h:.68"></span><span style="--h:.84"></span><span style="--h:.78"></span><span class="is-door" style="--h:.95"></span>
             </div>
             <div class="card__row"><span>Early bird</span><span>Sold out</span></div>
-            <div class="card__row"><span>Tier 2</span><span>212 / 300</span></div>
+            <div class="card__row"><span>Tier 2</span><span><b class="tier2">212</b> / 300</span></div>
             <span class="demo-note">Illustrative data</span>
           </div>
         </article>
@@ -276,11 +278,15 @@
             <p>Meta Ads, email, SMS and AI posters — built from your own buyer data and launched from the same place you sell tickets.</p>
           </div>
           <div class="feat__visual card channels">
-            <div class="card__head"><span>Campaign</span><span class="badge">Ready</span></div>
+            <div class="card__head"><span>Campaign</span><span class="badge mk__badge">Ready</span></div>
             <div class="channel"><svg class="i i--lg"><use href="#i-globe"/></svg><div><b>Meta Ads</b><span>From your buyer data</span></div><i class="toggle on"></i></div>
             <div class="channel"><svg class="i i--lg"><use href="#i-envelope"/></svg><div><b>Email</b><span>From your buyer data</span></div><i class="toggle on"></i></div>
             <div class="channel"><svg class="i i--lg"><use href="#i-chat-circle"/></svg><div><b>SMS</b><span>From your buyer data</span></div><i class="toggle on"></i></div>
             <div class="channel"><svg class="i i--lg"><use href="#i-image"/></svg><div><b>AI poster</b><span>3 export-ready variants</span></div><i class="toggle on"></i></div>
+            <div class="mk__send">
+              <div class="mk__bar"><i></i></div>
+              <div class="mk__status"><span class="mk__text">Ready to launch</span><b class="mk__reach"><span class="mk__n">0</span> reached</b></div>
+            </div>
             <span class="demo-note">Illustrative data</span>
           </div>
         </article>
@@ -327,7 +333,14 @@
         </article>
 
       </div>
-      <div class="hscroll__progress" aria-hidden="true"><span></span></div>
+      <nav class="hnav" aria-label="Product features">
+        <button type="button" class="hnav__item is-active" data-i="0"><b>01</b>Forecast</button>
+        <button type="button" class="hnav__item" data-i="1"><b>02</b>Live dashboard</button>
+        <button type="button" class="hnav__item" data-i="2"><b>03</b>Marketing</button>
+        <button type="button" class="hnav__item" data-i="3"><b>04</b>Poster Studio</button>
+        <button type="button" class="hnav__item" data-i="4"><b>05</b>Your audience</button>
+        <div class="hscroll__progress" aria-hidden="true"><span></span></div>
+      </nav>
     </div>
   </section>
 
@@ -366,7 +379,23 @@
               <span class="phone__hello">Tonight near you</span>
               <svg class="i"><use href="#i-magnifying-glass"/></svg>
             </div>
+            <div class="phone__feed"><div class="phone__track">
             <div class="ev ev--hero">
+              <div class="ev__art"><img src="assets/img/photos/dancefloor.jpg" alt="" loading="lazy"></div>
+              <div class="ev__meta"><b>Warehouse 02</b><span>Techno · 1.2 km · 23:00</span></div>
+              <div class="ev__going"><i></i><i></i><i></i><i class="ev__me"></i><span class="ev__count">+18 going</span></div>
+            </div>
+            <div class="ev">
+              <div class="ev__thumb"><img src="assets/img/photos/dj.jpg" alt="" loading="lazy"></div>
+              <div class="ev__meta"><b>Rooftop House</b><span>House · 2.4 km · 22:00</span></div>
+              <svg class="i"><use href="#i-heart"/></svg>
+            </div>
+            <div class="ev">
+              <div class="ev__thumb"><img src="assets/img/photos/lights.jpg" alt="" loading="lazy"></div>
+              <div class="ev__meta"><b>Disco Basement</b><span>Disco · 3.1 km · 00:00</span></div>
+              <svg class="i"><use href="#i-heart"/></svg>
+            </div>
+            <div class="ev ev--hero" aria-hidden="true">
               <div class="ev__art"><img src="assets/img/photos/dancefloor.jpg" alt="" loading="lazy"></div>
               <div class="ev__meta"><b>Warehouse 02</b><span>Techno · 1.2 km · 23:00</span></div>
               <div class="ev__going"><i></i><i></i><i></i><span>+18 going</span></div>
@@ -381,7 +410,8 @@
               <div class="ev__meta"><b>Disco Basement</b><span>Disco · 3.1 km · 00:00</span></div>
               <svg class="i"><use href="#i-heart"/></svg>
             </div>
-            <div class="phone__cta">I’m in</div>
+            </div></div>
+            <div class="phone__cta"><span class="phone__cta-a">I’m in</span><span class="phone__cta-b">You’re in ✓</span></div>
           </div>
         </div>
         <div class="float float--1" data-depth="0.6"><svg class="i"><use href="#i-chat-circle"/></svg><span><b>Léa</b> is going too</span></div>
@@ -397,11 +427,11 @@
       <h2 class="visually-hidden" id="wedge-title">Strategy</h2>
       <div class="wedge__row">
         <span class="label">Side A</span>
-        <p class="display wedge__line" data-split>The organizer OS<br>is the wedge.</p>
+        <p class="display wedge__line">The organizer OS<br>is the wedge.</p>
       </div>
       <div class="wedge__row wedge__row--r">
         <span class="label">Side B</span>
-        <p class="display wedge__line" data-split>The consumer app<br>is the moat.</p>
+        <p class="display wedge__line">The consumer app<br>is the moat.</p>
       </div>
     </div>
   </section>
@@ -571,6 +601,11 @@
         <div class="form__foot">
           <button class="btn btn--door btn--lg" type="submit"><span>I’m in</span><svg class="i"><use href="#i-arrow-right"/></svg></button>
           <p class="form__status" role="status" aria-live="polite"></p>
+        </div>
+        <div class="form__done" hidden>
+          <div class="form__mark"></div>
+          <b class="display">You’re in.</b>
+          <p>Every application is read by hand. Expect a reply within 48 hours.</p>
         </div>
       </form>
     </div>
