@@ -949,3 +949,8 @@ img.is-missing { visibility: hidden; }
 .pz--frame ul { list-style: none; margin: 4cqw 0 0; padding: 3cqw 0 0; border-top: .6cqw solid var(--midnight); font-size: 3.8cqw; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; display: flex; flex-direction: column; gap: 1cqw; }
 
 @media (prefers-reduced-motion: reduce) { .pz--record .pz__disc, .pz--burst .pz__rays { animation: none; } }
+.person__link { margin-top: auto; align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border: 1px solid var(--ink-14); border-radius: 99px; font-size: 14px; font-weight: 600; color: var(--midnight); transition: background-color .3s, color .3s, border-color .3s; }
+.person__link .i { width: 18px; height: 18px; }
+.person__link .i:last-child { width: 14px; height: 14px; opacity: .6; transition: transform .4s var(--ease); }
+.person__link:hover { background: var(--midnight); color: var(--paper); border-color: var(--midnight); }
+.person__link:hover .i:last-child { transform: translate(2px, -2px); }
