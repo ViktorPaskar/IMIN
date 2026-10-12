@@ -534,6 +534,18 @@
      Photos: collage parallax, masked reveals, slow zooms
      --------------------------------------------------------- */
   if (!reduced) {
+    // phones have no hover: the panel snapped to the centre turns to colour
+    const strip = $('.night__grid');
+    if (strip && !finePointer) {
+      const mark = () => {
+        const mid = strip.getBoundingClientRect().left + strip.clientWidth / 2;
+        let best = null, dist = Infinity;
+        $$('.ph', strip).forEach(p => { const r = p.getBoundingClientRect(); const d = Math.abs(r.left + r.width / 2 - mid); if (d < dist) { dist = d; best = p; } });
+        $$('.ph', strip).forEach(p => p.classList.toggle('is-active', p === best));
+      };
+      strip.addEventListener('scroll', () => requestAnimationFrame(mark), { passive: true });
+      ScrollTrigger.create({ trigger: strip, start: 'top 70%', onEnter: mark });
+    }
     // the strip rises panel by panel; each photo drifts inside its frame
     const panels = $$('.ph');
     gsap.from(panels, {

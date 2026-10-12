@@ -789,7 +789,7 @@ img.is-missing { visibility: hidden; }
 .ph--1, .ph--5 { flex-grow: 1.35; }
 .ph img {
   position: absolute; inset: -8% 0; width: 100%; height: 116%; object-fit: cover;
-  filter: brightness(.82) saturate(.95); transition: filter .9s var(--ease);
+  filter: grayscale(1) brightness(.82) contrast(1.06); transition: filter .9s var(--ease);
   will-change: transform;
 }
 .ph::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(11, 10, 20, .55), rgba(11, 10, 20, 0) 40%); pointer-events: none; }
@@ -800,9 +800,9 @@ img.is-missing { visibility: hidden; }
 .ph--5 img { object-position: 30% 50%; }
 @media (hover: hover) and (min-width: 821px) {
   .night__grid:hover .ph { flex-grow: .8; }
-  .night__grid:hover .ph img { filter: brightness(.5) saturate(.7); }
+  .night__grid:hover .ph img { filter: grayscale(1) brightness(.5) contrast(1.06); }
   .night__grid .ph:hover { flex-grow: 3; }
-  .night__grid .ph:hover img { filter: brightness(1) saturate(1.05); }
+  .night__grid .ph:hover img { filter: grayscale(0) brightness(1) saturate(1.05); }
 }
 @media (max-width: 820px) {
   .night__grid {
@@ -839,3 +839,4 @@ img.is-missing { visibility: hidden; }
 @media (min-width: 1680px) {
   :root { --max: 1520px; }
 }
+.ph.is-active img { filter: grayscale(0) brightness(1) saturate(1.05); }
