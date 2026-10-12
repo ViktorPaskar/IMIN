@@ -39,7 +39,6 @@
 
   function buildBeat(el, opts = {}) {
     const rows = opts.rows || +el.dataset.rows || 3;
-    const light = opts.light ?? el.dataset.light === '1';
     const exact = !!opts.exact;
     const bars = opts.bars || 10;
     const height = rows * ROW_H + (rows - 1) * ROW_GAP;
@@ -81,14 +80,8 @@
       rowsEls.push(g);
     }
 
-    let lightNode = null;
-    if (light) {
-      // someone just said "I'm in" — a vertical stroke, roughly two-thirds across
-      const r = Math.min(rows - 1, Math.floor(rows / 2) - (rows > 2 ? 1 : 0));
-      const candidates = strokes.filter(s => s.row === Math.max(0, r) && s.kind === 'v');
-      lightNode = candidates[Math.floor(candidates.length * .62)]?.node || null;
-      lightNode?.classList.add('is-light');
-    }
+    // the background pattern stays one color: no highlighted strokes
+    const lightNode = null;
 
     el.innerHTML = '';
     el.appendChild(svg);
@@ -139,27 +132,162 @@
   initBasics();
 
   /* ---------------------------------------------------------
+     HERO FIELD — the original beat pattern drawn on a canvas.
+     · intro: strokes grow out from the centre with an elastic snap
+     · idle: an equalizer wave that kicks at 124 BPM
+     · pointer: strokes light up and lean away, like a crowd parting
+     · scroll: the hero pins and the pattern opens like two doors,
+       letting a beam of light through
+     --------------------------------------------------------- */
+  function createHeroField(canvas) {
+    if (!canvas) return null;
+    const ctx = canvas.getContext('2d');
+    const state = { intro: reduced ? 1 : 0, open: 0 };
+    const mouse = { x: -9999, y: -9999, on: 0 };
+    const elastic = gsap.parseEase('elastic.out(1, 0.55)');
+    // centre-lines of the original strokes: top x (x0) → bottom x (x1), 800 units tall
+    const SHAPES = [
+      { x0: 50, x1: 50 }, { x0: 190, x1: 190 },
+      { x0: 334, x1: 503 }, { x0: 836, x1: 666 },
+      { x0: 980, x1: 980 }, { x0: 1120, x1: 1120 }, { x0: 1260, x1: 1260 },
+      { x0: 1404, x1: 1573 }, { x0: 1725, x1: 1725 }
+    ];
+    let W = 0, H = 0, dpr = 1, strokes = [], running = true;
+
+    function layout() {
+      const r = canvas.getBoundingClientRect();
+      W = r.width; H = r.height;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      const sc = Math.max(56, Math.min(140, H * .15)) / 800;
+      const pitchY = (800 + 120) * sc, barPx = BAR_W * sc;
+      const rows = Math.ceil(H / pitchY) + 1;
+      strokes = [];
+      for (let row = 0; row < rows; row++) {
+        const y = row * pitchY - pitchY * .3;
+        const start = (row % 2 ? -.75 : -.25) * barPx;
+        const bars = Math.ceil((W - start) / barPx) + 1;
+        for (let b = 0; b < bars; b++) {
+          for (const sh of SHAPES) {
+            const x0 = start + b * barPx + sh.x0 * sc;
+            const x1 = start + b * barPx + sh.x1 * sc;
+            const cx = (x0 + x1) / 2;
+            if (cx < -60 || cx > W + 60) continue;
+            const dc = Math.abs(cx - W / 2) / (W / 2);
+            strokes.push({
+              x0, x1, yT: y + 50 * sc, yB: y + 750 * sc, cx, cy: y + 400 * sc,
+              w: (sh.x0 === sh.x1 ? 100 : 84) * sc,
+              side: cx < W / 2 ? -1 : 1, dc, row,
+              delay: dc * .55 + Math.random() * .3 + row * .025,
+              f: 0
+            });
+          }
+        }
+      }
+    }
+
+    function draw(time) {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      const open = state.open;
+
+      // light through the open doors
+      if (open > .002) {
+        const bw = W * (.06 + .7 * open);
+        const g = ctx.createLinearGradient(W / 2 - bw / 2, 0, W / 2 + bw / 2, 0);
+        g.addColorStop(0, 'rgba(244,239,231,0)');
+        g.addColorStop(.5, `rgba(244,239,231,${(.16 * Math.min(1, open * 1.4)).toFixed(3)})`);
+        g.addColorStop(1, 'rgba(244,239,231,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
+      }
+
+      const beat = 60 / 124;
+      const kick = Math.exp(-((time % beat) / beat) * 4.5);
+      const R = Math.max(120, W * .12);
+      ctx.lineCap = 'round';
+
+      for (const st of strokes) {
+        let ip = (state.intro * 2.2 - st.delay) / 1.1;
+        if (ip <= 0) continue;
+        ip = ip >= 1 ? 1 : elastic(ip);
+
+        const dx = st.cx - mouse.x, dy = st.cy - mouse.y;
+        const target = mouse.on * Math.exp(-(dx * dx + dy * dy) / (2 * R * R));
+        st.f += (target - st.f) * .1;
+
+        const wave = reduced ? 0 : .5 + .5 * Math.sin(time * 2.4 + st.cx * .011 + st.row * .9);
+        const len = ip * (1 - .3 * wave * (.4 + .6 * kick) + .18 * st.f);
+        const ease = open * open;
+        const shift = st.side * ease * W * .6 * (1.15 - st.dc * .3);
+        const lean = st.f * .3 * Math.sign(dx || 1) + st.side * ease * .35;
+
+        const bx = st.x1 + shift, by = st.yB;
+        const vx = (st.x0 - st.x1) * len, vy = (st.yT - st.yB) * len;
+        const c = Math.cos(lean), sn = Math.sin(lean);
+        const tx = bx + vx * c - vy * sn, ty = by + vx * sn + vy * c;
+
+        const alpha = .07 + .42 * st.f + .1 * open;
+        ctx.strokeStyle = `rgba(244,239,231,${alpha.toFixed(3)})`;
+        ctx.lineWidth = st.w;
+        ctx.beginPath();
+        ctx.moveTo(bx, by);
+        ctx.lineTo(tx, ty);
+        ctx.stroke();
+      }
+    }
+
+    layout();
+    draw(0);
+    if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => { layout(); draw(gsap.ticker.time); }).observe(canvas);
+    if (!reduced) {
+      gsap.ticker.add(time => { if (running) draw(time); });
+      ScrollTrigger.create({ trigger: canvas.parentElement, start: 'top bottom', end: 'bottom top', onToggle: self => { running = self.isActive; } });
+    }
+
+    return {
+      state,
+      intro() { if (!reduced) gsap.to(state, { intro: 1, duration: 2.6, ease: 'none' }); },
+      pointer(x, y) { mouse.x = x; mouse.y = y; gsap.to(mouse, { on: 1, duration: .4, overwrite: 'auto' }); },
+      leave() { gsap.to(mouse, { on: 0, duration: .8, overwrite: 'auto' }); }
+    };
+  }
+
+  /* ---------------------------------------------------------
      Preloader → Hero intro
      --------------------------------------------------------- */
   const loader = $('.loader');
-  const heroLines = $$('.hero__title .line > span');
+  const hero = $('.hero');
+  const heroField = createHeroField($('.hero__canvas'));
+  const heroChars = [];
+  $$('.hero__title .line > span').forEach(el => {
+    heroChars.push(...SplitText.create(el, { type: 'chars', charsClass: 'ch' }).chars);
+  });
+  const hazeChars = $$('.hero__title .haze .ch');
+  const plainChars = heroChars.filter(c => !hazeChars.includes(c));
 
   function heroIntro(delay = 0) {
     const tl = gsap.timeline({ delay });
-    tl.from('.hero__photo', { opacity: 0, scale: 1.08, duration: 2.4, ease: 'power2.out' })
-      .from(heroLines, { yPercent: 110, rotate: 3, duration: 1.4, stagger: .09, ease: 'expo.out' }, 0)
-      .from('.hero__eyebrow', { y: 20, opacity: 0, duration: 1 }, '<.2')
-      .from('.hero__lead, .hero__actions > *', { y: 30, opacity: 0, stagger: .08, duration: 1.1 }, '<.15')
-      .from('.hero__beat .row', { yPercent: 40, opacity: 0, stagger: .08, duration: 1.6 }, '<')
-      .from('.hero__foot > *', { y: 16, opacity: 0, stagger: .06, duration: .9 }, '<.3')
-      .from('.header__inner', { y: -30, opacity: 0, duration: 1 }, '<');
+    tl.from('.hero__photo', { opacity: 0, scale: 1.14, duration: 2.8, ease: 'power2.out' }, 0)
+      .add(() => heroField?.intro(), 0)
+      .from(plainChars, { yPercent: 120, rotateX: -100, opacity: 0, duration: 1.2, stagger: .018, ease: 'expo.out' }, .1)
+      .from(hazeChars, { yPercent: 120, rotateX: -100, duration: 1.2, stagger: .025, ease: 'expo.out' }, .5)
+      .fromTo(hazeChars, { opacity: 0 }, {
+        keyframes: { opacity: [0, 1, .1, .85, .2, 1], easeEach: 'none' },
+        duration: .9, stagger: { each: .035, from: 'random' }
+      }, .55)
+      .add(() => { $('.hero__title .haze')?.classList.add('is-lit'); $('.hero__title')?.classList.add('is-done'); }, 1.4)
+      .from('.hero__eyebrow', { y: 20, opacity: 0, duration: 1 }, .3)
+      .from('.hero__lead, .hero__actions > *', { y: 30, opacity: 0, stagger: .08, duration: 1.1 }, .7)
+      .from('.hero__foot > *', { y: 16, opacity: 0, stagger: .06, duration: .9 }, .9)
+      .from('.header__inner', { y: -30, opacity: 0, duration: 1 }, .9);
     return tl;
   }
 
   if (loader && !reduced) {
     body.classList.add('is-loading');
     lenis?.stop();
-    const bar = buildBeat($('.loader__bar'), { rows: 1, bars: 1, exact: true, light: false, preserve: 'xMidYMid meet' });
+    const bar = buildBeat($('.loader__bar'), { rows: 1, bars: 1, exact: true, preserve: 'xMidYMid meet' });
     const ss = bar.strokes.map(s => s.node);
     ss.forEach(n => n.style.fill = 'var(--paper)');
     const count = $('.loader__count');
@@ -175,59 +303,46 @@
     });
     tl.from(ss, { scaleY: 0, transformOrigin: '50% 100%', duration: .7, stagger: .055, ease: 'expo.out' })
       .to(c, { v: 100, duration: 1.1, ease: 'power2.inOut', onUpdate: () => { count.textContent = String(Math.round(c.v)).padStart(2, '0'); } }, 0)
-      .to(ss[4], { fill: '#16B877', duration: .25, ease: 'none' }, '-=.2')
       .to(ss, { scaleY: () => gsap.utils.random(.2, 1), transformOrigin: '50% 100%', duration: .18, repeat: 3, yoyo: true, stagger: .02, ease: 'sine.inOut' })
-      .to(loader, { clipPath: 'inset(0 0 100% 0)', duration: 1.1, ease: 'expo.inOut' }, '+=.05')
-      .add(heroIntro(), '-=.55');
+      .to(ss, { x: (i) => (i < 4 ? -1 : i > 4 ? 1 : 0) * 600, opacity: 0, duration: .8, ease: 'expo.in' }, '+=.05')
+      .to(loader, { clipPath: 'inset(0 0 100% 0)', duration: 1.1, ease: 'expo.inOut' }, '-=.3')
+      .add(heroIntro(), '-=.6');
   } else {
     loader?.remove();
+    if (!reduced) heroIntro(.1);
   }
 
-  /* ---------------------------------------------------------
-     Hero: living beat (equalizer), scroll + pointer parallax
-     --------------------------------------------------------- */
-  const heroBeat = beats.get($('.hero__beat'));
-  if (heroBeat && !reduced) {
-    // equalizer pulse on a random subset of strokes
-    const pool = heroBeat.strokes.filter(s => s.kind === 'v' && s.node !== heroBeat.lightNode).map(s => s.node);
-    gsap.set(pool, { transformOrigin: '50% 100%' });
-    const pulse = () => {
-      const picks = gsap.utils.shuffle(pool.slice()).slice(0, 26);
-      gsap.to(picks, {
-        scaleY: () => gsap.utils.random(.35, 1),
-        duration: .45, ease: 'sine.inOut', yoyo: true, repeat: 1,
-        stagger: { each: .015, from: 'random' }
-      });
-    };
-    gsap.delayedCall(.2, function loop() { pulse(); gsap.delayedCall(.9, loop); });
-
-    // the Doorlight stroke breathes
-    if (heroBeat.lightNode) gsap.to(heroBeat.lightNode, { opacity: .45, duration: 1.2, repeat: -1, yoyo: true, ease: 'sine.inOut' });
-
-    // rows drift in opposite directions while scrolling
-    heroBeat.rows.forEach((row, i) => {
-      gsap.to(row, {
-        x: (i % 2 ? 1 : -1) * BAR_W * (.4 + i * .13),
-        ease: 'none',
-        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
-      });
-    });
-    gsap.to('.hero__beat', { yPercent: 18, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
-  }
-
+  /* Hero: pointer light, title parallax, and the scroll-pinned "doors" */
   if (!reduced) {
-    gsap.to('.hero__inner', { yPercent: -18, opacity: .2, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
-    gsap.to('.hero__glow', { yPercent: 40, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
-
     if (finePointer) {
       const glowX = gsap.quickTo('.hero__glow', 'x', { duration: 1.6, ease: 'power3.out' });
       const glowY = gsap.quickTo('.hero__glow', 'y', { duration: 1.6, ease: 'power3.out' });
       const titleX = gsap.quickTo('.hero__title', 'x', { duration: 1.2, ease: 'power3.out' });
-      $('.hero').addEventListener('pointermove', e => {
+      const titleY = gsap.quickTo('.hero__title', 'y', { duration: 1.2, ease: 'power3.out' });
+      hero.addEventListener('pointermove', e => {
+        const r = hero.getBoundingClientRect();
+        heroField?.pointer(e.clientX - r.left, e.clientY - r.top);
         const nx = e.clientX / innerWidth - .5, ny = e.clientY / innerHeight - .5;
-        glowX(nx * -160); glowY(ny * -120); titleX(nx * -14);
+        glowX(nx * -180); glowY(ny * -140); titleX(nx * -18); titleY(ny * -10);
       });
+      hero.addEventListener('pointerleave', () => heroField?.leave());
     }
+
+    const doors = gsap.timeline({
+      scrollTrigger: { trigger: hero, start: 'top top', end: '+=85%', pin: true, scrub: .8, anticipatePin: 1, invalidateOnRefresh: true }
+    });
+    if (heroField) doors.to(heroField.state, { open: 1, ease: 'none' }, 0);
+    doors
+      .to(heroChars, {
+        x: (i, el) => { const r = el.getBoundingClientRect(); return (r.left + r.width / 2 - innerWidth / 2) * .8; },
+        rotateY: (i, el) => { const r = el.getBoundingClientRect(); return (r.left + r.width / 2 < innerWidth / 2 ? 1 : -1) * 35; },
+        ease: 'power2.in'
+      }, 0)
+      .to('.hero__inner', { opacity: 0, scale: .94, ease: 'power1.in' }, .15)
+      .to('.hero__foot', { opacity: 0, y: 20, ease: 'none' }, 0)
+      .to('.hero__photo img', { scale: 1.25, ease: 'none' }, 0)
+      .to('.hero__photo', { opacity: .35, ease: 'none' }, 0)
+      .to('.hero__glow', { opacity: 0, ease: 'none' }, 0);
   }
 
   /* ---------------------------------------------------------
@@ -460,7 +575,6 @@
       gsap.from(f, { clipPath: 'inset(100% 0% 0% 0%)', duration: 1.6, ease: 'expo.inOut', scrollTrigger: { trigger: f, start: 'top 95%' } });
       gsap.fromTo(img, { scale: 1.35 }, { scale: 1.05, ease: 'none', scrollTrigger: { trigger: '.night', start: 'top bottom', end: 'bottom top', scrub: true } });
     });
-    gsap.to('.hero__photo img', { yPercent: 16, scale: 1.12, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
     gsap.fromTo('.apply__photo img', { yPercent: -8 }, { yPercent: 8, ease: 'none', scrollTrigger: { trigger: '.apply', start: 'top bottom', end: 'bottom top', scrub: true } });
     $$('.side__photo img').forEach(img => gsap.fromTo(img, { yPercent: -8, scale: 1.1 }, { yPercent: 8, scale: 1, ease: 'none', scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } }));
   }
@@ -509,6 +623,40 @@
     const footBeat = beats.get($('.footer__beat'));
     footBeat?.rows.forEach((row, i) => gsap.fromTo(row, { x: (i % 2 ? -1 : 1) * BAR_W * .5 }, { x: 0, ease: 'none', scrollTrigger: { trigger: '.footer', start: 'top bottom', end: 'bottom bottom', scrub: true } }));
     gsap.from('.footer__claim', { y: 40, opacity: 0, duration: 1.2, scrollTrigger: { trigger: '.footer', start: 'top 85%' } });
+  }
+
+  /* ---------------------------------------------------------
+     Scroll velocity bends the photos; nav links scramble on hover
+     --------------------------------------------------------- */
+  if (!reduced) {
+    const bendEls = $$('.ph, .side__photo, .poster');
+    const benders = bendEls.map(el => gsap.quickTo(el, 'skewY', { duration: .6, ease: 'power3.out' }));
+    let settle;
+    ScrollTrigger.create({
+      onUpdate: self => {
+        const v = gsap.utils.clamp(-5, 5, self.getVelocity() / -350);
+        benders.forEach(q => q(v));
+        clearTimeout(settle);
+        settle = setTimeout(() => benders.forEach(q => q(0)), 140);
+      }
+    });
+
+    const GLYPHS = 'IMN/\\|';
+    $$('.nav a, .footer__nav a').forEach(a => {
+      const text = a.textContent;
+      let raf = 0;
+      a.addEventListener('pointerenter', () => {
+        cancelAnimationFrame(raf);
+        const t0 = performance.now();
+        const step = now => {
+          const p = Math.min(1, (now - t0) / 420);
+          const keep = Math.floor(p * text.length);
+          a.textContent = text.split('').map((ch, i) => (i < keep || ch === ' ' ? ch : GLYPHS[(Math.random() * GLYPHS.length) | 0])).join('');
+          if (p < 1) raf = requestAnimationFrame(step); else a.textContent = text;
+        };
+        raf = requestAnimationFrame(step);
+      });
+    });
   }
 
   /* ---------------------------------------------------------
@@ -603,7 +751,14 @@
 
     // a photo that fails to load leaves the toned background, not a broken icon
     $$('img').forEach(img => {
-      const fail = () => img.classList.add('is-missing');
+      const fail = () => {
+        img.classList.add('is-missing');
+        // empty frames read as unfinished: hide a photo block until its file exists
+        const frame = img.closest('.ph, .side__photo');
+        if (frame) frame.hidden = true;
+        const night = img.closest('.night');
+        if (night && !$$('.ph', night).some(f => !f.hidden)) night.hidden = true;
+      };
       if (img.complete && img.naturalWidth === 0) fail();
       img.addEventListener('error', fail);
     });
