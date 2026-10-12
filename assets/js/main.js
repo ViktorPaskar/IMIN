@@ -98,6 +98,55 @@
   });
 
   /* ---------------------------------------------------------
+     POSTER STUDIO — three genuinely different layouts per vibe,
+     all in the brand palette and the two brand typefaces.
+     --------------------------------------------------------- */
+  const PH = n => `assets/img/photos/${n}.jpg`;
+  const VIBES = {
+    techno: {
+      prompt: 'Warehouse techno. Doors at midnight. Strobes, no phones.',
+      posters: [
+        `<div class="pz pz--slab"><img class="pz__img" src="${PH('night-5')}" alt=""><div class="pz__body"><span class="pz__k">IMIN / 02</span><b class="pz__t">Ware<br>house</b><div class="pz__row"><span>Sat 23:00</span><span>Metz</span></div></div></div>`,
+        `<div class="pz pz--vert"><img class="pz__img" src="${PH('crowd')}" alt=""><b class="pz__t">Doors at midnight</b><div class="pz__side"><span class="pz__k">Techno</span><span class="pz__big">23<br>00</span></div></div>`,
+        `<div class="pz pz--outline"><span class="pz__k">Strobes only · 18+</span><b class="pz__t"><i>No</i><i>Phones</i></b><div class="pz__beat"></div></div>`
+      ]
+    },
+    house: {
+      prompt: 'Rooftop house. Sunset to 2am. Vinyl only.',
+      posters: [
+        `<div class="pz pz--record"><span class="pz__k">rooftop sessions</span><div class="pz__disc"><img src="${PH('night-1')}" alt=""></div><b class="pz__t">house<br>at sunset</b><span class="pz__k">sat · 19:00 → 02:00</span></div>`,
+        `<div class="pz pz--sunset"><div class="pz__sun"></div><b class="pz__t">Roof<br>top</b><div class="pz__row"><span>House</span><span>Sat 19:00</span></div></div>`,
+        `<div class="pz pz--tiles"><div class="pz__grid"><img src="${PH('night-4')}" alt=""><img src="${PH('dancefloor')}" alt=""><img src="${PH('dj')}" alt=""><img src="${PH('night-3')}" alt=""></div><b class="pz__t">Vinyl only</b><span class="pz__k">House · Sat 19:00</span></div>`
+      ]
+    },
+    disco: {
+      prompt: 'Disco basement. Mirror ball, glitter, 70s edits.',
+      posters: [
+        `<div class="pz pz--burst"><div class="pz__rays"></div><div class="pz__ball"><img src="${PH('lights')}" alt=""></div><b class="pz__t">Disco<br>basement</b><span class="pz__k">Fri · 22:00</span></div>`,
+        `<div class="pz pz--echo"><b class="pz__t"><i>Disco</i><i>Disco</i><i>Disco</i><i>Disco</i><i>Disco</i></b><div class="pz__row"><span>70s edits</span><span>Fri 22:00</span></div></div>`,
+        `<div class="pz pz--ticket"><div class="pz__stub"><span>Admit one</span></div><span class="pz__k">Disco basement</span><b class="pz__t">Fri<br>14</b><div class="pz__row"><span>22:00</span><span>Nº 0412</span></div></div>`
+      ]
+    },
+    hiphop: {
+      prompt: 'Hip-hop block party. Live MCs. Late doors.',
+      posters: [
+        `<div class="pz pz--collage"><div class="pz__snap"><img src="${PH('night-2')}" alt=""><i></i><i></i></div><b class="pz__t">Block<br>party</b><span class="pz__k">Sat · late doors</span></div>`,
+        `<div class="pz pz--halftone"><img class="pz__img" src="${PH('apply')}" alt=""><div class="pz__dots"></div><b class="pz__t">Live<br>MCs</b><span class="pz__k">Hip-hop · Sat 23:00</span></div>`,
+        `<div class="pz pz--frame"><span class="pz__pill">Vol. 3</span><b class="pz__t">Block<br>party</b><ul><li>Live MCs</li><li>DJ sets</li><li>Late doors</li></ul></div>`
+      ]
+    }
+  };
+
+  function renderPosters(vibe) {
+    const box = $('.posters');
+    if (!box || !VIBES[vibe]) return;
+    box.dataset.vibeCurrent = vibe;
+    box.innerHTML = VIBES[vibe].posters.map(h => h.replace('class="pz ', 'class="poster pz ')).join('');
+    $$('.pz__beat', box).forEach(el => buildBeat(el, { rows: 2, bars: 2, preserve: 'xMidYMax slice' }));
+  }
+  renderPosters($('.vibe.is-active')?.dataset.vibe || 'techno');
+
+  /* ---------------------------------------------------------
      FORECAST — a real chart: 42 days of ticket sales against a
      back-loaded target curve, today at 14 days out, a projection
      with its uncertainty, and a hover read-out for every day.
@@ -507,16 +556,24 @@
     gsap.to(o, { n: text.length, duration: text.length * .035, ease: 'none', onUpdate: () => { el.textContent = text.slice(0, Math.round(o.n)); } });
   }
 
-  // Vibe chips → re-render posters
+  // Vibe chips → new prompt, three new posters
   const posters = $('.posters');
+  const typed = $('.studio__typed');
   $$('.vibe').forEach(btn => btn.addEventListener('click', () => {
+    const vibe = btn.dataset.vibe;
+    if (!posters || posters.dataset.vibeCurrent === vibe) return;
     $$('.vibe').forEach(b => b.classList.toggle('is-active', b === btn));
-    if (!posters) return;
-    if (reduced) { posters.dataset.vibeCurrent = btn.dataset.vibe; return; }
+    const text = VIBES[vibe].prompt;
+    if (reduced) { renderPosters(vibe); if (typed) typed.textContent = text; return; }
+    if (typed) {
+      typed.dataset.done = '1';
+      const o = { n: 0 };
+      gsap.to(o, { n: text.length, duration: text.length * .022, ease: 'none', overwrite: true, onUpdate: () => { typed.textContent = text.slice(0, Math.round(o.n)); } });
+    }
     gsap.timeline()
-      .to(posters.children, { y: -14, opacity: 0, rotate: 0, stagger: .05, duration: .3, ease: 'power2.in' })
-      .call(() => { posters.dataset.vibeCurrent = btn.dataset.vibe; })
-      .to(posters.children, { y: 0, opacity: 1, stagger: .07, duration: .8, ease: 'expo.out' });
+      .to(posters.children, { y: -16, opacity: 0, stagger: .05, duration: .3, ease: 'power2.in' })
+      .call(() => renderPosters(vibe))
+      .add(() => gsap.from(posters.children, { y: 40, opacity: 0, rotate: i => (i - 1) * 3, stagger: .08, duration: .9, ease: 'expo.out' }));
   }));
 
   /* ---------------------------------------------------------

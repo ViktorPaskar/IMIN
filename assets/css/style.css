@@ -396,14 +396,6 @@ main { overflow-x: clip; }
 .poster__title { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: clamp(22px, 2.6vw, 40px); line-height: .88; }
 .poster__foot { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; opacity: .7; }
 /* vibes — palette only, stays in brand */
-.posters[data-vibe-current="techno"] .poster--2 { --p-bg: var(--ultra); --p-stroke: rgba(244,239,231,.14); }
-.posters[data-vibe-current="techno"] .poster--3 { --p-bg: var(--paper); --p-fg: var(--midnight); --p-stroke: rgba(11,10,20,.12); --p-accent: var(--ultra); }
-.posters[data-vibe-current="house"] .poster { --p-bg: var(--paper); --p-fg: var(--midnight); --p-stroke: rgba(11,10,20,.1); --p-accent: var(--ultra); }
-.posters[data-vibe-current="house"] .poster--2 { --p-bg: var(--haze); --p-stroke: rgba(11,10,20,.12); --p-accent: var(--midnight); }
-.posters[data-vibe-current="disco"] .poster { --p-bg: var(--door); --p-fg: var(--midnight); --p-stroke: rgba(11,10,20,.14); --p-accent: var(--paper); }
-.posters[data-vibe-current="disco"] .poster--2 { --p-bg: var(--midnight); --p-fg: var(--paper); --p-stroke: var(--stroke); --p-accent: var(--door); }
-.posters[data-vibe-current="hiphop"] .poster { --p-bg: var(--midnight); --p-fg: var(--paper); --p-stroke: rgba(156,140,255,.22); --p-accent: var(--door); }
-.posters[data-vibe-current="hiphop"] .poster--3 { --p-bg: var(--haze); --p-fg: var(--midnight); --p-stroke: rgba(11,10,20,.14); --p-accent: var(--midnight); }
 
 .owner { display: flex; flex-direction: column; gap: 36px; align-items: flex-start; }
 .owner__big { font-size: clamp(32px, 3.2vw, 54px); color: var(--paper); }
@@ -843,3 +835,117 @@ img.is-missing { visibility: hidden; }
 .avatar--photo { width: 112px; height: 112px; overflow: hidden; background: var(--ink-14); }
 .avatar--photo img { width: 100%; height: 100%; object-fit: cover; filter: contrast(1.05); transition: transform .8s var(--ease); }
 .person:hover .avatar--photo img { transform: scale(1.06); }
+
+/* =========================================================
+   Poster Studio — 12 layouts (3 per vibe)
+   ========================================================= */
+.pz {
+  container-type: inline-size; padding: 7%; gap: 0; border: 0; isolation: isolate;
+  background: var(--midnight); color: var(--paper); justify-content: flex-start;
+  box-shadow: 0 24px 50px -24px rgba(0, 0, 0, .8);
+}
+.pz > * { position: relative; z-index: 1; }
+.pz .pz__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.pz__t { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; line-height: .86; letter-spacing: -.005em; }
+.pz__k { font-size: 3.6cqw; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+.pz__row { display: flex; justify-content: space-between; gap: 4cqw; font-size: 3.6cqw; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.pz i { font-style: normal; }
+
+/* TECHNO 1 — slab: photo on top, heavy type below */
+.pz--slab { padding: 0; }
+.pz--slab .pz__img { position: relative; height: 54%; filter: grayscale(1) contrast(1.35) brightness(.85); }
+.pz--slab .pz__body { flex: 1; display: flex; flex-direction: column; padding: 5cqw 7cqw 6cqw; background: var(--midnight); border-top: 1.2cqw solid var(--paper); }
+.pz--slab .pz__k { color: var(--haze); }
+.pz--slab .pz__t { font-size: 21cqw; margin: 2cqw 0 auto; }
+.pz--slab .pz__row { border-top: 1px solid rgba(244,239,231,.3); padding-top: 3cqw; color: rgba(244,239,231,.7); }
+
+/* TECHNO 2 — vertical: title runs up the edge */
+.pz--vert { background: var(--ultra); flex-direction: row; padding: 6%; }
+.pz--vert .pz__img { mix-blend-mode: luminosity; opacity: .55; filter: contrast(1.2); }
+.pz--vert .pz__t { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 22cqw; line-height: .82; white-space: nowrap; }
+.pz--vert .pz__side { margin-left: auto; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; text-align: right; }
+.pz--vert .pz__big { font-family: var(--f-display); font-weight: 800; font-size: 17cqw; line-height: .85; }
+
+/* TECHNO 3 — outline type only */
+.pz--outline { background: var(--paper); color: var(--midnight); }
+.pz--outline .pz__t { display: flex; flex-direction: column; margin-top: auto; margin-bottom: 18cqw; font-size: 30cqw; line-height: .8; }
+.pz--outline .pz__t i:first-child { color: transparent; -webkit-text-stroke: .5cqw var(--midnight); }
+.pz--outline .pz__k { color: var(--midnight); }
+.pz--outline .pz__beat { position: absolute; left: 0; right: 0; bottom: 0; height: 16cqw; opacity: .9; }
+.pz--outline .pz__beat .s { fill: var(--midnight); }
+
+/* HOUSE 1 — record */
+.pz--record { background: var(--haze); color: var(--midnight); align-items: center; text-align: center; justify-content: space-between; }
+.pz--record .pz__k { font-size: 3.4cqw; letter-spacing: .08em; text-transform: lowercase; }
+.pz--record .pz__disc { width: 70cqw; aspect-ratio: 1; border-radius: 50%; overflow: hidden; position: relative; background: var(--midnight); box-shadow: 0 0 0 2.4cqw var(--midnight); animation: spin 9s linear infinite; }
+.pz--record .pz__disc img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.1); mix-blend-mode: screen; opacity: .85; }
+.pz--record .pz__disc::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: repeating-radial-gradient(circle, rgba(11,10,20,.0) 0 1.4cqw, rgba(11,10,20,.35) 1.4cqw 1.7cqw); z-index: 1; }
+.pz--record .pz__disc::after { content: ""; position: absolute; left: 50%; top: 50%; width: 18cqw; height: 18cqw; margin: -9cqw 0 0 -9cqw; border-radius: 50%; background: var(--paper) radial-gradient(circle, var(--midnight) 0 1.6cqw, transparent 1.7cqw); z-index: 2; }
+.pz--record .pz__t { font-family: var(--f-text); font-weight: 700; text-transform: lowercase; font-size: 12cqw; line-height: .95; letter-spacing: -.04em; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* HOUSE 2 — striped sun on a dusk gradient */
+.pz--sunset { background: linear-gradient(180deg, var(--ultra) 0%, var(--haze) 58%, var(--paper) 100%); color: var(--midnight); }
+.pz--sunset .pz__sun { position: absolute; left: 50%; top: 14cqw; width: 70cqw; height: 70cqw; margin-left: -35cqw; border-radius: 50%; z-index: 0;
+  background: repeating-linear-gradient(180deg, var(--paper) 0 4.4cqw, transparent 4.4cqw 6.6cqw);
+  -webkit-mask-image: linear-gradient(180deg, #000 45%, transparent 100%); mask-image: linear-gradient(180deg, #000 45%, transparent 100%); }
+.pz--sunset .pz__t { margin-top: auto; font-size: 27cqw; }
+.pz--sunset .pz__row { margin-top: 4cqw; }
+
+/* HOUSE 3 — photo tiles */
+.pz--tiles { background: var(--paper); color: var(--midnight); padding: 5%; }
+.pz--tiles .pz__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.4cqw; flex: 1; min-height: 0; }
+.pz--tiles .pz__grid img { width: 100%; height: 100%; object-fit: cover; border-radius: 1.2cqw; filter: grayscale(1) contrast(1.1); }
+.pz--tiles .pz__grid img:nth-child(2) { filter: none; }
+.pz--tiles .pz__t { font-size: 16cqw; margin-top: 4cqw; }
+.pz--tiles .pz__k { margin-top: 2cqw; font-size: 3.2cqw; }
+
+/* DISCO 1 — mirror-ball burst */
+.pz--burst { align-items: center; text-align: center; justify-content: space-between; }
+.pz--burst .pz__rays { position: absolute; inset: -30%; z-index: 0; background: repeating-conic-gradient(from 0deg at 50% 50%, var(--ultra) 0 6deg, var(--midnight) 6deg 12deg); animation: spin 30s linear infinite; opacity: .9; }
+.pz--burst .pz__ball { width: 44cqw; aspect-ratio: 1; border-radius: 50%; overflow: hidden; margin-top: 16cqw; box-shadow: 0 0 0 1.2cqw var(--paper), 0 0 18cqw var(--haze); }
+.pz--burst .pz__ball img { width: 100%; height: 100%; object-fit: cover; }
+.pz--burst .pz__t { font-size: 17cqw; text-shadow: 0 .8cqw 0 var(--midnight); }
+
+/* DISCO 2 — echo */
+.pz--echo { background: var(--ultra); }
+.pz--echo .pz__t { display: flex; flex-direction: column; font-size: 24cqw; line-height: .78; margin-bottom: auto; }
+.pz--echo .pz__t i:nth-child(1) { opacity: .12; } .pz--echo .pz__t i:nth-child(2) { opacity: .24; }
+.pz--echo .pz__t i:nth-child(3) { opacity: .42; } .pz--echo .pz__t i:nth-child(4) { opacity: .68; }
+.pz--echo .pz__t i:nth-child(5) { color: var(--paper); }
+
+/* DISCO 3 — ticket */
+.pz--ticket { background: var(--paper); color: var(--midnight);
+  -webkit-mask: radial-gradient(5% 3.6% at 0 62%, transparent 98%, #000), radial-gradient(5% 3.6% at 100% 62%, transparent 98%, #000);
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+  mask: radial-gradient(5% 3.6% at 0 62%, transparent 98%, #000), radial-gradient(5% 3.6% at 100% 62%, transparent 98%, #000); }
+.pz--ticket .pz__stub { position: absolute; left: 0; right: 0; bottom: 0; height: 38%; z-index: 0; background: var(--door); border-top: .8cqw dashed var(--midnight); display: flex; align-items: flex-end; padding: 6cqw 7cqw; }
+.pz--ticket .pz__stub span { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: 9cqw; color: var(--midnight); }
+.pz--ticket .pz__t { font-size: 30cqw; margin-top: 4cqw; }
+.pz--ticket .pz__row { margin-top: 3cqw; }
+
+/* HIP-HOP 1 — collage */
+.pz--collage { background: var(--paper); color: var(--midnight); }
+.pz--collage .pz__snap { position: relative; margin: 2cqw 2cqw 0; aspect-ratio: 1; transform: rotate(-4deg); background: var(--midnight); padding: 2cqw; box-shadow: 0 3cqw 6cqw -2cqw rgba(11,10,20,.45); }
+.pz--collage .pz__snap img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.25); }
+.pz--collage .pz__snap i { position: absolute; width: 22cqw; height: 6cqw; background: rgba(156, 140, 255, .8); }
+.pz--collage .pz__snap i:nth-of-type(1) { top: -2cqw; left: -4cqw; transform: rotate(-30deg); }
+.pz--collage .pz__snap i:nth-of-type(2) { bottom: -2cqw; right: -4cqw; transform: rotate(-24deg); }
+.pz--collage .pz__t { align-self: flex-start; margin-top: auto; padding: 2cqw 3cqw 1cqw; background: var(--midnight); color: var(--paper); font-size: 16cqw; transform: rotate(2deg); }
+.pz--collage .pz__k { margin-top: 3cqw; }
+
+/* HIP-HOP 2 — halftone */
+.pz--halftone .pz__img { filter: grayscale(1) contrast(1.5) brightness(1.15); }
+.pz--halftone .pz__dots { position: absolute; inset: 0; z-index: 0; background: radial-gradient(circle at center, transparent 0 32%, var(--midnight) 36%) 0 0 / 3.4cqw 3.4cqw; }
+.pz--halftone .pz__t { margin-top: auto; font-size: 30cqw; line-height: .8; }
+.pz--halftone .pz__t::after { content: ""; display: block; width: 30%; height: 2.4cqw; margin-top: 3cqw; background: var(--door); }
+.pz--halftone .pz__k { margin-top: 3cqw; }
+
+/* HIP-HOP 3 — heavy frame with a line-up */
+.pz--frame { background: var(--haze); color: var(--midnight); padding: 10%; }
+.pz--frame::before { content: ""; position: absolute; inset: 0; border: 3.4cqw solid var(--midnight); pointer-events: none; z-index: 2; }
+.pz--frame .pz__pill { align-self: flex-start; padding: 1.4cqw 3.4cqw; border-radius: 99px; background: var(--ultra); color: var(--paper); font-size: 3.6cqw; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.pz--frame .pz__t { font-size: 25cqw; margin-top: auto; }
+.pz--frame ul { list-style: none; margin: 4cqw 0 0; padding: 3cqw 0 0; border-top: .6cqw solid var(--midnight); font-size: 3.8cqw; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; display: flex; flex-direction: column; gap: 1cqw; }
+
+@media (prefers-reduced-motion: reduce) { .pz--record .pz__disc, .pz--burst .pz__rays { animation: none; } }
