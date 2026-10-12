@@ -267,7 +267,21 @@
     lenis?.stop();
     const bar = buildBeat($('.loader__bar'), { rows: 1, bars: 1, exact: true, preserve: 'xMidYMid meet' });
     const ss = bar.strokes.map(s => s.node);
-    ss.forEach(n => n.style.fill = 'var(--paper)');
+    // the strokes shimmer through the brand colours, left to right
+    const gr = document.createElementNS(SVGNS, 'linearGradient');
+    gr.setAttribute('id', 'loaderShine');
+    gr.setAttribute('gradientUnits', 'userSpaceOnUse');
+    gr.setAttribute('spreadMethod', 'repeat');
+    gr.setAttribute('x1', 0); gr.setAttribute('x2', 1775); gr.setAttribute('y1', 0); gr.setAttribute('y2', 0);
+    [['0', '#F4EFE7'], ['.25', '#9C8CFF'], ['.5', '#4B2BFF'], ['.75', '#16B877'], ['1', '#F4EFE7']].forEach(([o, c]) => {
+      const st = document.createElementNS(SVGNS, 'stop'); st.setAttribute('offset', o); st.setAttribute('stop-color', c); gr.appendChild(st);
+    });
+    const defs = document.createElementNS(SVGNS, 'defs'); defs.appendChild(gr); bar.svg.prepend(defs);
+    ss.forEach(n => n.style.fill = 'url(#loaderShine)');
+    const shine = { x: -1775 };
+    gsap.to(shine, { x: 0, duration: 1.6, ease: 'none', repeat: -1, onUpdate: () => {
+      gr.setAttribute('x1', shine.x); gr.setAttribute('x2', shine.x + 1775);
+    } });
     const count = $('.loader__count');
     const c = { v: 0 };
     gsap.set(ss, { transformOrigin: '50% 50%' });
