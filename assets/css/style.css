@@ -839,3 +839,7 @@ img.is-missing { visibility: hidden; }
 .ph.is-active img { filter: grayscale(0) brightness(1) saturate(1.05); }
 .side--a .side__photo img { object-position: 50% 30%; }
 .side--b .side__photo img { object-position: 50% 60%; }
+.avatar--open { width: 112px; height: 112px; }
+.avatar--photo { width: 112px; height: 112px; overflow: hidden; background: var(--ink-14); }
+.avatar--photo img { width: 100%; height: 100%; object-fit: cover; filter: contrast(1.05); transition: transform .8s var(--ease); }
+.person:hover .avatar--photo img { transform: scale(1.06); }
