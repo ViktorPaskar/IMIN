@@ -267,20 +267,27 @@
     lenis?.stop();
     const bar = buildBeat($('.loader__bar'), { rows: 1, bars: 1, exact: true, preserve: 'xMidYMid meet' });
     const ss = bar.strokes.map(s => s.node);
-    // the strokes shimmer through the brand colours, left to right
-    const gr = document.createElementNS(SVGNS, 'linearGradient');
-    gr.setAttribute('id', 'loaderShine');
-    gr.setAttribute('gradientUnits', 'userSpaceOnUse');
-    gr.setAttribute('spreadMethod', 'repeat');
-    gr.setAttribute('x1', 0); gr.setAttribute('x2', 1775); gr.setAttribute('y1', 0); gr.setAttribute('y2', 0);
-    [['0', '#F4EFE7'], ['.25', '#9C8CFF'], ['.5', '#4B2BFF'], ['.75', '#16B877'], ['1', '#F4EFE7']].forEach(([o, c]) => {
-      const st = document.createElementNS(SVGNS, 'stop'); st.setAttribute('offset', o); st.setAttribute('stop-color', c); gr.appendChild(st);
-    });
-    const defs = document.createElementNS(SVGNS, 'defs'); defs.appendChild(gr); bar.svg.prepend(defs);
+    // the strokes shimmer through the brand colours, left to right,
+    // with a soft neon bloom in the same colours
+    const NSs = SVGNS, mk = (t, at = {}, parent) => { const n = document.createElementNS(NSs, t); for (const k in at) n.setAttribute(k, at[k]); parent?.appendChild(n); return n; };
+    const defs = mk('defs');
+    const SPAN = 2600;
+    const gr = mk('linearGradient', { id: 'loaderShine', gradientUnits: 'userSpaceOnUse', spreadMethod: 'reflect', x1: 0, y1: 0, x2: SPAN, y2: 0 }, defs);
+    [[0, '#4B2BFF'], [.22, '#7A63FF'], [.4, '#9C8CFF'], [.52, '#F4EFE7'], [.64, '#9C8CFF'], [.82, '#16B877'], [1, '#4B2BFF']]
+      .forEach(([o, c]) => mk('stop', { offset: o, 'stop-color': c }, gr));
+    const glow = mk('filter', { id: 'loaderGlow', x: '-30%', y: '-40%', width: '160%', height: '180%' }, defs);
+    mk('feGaussianBlur', { in: 'SourceGraphic', stdDeviation: 34, result: 'b' }, glow);
+    mk('feColorMatrix', { in: 'b', type: 'matrix', values: '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 .75 0', result: 'g' }, glow);
+    const merge = mk('feMerge', {}, glow);
+    mk('feMergeNode', { in: 'g' }, merge); mk('feMergeNode', { in: 'SourceGraphic' }, merge);
+    bar.svg.prepend(defs);
+    bar.rows[0].setAttribute('filter', 'url(#loaderGlow)');
+    bar.svg.style.overflow = 'visible';
     ss.forEach(n => n.style.fill = 'url(#loaderShine)');
-    const shine = { x: -1775 };
-    gsap.to(shine, { x: 0, duration: 1.6, ease: 'none', repeat: -1, onUpdate: () => {
-      gr.setAttribute('x1', shine.x); gr.setAttribute('x2', shine.x + 1775);
+    // slight diagonal sweep, slow and continuous; reflect makes the loop seamless
+    const shine = { x: 0 };
+    gsap.to(shine, { x: SPAN * 2, duration: 3.2, ease: 'none', repeat: -1, onUpdate: () => {
+      gr.setAttribute('gradientTransform', `translate(${shine.x - SPAN * 2} 0) rotate(-18 887 400)`);
     } });
     const count = $('.loader__count');
     const c = { v: 0 };
