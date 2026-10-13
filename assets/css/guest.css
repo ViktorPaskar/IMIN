@@ -350,6 +350,9 @@ body.guest {
 .note__text .w { display: inline-block; }
 .note__by { display: flex; align-items: center; gap: 14px; margin-top: 32px; font-size: var(--t16); color: var(--paper-64); }
 .note__by i { width: 40px; height: 1px; background: var(--haze); }
+.note__by span { display: flex; flex-direction: column; gap: 2px; }
+.note__by b { font-weight: 600; color: var(--paper); }
+.note__by em { font-style: normal; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--haze); }
 .last__quotes .note { display: block; margin: 0; }
 .last__quotes .note__text { font-size: var(--t25); }
 
