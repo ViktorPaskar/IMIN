@@ -115,8 +115,8 @@ body.guest {
 /* Thoughts: show once behind the headline, get crossed out, then fall away */
 .thoughts { position: absolute; z-index: 1; inset: calc(var(--header-h) + 16px) 0 0; pointer-events: none; visibility: hidden; max-width: calc(var(--max) + var(--gutter) * 2); margin: 0 auto; }
 .thoughts.is-on { visibility: visible; }
-.thought { position: absolute; font-family: var(--f-display); font-weight: 700; font-size: var(--t39); line-height: 1; text-transform: uppercase; color: var(--haze); white-space: nowrap; opacity: 0; }
-.thought::after { content: ""; position: absolute; left: -4px; right: -4px; top: 50%; height: 3px; background: currentColor; transform: scaleX(0); transform-origin: 0 50%; }
+.thought { position: absolute; font-size: var(--t20); line-height: 1.2; color: var(--haze); white-space: nowrap; opacity: 0; }
+.thought::after { content: ""; position: absolute; left: -3px; right: -3px; top: 54%; height: 1.5px; background: currentColor; transform: scaleX(0); transform-origin: 0 50%; }
 .thought.is-struck::after { transform: scaleX(1); transition: transform .4s var(--ease); }
 .thought:nth-child(1) { left: var(--gutter); top: 4%; }
 .thought:nth-child(2) { left: 30%; top: 15%; }
@@ -427,7 +427,7 @@ body.guest {
   .invite__ask { font-size: 31px; }
   .cd { gap: 6px; } .cd span { min-width: 28px; font-size: 9px; } .cd b { font-size: 20px; }
   .thoughts { inset: calc(var(--header-h) + 4px) 0 auto; height: 260px; }
-  .thought { font-size: 20px; }
+  .thought { font-size: 14px; }
   .thought:nth-child(1) { left: 16px; top: 0; } .thought:nth-child(2) { left: auto; right: 16px; top: 22%; }
   .thought:nth-child(3) { left: 24px; top: 44%; } .thought:nth-child(4) { left: auto; right: 20px; top: 66%; }
   .tband { padding: 16px 0; }

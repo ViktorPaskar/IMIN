@@ -87,7 +87,7 @@
         <div class="invite__date" aria-hidden="true"><span class="invite__day">${pad(d.getDate())}.${pad(d.getMonth() + 1)}</span><span class="invite__when"><b>${DAYS[d.getDay()]}</b>Doors ${time(d)}<span>${esc(next.city)}</span></span></div>
         <p class="invite__text">${esc(next.name)}. ${esc(next.line)} ${esc(next.city)}.</p>
         <div class="invite__perf" aria-hidden="true"></div>
-        <div class="invite__row"><p class="display invite__ask">You in?</p><div class="cd" data-cd="${esc(next.date)}" aria-label="Time until doors"></div></div>`;
+        <p class="display invite__ask">You in?</p>`;
       setIm(next.url); photo(next.photo);
       if (entry) entry.textContent = next.entry || '';
     } else if (state === 'B') {
@@ -109,18 +109,6 @@
     im.splice(0, 1, $('[data-im]', card));
   }
   renderInvite();
-
-  // countdown to doors
-  const cdEl = $('[data-cd]');
-  if (cdEl) {
-    const until = parse(cdEl.dataset.cd);
-    const tick = () => {
-      let t = Math.max(0, Math.floor((until - Date.now()) / 1000));
-      const parts = [['d', Math.floor(t / 86400)], ['h', Math.floor(t % 86400 / 3600)], ['m', Math.floor(t % 3600 / 60)], ['s', t % 60]];
-      cdEl.innerHTML = parts.map(([u, v]) => `<span><b>${pad(v)}</b>${u}</span>`).join('');
-    };
-    tick(); setInterval(tick, 1000);
-  }
 
   // sticky bar content
   if (next) { $('[data-sticky-date]').textContent = `${dayDate(parse(next.date))} · ${time(parse(next.date))}`; $('[data-sticky-name]').textContent = next.name; }
@@ -412,14 +400,14 @@
       .from('.g-hero__lines i', { scaleY: 0, duration: 1.6, stagger: .08, ease: 'expo.inOut' }, 0)
       .from('.g-hero__eyebrow i', { scaleX: 0, duration: 1, ease: 'expo.inOut' }, .2)
       .from('.g-hero__eyebrow span', { opacity: 0, x: -10, duration: .9 }, .4)
-      .from('.g-hero__title .line > span', { yPercent: 110, rotate: 4, transformOrigin: '0% 100%', duration: 1.3, stagger: .1 }, firstVisit && !reduced ? 1.9 : .15)
+      .from('.g-hero__title .line > span', { yPercent: 110, rotate: 4, transformOrigin: '0% 100%', duration: 1.3, stagger: .1 }, .15)
       .from('.g-hero__sub', { y: 14, opacity: 0, duration: .9 }, '-=.9')
       .from('.invite', { y: 40, opacity: 0, clipPath: 'inset(0 0 100% 0)', duration: 1.3, ease: 'expo.out' }, .3)
       .from('.invite__body > *', { y: 16, opacity: 0, duration: .8, stagger: .06 }, .55)
       .from('.g-hero__under', { opacity: 0, duration: .8 }, 1)
       .from(beatNodes, { scaleY: 0, transformOrigin: '50% 100%', transformBox: 'fill-box', duration: 1, stagger: { each: .008, from: 'start' } }, .2)
       .add(() => wave.start(), 1.2);
-    if (firstVisit && !reduced) tl.add(thoughts, .35);
+    if (firstVisit && !reduced) tl.add(thoughts, .2);
     store.set('imin_seen', '1');
     return tl;
   }
