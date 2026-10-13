@@ -437,7 +437,7 @@
     let on = false, visible = true, prm = [];
     // every stick gets its own tempo and phase, so each one moves on its own like a level meter
     const seed = () => { prm = beatNodes.map(() => [1.8 + Math.random() * 2.6, 3.1 + Math.random() * 3.4, Math.random() * 6.28, Math.random() * 6.28]); };
-    const prep = () => { seed(); beatNodes.forEach(nd => { nd.style.transformBox = 'fill-box'; nd.style.transformOrigin = '50% 50%'; }); };
+    const prep = () => { seed(); beatNodes.forEach(nd => { nd.style.transformBox = 'fill-box'; nd.style.transformOrigin = '50% 100%'; }); };
     const run = () => {
       if (!visible) return;
       const t = gsap.ticker.time;
