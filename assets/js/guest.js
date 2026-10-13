@@ -434,20 +434,20 @@
 
   /* The beat breathes like a sound wave once the page is up */
   const wave = (() => {
-    let on = false, visible = true, prm = [];
-    // every stick gets its own tempo and phase, so each one moves on its own like a level meter
-    const seed = () => { prm = beatNodes.map(() => [1.8 + Math.random() * 2.6, 3.1 + Math.random() * 3.4, Math.random() * 6.28, Math.random() * 6.28]); };
-    const prep = () => { seed(); beatNodes.forEach(nd => { nd.style.transformBox = 'fill-box'; nd.style.transformOrigin = '50% 100%'; }); };
+    let on = false, visible = true, prm = [], live = [];
+    // every moving stick gets its own tempo and phase, like a level meter
+    const seed = () => { prm = live.map(() => [1.8 + Math.random() * 2.6, 3.1 + Math.random() * 3.4, Math.random() * 6.28, Math.random() * 6.28]); };
+    // only the Paper sticks move; Haze and Doorlight hold still
+    const prep = () => { live = beatNodes.filter(nd => nd.getAttribute('fill') === FILL.p); seed(); live.forEach(nd => { nd.style.transformBox = 'fill-box'; nd.style.transformOrigin = '50% 100%'; }); };
     const run = () => {
       if (!visible) return;
       const t = gsap.ticker.time;
-      const n = beatNodes.length;
+      const n = live.length;
       for (let i = 0; i < n; i++) {
         const [f1, f2, p1, p2] = prm[i];
-        const swell = .78 + .22 * Math.sin(t * 1.6 - i * .22); // a slow pulse travels along the line
+        const swell = .78 + .22 * Math.sin(t * 1.6 - i * .6); // a slow pulse travels along the line
         const v = Math.max(.3, Math.min(1, swell * (.3 + .7 * Math.abs(.6 * Math.sin(t * f1 + p1) + .4 * Math.sin(t * f2 + p2)))));
-        const nd = beatNodes[i];
-        nd.style.transform = `${nd.dataset.tx ? `translate(${nd.dataset.tx}px,0) ` : ''}scaleY(${v.toFixed(3)})`;
+        live[i].style.transform = `scaleY(${v.toFixed(3)})`;
       }
     };
     return {
