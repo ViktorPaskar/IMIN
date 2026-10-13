@@ -84,8 +84,10 @@
     if (state === 'A') {
       const d = parse(next.date);
       html = `<div class="invite__top"><span class="label invite__label">Doors · ${dayDate(d)} · ${time(d)}</span><span class="by">By ${esc(next.by || 'IMIN')}</span></div>
+        <div class="invite__date" aria-hidden="true"><span class="invite__day">${pad(d.getDate())}.${pad(d.getMonth() + 1)}</span><span class="invite__when"><b>${DAYS[d.getDay()]}</b>Doors ${time(d)}<span>${esc(next.city)}</span></span></div>
         <p class="invite__text">${esc(next.name)}. ${esc(next.line)} ${esc(next.city)}.</p>
-        <p class="display invite__ask">You in?</p>`;
+        <div class="invite__perf" aria-hidden="true"></div>
+        <div class="invite__row"><p class="display invite__ask">You in?</p><div class="cd" data-cd="${esc(next.date)}" aria-label="Time until doors"></div></div>`;
       setIm(next.url); photo(next.photo);
       if (entry) entry.textContent = next.entry || '';
     } else if (state === 'B') {
@@ -108,6 +110,18 @@
   }
   renderInvite();
 
+  // countdown to doors
+  const cdEl = $('[data-cd]');
+  if (cdEl) {
+    const until = parse(cdEl.dataset.cd);
+    const tick = () => {
+      let t = Math.max(0, Math.floor((until - Date.now()) / 1000));
+      const parts = [['d', Math.floor(t / 86400)], ['h', Math.floor(t % 86400 / 3600)], ['m', Math.floor(t % 3600 / 60)], ['s', t % 60]];
+      cdEl.innerHTML = parts.map(([u, v]) => `<span><b>${pad(v)}</b>${u}</span>`).join('');
+    };
+    tick(); setInterval(tick, 1000);
+  }
+
   // sticky bar content
   if (next) { $('[data-sticky-date]').textContent = `${dayDate(parse(next.date))} · ${time(parse(next.date))}`; $('[data-sticky-name]').textContent = next.name; }
 
@@ -129,10 +143,14 @@
   const citiesEl = $('[data-cities]');
   if (citiesEl) { if (cities.length) citiesEl.textContent = `Nights in: ${cities.join(' · ')}`; else citiesEl.hidden = true; }
 
+  const eyebrow = $('[data-hero-eyebrow]');
+  if (eyebrow && cities.length) eyebrow.textContent = `Music-first nights · ${cities.join(' · ')}`;
+
   // formats
   const fm = $('[data-formats]');
   if (fm) fm.innerHTML = (cfg.formats || []).map(f => `
     <article class="format" data-reveal>
+      ${f.photo ? `<div class="format__bg" aria-hidden="true"><img src="${esc(f.photo)}" alt="" loading="lazy"></div>` : ''}
       <div class="format__top"><span class="label">Format</span><span class="by">By ${esc(f.by)}</span></div>
       <h3>${esc(f.name)}</h3><p>${esc(f.text)}</p>
     </article>`).join('');
@@ -161,6 +179,9 @@
     const pl = $('[data-last-playlist]'); if (last.playlist) { pl.href = last.playlist; pl.hidden = false; }
     if (!real) sec.classList.add('is-preview');
   }
+
+  // section numbers follow what's visible
+  $$('main > section:not([hidden]) .sec-label').forEach((l, i) => { const b = document.createElement('b'); b.textContent = pad(i + 1); l.prepend(b); });
 
   // 6. FAQ
   const FAQ = [
@@ -324,7 +345,7 @@
     for (let b = 0; b < bars; b++) for (const [k, x, c] of BAR) {
       let n;
       if (k === 'v') { n = document.createElementNS(NS, 'rect'); n.setAttribute('x', b * 1815 + x); n.setAttribute('y', 0); n.setAttribute('width', 100); n.setAttribute('height', 800); n.setAttribute('rx', 50); }
-      else { n = document.createElementNS(NS, 'path'); n.setAttribute('d', k === 'b' ? D_BACK : D_FWD); n.setAttribute('transform', `translate(${b * 1815 + x} 0)`); }
+      else { n = document.createElementNS(NS, 'path'); n.setAttribute('d', k === 'b' ? D_BACK : D_FWD); n.setAttribute('transform', `translate(${b * 1815 + x} 0)`); n.dataset.tx = b * 1815 + x; }
       n.setAttribute('fill', mono || FILL[c]);
       svg.appendChild(n); nodes.push(n);
     }
@@ -384,26 +405,61 @@
   store.sset('imin_loader', '1');
 
   function heroIntro(delay = 0) {
-    const tl = gsap.timeline({ delay });
-    tl.fromTo('.g-hero__media .hero__photo img', { scale: 1.12 }, { scale: 1.02, duration: 2.6, ease: 'power3.out' }, 0)
-      .from('.g-hero__title .line > span', { yPercent: 105, duration: 1.1, stagger: .08 }, .05)
-      .from('.g-hero__sub', { y: 14, opacity: 0, duration: .9 }, .35)
-      .from(beatNodes, { scaleY: 0, transformOrigin: '50% 100%', transformBox: 'fill-box', duration: .9, stagger: { each: .006, from: 'start' } }, .2);
-    if (firstVisit && !reduced) tl.add(thoughts, .7);
+    const hero = $('.g-hero');
+    const tl = gsap.timeline({ delay, onComplete: () => hero.classList.add('is-ready') });
+    tl.fromTo('.g-hero__media .hero__photo img', { scale: 1.18 }, { scale: 1.02, duration: 2.8, ease: 'power3.out' }, 0)
+      .fromTo('.g-hero__media .hero__photo:first-child img', { filter: 'grayscale(1) contrast(1.15) brightness(.2)' }, { filter: 'grayscale(1) contrast(1.15) brightness(.8)', duration: 2.8, ease: 'power3.out' }, 0)
+      .from('.g-hero__lines i', { scaleY: 0, duration: 1.6, stagger: .08, ease: 'expo.inOut' }, 0)
+      .from('.g-hero__eyebrow i', { scaleX: 0, duration: 1, ease: 'expo.inOut' }, .2)
+      .from('.g-hero__eyebrow span', { opacity: 0, x: -10, duration: .9 }, .4)
+      .from('.g-hero__title .line > span', { yPercent: 110, rotate: 4, transformOrigin: '0% 100%', duration: 1.3, stagger: .1 }, firstVisit && !reduced ? 1.9 : .15)
+      .from('.g-hero__sub', { y: 14, opacity: 0, duration: .9 }, '-=.9')
+      .from('.invite', { y: 40, opacity: 0, clipPath: 'inset(0 0 100% 0)', duration: 1.3, ease: 'expo.out' }, .3)
+      .from('.invite__body > *', { y: 16, opacity: 0, duration: .8, stagger: .06 }, .55)
+      .from('.g-hero__under', { opacity: 0, duration: .8 }, 1)
+      .from(beatNodes, { scaleY: 0, transformOrigin: '50% 100%', transformBox: 'fill-box', duration: 1, stagger: { each: .008, from: 'start' } }, .2)
+      .add(() => wave.start(), 1.2);
+    if (firstVisit && !reduced) tl.add(thoughts, .35);
     store.set('imin_seen', '1');
     return tl;
   }
 
-  /* Thoughts: appear behind the headline and get crossed out, once, ~2.3 s */
+  /* Thoughts: pile up behind the headline, get crossed out, then fall away (once, ~2.2 s) */
   function thoughts() {
     const box = $('.thoughts'); if (!box) return;
     const items = $$('.thought', box);
     box.classList.add('is-on');
-    gsap.timeline()
-      .fromTo(items, { opacity: 0, y: 8 }, { opacity: .9, y: 0, duration: .45, stagger: .22, ease: 'power2.out' })
-      .call(() => items.forEach((t, i) => setTimeout(() => t.classList.add('is-struck'), i * 160)), null, '-=.1')
-      .to(items, { opacity: .28, duration: .6, ease: 'power1.out' }, '+=.75');
+    gsap.timeline({ onComplete: () => box.remove() })
+      .fromTo(items, { opacity: 0, y: 24, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: .5, stagger: .18, ease: 'power3.out' })
+      .call(() => items.forEach((t, i) => setTimeout(() => t.classList.add('is-struck'), i * 110)), null, '-=.15')
+      .to(items, { y: () => innerHeight * (.6 + Math.random() * .3), rotate: () => gsap.utils.random(-18, 18), opacity: 0, duration: .9, stagger: .07, ease: 'power3.in' }, '+=.55');
   }
+
+  /* The beat breathes like a sound wave once the page is up */
+  const wave = (() => {
+    let on = false, visible = true;
+    const run = () => {
+      if (!visible) return;
+      const t = gsap.ticker.time;
+      const n = beatNodes.length;
+      for (let i = 0; i < n; i++) {
+        const x = i / 9;
+        const v = .58 + .42 * Math.abs(Math.sin(t * 2.1 + x * .9) * .6 + Math.sin(t * 3.3 - x * 1.7) * .4);
+        const nd = beatNodes[i];
+        nd.style.transform = `${nd.dataset.tx ? `translate(${nd.dataset.tx}px,0) ` : ''}scaleY(${v.toFixed(3)})`;
+      }
+    };
+    return {
+      start() {
+        if (on || reduced) return; on = true;
+        beatNodes.forEach(nd => { nd.style.transformBox = 'fill-box'; nd.style.transformOrigin = '50% 100%'; });
+        gsap.ticker.add(run);
+        ScrollTrigger.create({ trigger: '.g-hero', start: 'top top', end: 'bottom top', onToggle: st => { visible = st.isActive; } });
+      },
+      redraw() { if (on) beatNodes.forEach(nd => { nd.style.transformBox = 'fill-box'; nd.style.transformOrigin = '50% 100%'; }); }
+    };
+  })();
+  addEventListener('resize', () => setTimeout(() => wave.redraw(), 260));
 
   if (showLoader) {
     body.classList.add('is-loading'); lenis?.stop();
@@ -427,14 +483,55 @@
     if (!reduced) heroIntro(0);
   }
 
-  // hero: photo drifts on scroll, a little parallax with the pointer
+  // hero: on the way out the lines split apart, the photo pushes in, the ticket lifts away
   if (!reduced) {
-    gsap.to('.g-hero__media', { yPercent: 14, ease: 'none', scrollTrigger: { trigger: '.g-hero', start: 'top top', end: 'bottom top', scrub: true } });
+    const out = gsap.timeline({ scrollTrigger: { trigger: '.g-hero', start: 'top top', end: 'bottom top', scrub: .4 } });
+    out.to('.g-hero__media', { yPercent: 18, scale: 1.08, ease: 'none' }, 0)
+      .to('.g-hero__title .line:nth-child(1)', { xPercent: -10, ease: 'none' }, 0)
+      .to('.g-hero__title .line:nth-child(2)', { xPercent: 8, ease: 'none' }, 0)
+      .to('.g-hero__title .line:nth-child(3)', { xPercent: -5, ease: 'none' }, 0)
+      .to('.g-hero__copy', { yPercent: -20, opacity: .2, ease: 'none' }, 0)
+      .to('.g-hero__aside', { y: -120, ease: 'none' }, 0)
+      .to('.g-hero__shade', { opacity: .6, ease: 'none' }, 0);
     if (finePointer) {
-      const px = gsap.quickTo('.g-hero__media .hero__photo', 'x', { duration: 2, ease: 'power3.out' });
-      const py = gsap.quickTo('.g-hero__media .hero__photo', 'y', { duration: 2, ease: 'power3.out' });
-      $('.g-hero').addEventListener('pointermove', e => { px((e.clientX / innerWidth - .5) * -18); py((e.clientY / innerHeight - .5) * -12); });
+      const hero = $('.g-hero'), lit = $('.hero__photo--lit');
+      const photo = $$('.g-hero__media .hero__photo');
+      const px = gsap.quickTo(photo, 'x', { duration: 2, ease: 'power3.out' });
+      const py = gsap.quickTo(photo, 'y', { duration: 2, ease: 'power3.out' });
+      const m = { x: innerWidth * .7, y: innerHeight * .4 };
+      const mx = gsap.quickTo(m, 'x', { duration: .9, ease: 'power3.out', onUpdate: () => lit.style.setProperty('--mx', m.x + 'px') });
+      const my = gsap.quickTo(m, 'y', { duration: .9, ease: 'power3.out', onUpdate: () => lit.style.setProperty('--my', m.y + 'px') });
+      hero.addEventListener('pointermove', e => {
+        px((e.clientX / innerWidth - .5) * -22); py((e.clientY / innerHeight - .5) * -14);
+        const r = lit.getBoundingClientRect(); mx(e.clientX - r.left); my(e.clientY - r.top);
+        hero.classList.toggle('is-lit', !e.target.closest('.invite, .g-hero__title, .header'));
+      });
+      hero.addEventListener('pointerleave', () => hero.classList.remove('is-lit'));
     }
+  }
+
+  // thoughts → answers band and the big type rows move with scroll speed
+  if (!reduced) {
+    const loops = [];
+    const loop = (track, dir, speed) => {
+      track.innerHTML += track.innerHTML; // seamless
+      const st = { x: 0, w: 0 };
+      const measure = () => { st.w = track.scrollWidth / 2; };
+      measure(); addEventListener('resize', measure);
+      loops.push(() => { st.x = (st.x + dir * speed * (1 + Math.min(6, Math.abs(vel) / 220))) % st.w; gsap.set(track, { x: st.x > 0 ? st.x - st.w : st.x }); });
+    };
+    let vel = 0;
+    ScrollTrigger.create({ start: 0, end: 'max', onUpdate: s => { vel = s.getVelocity(); } });
+    const tb = $('.tband__track'); if (tb) loop(tb, -1, .6);
+    gsap.ticker.add(() => { vel *= .92; loops.forEach(f => f()); });
+
+    $$('.bigband__row').forEach((row, i) => {
+      gsap.fromTo(row, { xPercent: i % 2 ? -32 : 0 }, { xPercent: i % 2 ? 0 : -32, ease: 'none', scrollTrigger: { trigger: '.bigband', start: 'top bottom', end: 'bottom top', scrub: .3 } });
+    });
+    gsap.from('.bigband span', { yPercent: 40, opacity: 0, duration: 1.2, stagger: .05, scrollTrigger: { trigger: '.bigband', start: 'top 85%' } });
+    $$('.room__bg span').forEach((w, i) => {
+      gsap.fromTo(w, { xPercent: i ? 20 : -20 }, { xPercent: i ? -10 : 10, ease: 'none', scrollTrigger: { trigger: '.room', start: 'top bottom', end: 'bottom top', scrub: true } });
+    });
   }
 
   // titles: masked line reveal
@@ -442,7 +539,7 @@
     if (!reduced) $$('[data-split]').forEach(el => {
       if (el.closest('[hidden]')) return;
       const s = SplitText.create(el, { type: 'lines', mask: 'lines' });
-      gsap.from(s.lines, { yPercent: 108, duration: 1.2, stagger: .08, scrollTrigger: { trigger: el, start: 'top 86%' } });
+      gsap.from(s.lines, { yPercent: 110, rotate: 3, transformOrigin: '0% 100%', duration: 1.3, stagger: .09, scrollTrigger: { trigger: el, start: 'top 86%' } });
     });
     ScrollTrigger.refresh();
   });
@@ -467,6 +564,51 @@
     gsap.from('.qd', { y: 16, opacity: 0, stagger: .04, duration: .8, scrollTrigger: { trigger: '.faq__list', start: 'top 85%' } });
     gsap.from('.room__slogan > *', { y: 20, opacity: 0, stagger: .1, duration: 1, scrollTrigger: { trigger: '.room', start: 'top 75%' } });
     gsap.from('.room', { clipPath: 'inset(6% 3% 6% 3%)', ease: 'none', scrollTrigger: { trigger: '.room', start: 'top bottom', end: 'top 35%', scrub: true } });
+  }
+
+  // section labels: the little rule draws in
+  if (!reduced) $$('.sec-label').forEach(l => {
+    gsap.fromTo(l, { '--rule': 0 }, { '--rule': 1, duration: 1.2, ease: 'expo.inOut', scrollTrigger: { trigger: l, start: 'top 90%' } });
+    gsap.from(l, { opacity: 0, x: -12, duration: 1, scrollTrigger: { trigger: l, start: 'top 90%' } });
+  });
+
+  // Bohdan's note: the photo opens and drifts, the words light up as you read
+  const note = $('#idea .note');
+  if (note && !reduced) {
+    const ph = $('.note__photo', note);
+    gsap.from(ph, { clipPath: 'inset(100% 0 0 0)', duration: 1.6, ease: 'expo.inOut', scrollTrigger: { trigger: note, start: 'top 80%' } });
+    gsap.fromTo($('img', ph), { yPercent: -8, scale: 1.15 }, { yPercent: 8, scale: 1, ease: 'none', scrollTrigger: { trigger: note, start: 'top bottom', end: 'bottom top', scrub: true } });
+    gsap.from('.note__mark', { yPercent: 60, opacity: 0, duration: 1.2, scrollTrigger: { trigger: note, start: 'top 75%' } });
+    const q = $('[data-words]', note);
+    q.innerHTML = q.textContent.split(' ').map(w => `<span class="w">${esc(w)}</span>`).join(' ');
+    gsap.fromTo($$('.w', q), { opacity: .16 }, { opacity: 1, stagger: .1, ease: 'none', scrollTrigger: { trigger: q, start: 'top 80%', end: 'bottom 45%', scrub: .5 } });
+    gsap.from('.note__by', { opacity: 0, y: 12, duration: 1, scrollTrigger: { trigger: '.note__by', start: 'top 92%' } });
+  }
+
+  // setlist: the meters start playing when it comes into view
+  const sl = $('.setlist');
+  if (sl && !reduced) {
+    ScrollTrigger.create({ trigger: sl, start: 'top 85%', end: 'bottom 10%', toggleClass: 'is-playing' });
+    gsap.from('.setlist .meter i', { scaleY: 0, duration: .8, stagger: { each: .012, from: 'start' }, ease: 'power3.out', scrollTrigger: { trigger: sl, start: 'top 80%' } });
+  }
+  $$('.format__bg img').forEach(img => !reduced && gsap.fromTo(img, { yPercent: -10 }, { yPercent: 0, ease: 'none', scrollTrigger: { trigger: img.closest('.format'), start: 'top bottom', end: 'bottom top', scrub: true } }));
+
+  // photo strip: panels rise one by one, photos drift inside their frames
+  const strip = $('.night__grid');
+  if (strip && !reduced) {
+    const panels = $$('.ph', strip);
+    gsap.from(panels, { clipPath: 'inset(100% 0% 0% 0%)', duration: 1.5, ease: 'expo.inOut', stagger: .09, scrollTrigger: { trigger: strip, start: 'top 82%' } });
+    panels.forEach((f, i) => gsap.fromTo($('img', f), { yPercent: -6 - i % 2 * 3, scale: 1.18 }, { yPercent: 6 + i % 2 * 3, scale: 1.06, ease: 'none', scrollTrigger: { trigger: strip, start: 'top bottom', end: 'bottom top', scrub: true } }));
+    if (!finePointer) {
+      const mark = () => {
+        const mid = strip.getBoundingClientRect().left + strip.clientWidth / 2;
+        let best = null, dist = Infinity;
+        panels.forEach(p => { const r = p.getBoundingClientRect(); const d = Math.abs(r.left + r.width / 2 - mid); if (d < dist) { dist = d; best = p; } });
+        panels.forEach(p => p.classList.toggle('is-active', p === best));
+      };
+      strip.addEventListener('scroll', () => requestAnimationFrame(mark), { passive: true });
+      ScrollTrigger.create({ trigger: strip, start: 'top 70%', onEnter: mark });
+    }
   }
 
   // reading progress

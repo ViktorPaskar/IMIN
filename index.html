@@ -86,20 +86,23 @@
   <section class="g-hero" id="top" data-section="hero">
     <div class="g-hero__media" aria-hidden="true">
       <div class="hero__photo"><img src="assets/img/photos/hero.jpg" srcset="assets/img/photos/hero-m.jpg 1000w, assets/img/photos/hero.jpg 2000w" sizes="100vw" alt="" fetchpriority="high"></div>
+      <div class="hero__photo hero__photo--lit"><img src="assets/img/photos/hero.jpg" alt=""></div>
       <div class="g-hero__shade"></div>
+      <div class="g-hero__lines"><i></i><i></i><i></i><i></i><i></i></div>
     </div>
     <div class="thoughts" aria-hidden="true">
-      <span class="thought" style="--x:52%;--y:8%">What if I don't know anyone?</span>
-      <span class="thought" style="--x:66%;--y:30%">What do I wear?</span>
-      <span class="thought" style="--x:44%;--y:52%">Is it even worth it?</span>
-      <span class="thought" style="--x:60%;--y:74%">Maybe I'll just stay in.</span>
+      <span class="thought">What if I don't know anyone?</span>
+      <span class="thought">What do I wear?</span>
+      <span class="thought">Is it even worth it?</span>
+      <span class="thought">Maybe I'll just stay in.</span>
     </div>
 
     <div class="wrap g-hero__inner">
       <div class="g-hero__copy">
+        <span class="label g-hero__eyebrow"><i></i><span data-hero-eyebrow>Music-first nights</span></span>
         <h1 class="display g-hero__title">
           <span class="line"><span>Don't</span></span>
-          <span class="line"><span>overthink</span></span>
+          <span class="line line--out"><span>overthink</span></span>
           <span class="line"><span>the night.</span></span>
         </h1>
         <p class="g-hero__sub">Music first. Come as you are.</p>
@@ -125,13 +128,24 @@
         </div>
       </div>
     </div>
+    <a class="g-hero__scroll" href="#idea" aria-label="Scroll to the idea"><span></span></a>
     <div class="g-hero__beat" aria-hidden="true"></div>
   </section>
+
+  <!-- Thoughts → answers band -->
+  <div class="tband" aria-hidden="true">
+    <div class="tband__track">
+      <span class="tband__q">What if I don't know anyone?</span><span class="tband__a">That's kind of the point.</span><i></i>
+      <span class="tband__q">What do I wear?</span><span class="tband__a">Whatever you dance in.</span><i></i>
+      <span class="tband__q">Is it even worth it?</span><span class="tband__a">Come for one track. Stay if it's good.</span><i></i>
+      <span class="tband__q">Who else is going?</span><span class="tband__a">People who came for the music.</span><i></i>
+    </div>
+  </div>
 
   <!-- 2. The idea -->
   <section class="idea2" id="idea" data-section="idea">
     <div class="wrap">
-      <span class="label">The idea</span>
+      <span class="label sec-label">The idea</span>
       <h2 class="display h1" data-split>Going out shouldn't feel like a first date.</h2>
       <p class="lead idea2__text" data-reveal data-copy="idea"></p>
       <span class="label idea2__cities" data-cities data-reveal>Nights in: Metz</span>
@@ -143,9 +157,13 @@
         <li class="qa__row"><span class="qa__q">Is it even worth it?</span><span class="qa__a">Come for one track. Stay if it's good.</span></li>
       </ol>
 
-      <figure class="note" data-reveal>
-        <blockquote class="note__text">Finding a night is easy. Finding someone to go with is harder. That's what we're working on.</blockquote>
-        <figcaption class="note__by"><img src="assets/img/photos/bohdan.jpg" alt="" width="48" height="48" loading="lazy"><span>Bohdan, IMIN</span></figcaption>
+      <figure class="note">
+        <div class="note__photo"><img src="assets/img/photos/bohdan.jpg" alt="Bohdan, IMIN" width="400" height="400" loading="lazy"></div>
+        <div class="note__body">
+          <span class="note__mark" aria-hidden="true">“</span>
+          <blockquote class="note__text" data-words>Finding a night is easy. Finding someone to go with is harder. That's what we're working on.</blockquote>
+          <figcaption class="note__by"><i></i><span>Bohdan, IMIN</span></figcaption>
+        </div>
       </figure>
       <a class="text-link" href="#top" data-track="see_next_night_click" data-section-name="idea">See the next night <svg class="i"><use href="#i-arrow-up"/></svg></a>
     </div>
@@ -154,32 +172,42 @@
   <!-- 3. The nights -->
   <section class="nights" id="nights" data-section="nights">
     <div class="wrap">
-      <span class="label">The nights</span>
+      <span class="label sec-label">The nights</span>
       <h2 class="display h1" data-split>Nights worth saying yes to.</h2>
       <p class="lead" data-reveal data-copy="nights"></p>
 
       <div class="nights__grid">
         <figure class="setlist" data-reveal>
           <ol>
-            <li><span class="label">Doors</span><b>Coffee first. Or not.</b></li>
-            <li><span class="label">First track</span><b>Nobody dances yet. Classic.</b></li>
-            <li><span class="label">Peak</span><b>Phones down. Mostly.</b></li>
-            <li><span class="label">Last track</span><b>Go home, or go out.</b></li>
+            <li style="--e:2"><span class="label">Doors</span><b>Coffee first. Or not.</b><span class="meter" aria-hidden="true"><i style="--h:0.22"></i><i style="--h:0.22"></i><i style="--h:0.13"></i><i style="--h:0.13"></i><i style="--h:0.21"></i><i style="--h:0.2"></i><i style="--h:0.19"></i><i style="--h:0.15"></i><i style="--h:0.18"></i><i style="--h:0.18"></i><i style="--h:0.18"></i><i style="--h:0.14"></i></span></li>
+            <li style="--e:4"><span class="label">First track</span><b>Nobody dances yet. Classic.</b><span class="meter" aria-hidden="true"><i style="--h:0.29"></i><i style="--h:0.27"></i><i style="--h:0.32"></i><i style="--h:0.28"></i><i style="--h:0.26"></i><i style="--h:0.32"></i><i style="--h:0.43"></i><i style="--h:0.4"></i><i style="--h:0.4"></i><i style="--h:0.29"></i><i style="--h:0.35"></i><i style="--h:0.3"></i></span></li>
+            <li style="--e:9"><span class="label">Peak</span><b>Phones down. Mostly.</b><span class="meter" aria-hidden="true"><i style="--h:0.76"></i><i style="--h:0.72"></i><i style="--h:0.61"></i><i style="--h:0.94"></i><i style="--h:0.55"></i><i style="--h:0.78"></i><i style="--h:0.95"></i><i style="--h:0.59"></i><i style="--h:0.8"></i><i style="--h:0.83"></i><i style="--h:0.57"></i><i style="--h:0.72"></i></span></li>
+            <li style="--e:5"><span class="label">Last track</span><b>Go home, or go out.</b><span class="meter" aria-hidden="true"><i style="--h:0.46"></i><i style="--h:0.49"></i><i style="--h:0.5"></i><i style="--h:0.54"></i><i style="--h:0.49"></i><i style="--h:0.54"></i><i style="--h:0.31"></i><i style="--h:0.42"></i><i style="--h:0.54"></i><i style="--h:0.47"></i><i style="--h:0.53"></i><i style="--h:0.33"></i></span></li>
           </ol>
           <figcaption class="caption">Roughly. Nobody's keeping time.</figcaption>
         </figure>
         <div class="formats" data-formats></div>
       </div>
 
-      <div class="night__grid nights__photos" data-nights-photos hidden></div>
       <a class="text-link" href="#" data-link="allNights" data-track="see_all_nights_click" data-section-name="nights">See all nights <svg class="i"><use href="#i-arrow-right"/></svg></a>
+    </div>
+  </section>
+
+  <!-- Photo strip: one opens under the cursor -->
+  <section class="night strip" aria-label="Photos from the night">
+    <div class="night__grid">
+      <figure class="ph ph--1"><img src="assets/img/photos/night-1.jpg" alt="A DJ smiling behind the decks, hands up in the crowd" loading="lazy"></figure>
+      <figure class="ph ph--2"><img src="assets/img/photos/night-2.jpg" alt="Dancing under the lights" loading="lazy"></figure>
+      <figure class="ph ph--3"><img src="assets/img/photos/night-3.jpg" alt="A crowd in front of a lit stage" loading="lazy"></figure>
+      <figure class="ph ph--4"><img src="assets/img/photos/night-4.jpg" alt="A hand on a DJ controller" loading="lazy"></figure>
+      <figure class="ph ph--5"><img src="assets/img/photos/night-5.jpg" alt="A DJ raising a hand to a packed crowd" loading="lazy"></figure>
     </div>
   </section>
 
   <!-- 4. Next up (only with more than one upcoming night) -->
   <section class="next" id="next" data-section="next" hidden>
     <div class="wrap">
-      <span class="label">Next up</span>
+      <span class="label sec-label">Next up</span>
       <h2 class="display h1" data-split>Pick your night.</h2>
       <ol class="tickets" data-tickets></ol>
       <a class="text-link" href="#" data-link="allNights" data-track="see_all_nights_click" data-section-name="next">See all nights <svg class="i"><use href="#i-arrow-right"/></svg></a>
@@ -189,7 +217,7 @@
   <!-- 5. Last time (after the first night) -->
   <section class="last" id="last" data-section="last" hidden>
     <div class="wrap">
-      <span class="label" data-last-label>Last time</span>
+      <span class="label sec-label" data-last-label>Last time</span>
       <h2 class="display h1" data-last-title></h2>
       <div class="last__grid" data-last-photos></div>
       <div class="last__quotes" data-last-quotes></div>
@@ -200,11 +228,16 @@
     </div>
   </section>
 
+  <div class="bigband" aria-hidden="true">
+    <div class="bigband__row"><span>Music first</span><i></i><span class="is-out">Come as you are</span><i></i><span>Music first</span><i></i><span class="is-out">Come as you are</span><i></i></div>
+    <div class="bigband__row bigband__row--rev"><span class="is-out">Don't overthink</span><i></i><span>The night</span><i></i><span class="is-out">Don't overthink</span><i></i><span>The night</span><i></i></div>
+  </div>
+
   <!-- 6. FAQ -->
   <section class="faq" id="faq" data-section="faq">
     <div class="wrap faq__grid">
       <div class="faq__head">
-        <span class="label">FAQ</span>
+        <span class="label sec-label">FAQ</span>
         <h2 class="display h1" data-split>Still overthinking?</h2>
       </div>
       <div class="faq__list" data-faq></div>
@@ -215,7 +248,7 @@
   <!-- 7. Stay close -->
   <section class="stay" id="stay" data-section="stay">
     <div class="wrap">
-      <span class="label">Stay close</span>
+      <span class="label sec-label">Stay close</span>
       <h2 class="display h1" data-split>Not tonight? No strings.</h2>
       <p class="lead" data-reveal>Follow along. You'll hear about the next night first.</p>
 
@@ -257,6 +290,7 @@
 
   <!-- 8. The other side of the room (the one Ultra block) -->
   <section class="room" id="create" data-section="bridge">
+    <div class="room__bg" aria-hidden="true"><span>Create</span><span>Earn</span></div>
     <div class="wrap">
       <p class="room__slogan display" aria-label="Join, done. Create. Earn.">
         <span class="room__done">Join <svg class="i"><use href="#i-check"/></svg></span>

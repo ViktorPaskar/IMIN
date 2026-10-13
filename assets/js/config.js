@@ -69,7 +69,7 @@ window.IMIN = {
 
   /* Formats for "The nights". */
   formats: [
-    { name: 'CoffeeShop Rave', by: 'IMIN', text: 'Daytime. A DJ, coffee, daylight. A café turns into a dance floor for an afternoon.' }
+    { name: 'CoffeeShop Rave', by: 'IMIN', text: 'Daytime. A DJ, coffee, daylight. A café turns into a dance floor for an afternoon.', photo: 'assets/img/photos/night-4.jpg' }
   ],
 
   /* Flips the copy in "The idea" and "The nights" once an outside creator has published a night. */
