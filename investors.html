@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>IMIN — The two-sided platform for nightlife</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="IMIN is the two-sided platform for nightlife: the operating system that runs the night for organizers, and the app that helps people find an event, and someone to go with.">
+  <meta name="theme-color" content="#0B0A14">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://imin.wtf/">
+  <meta property="og:title" content="IMIN — Two sides. One night.">
+  <meta property="og:description" content="The operating system that runs the night for organizers. And the app that helps people find an event, and someone to go with.">
+  <meta property="og:image" content="https://imin.wtf/assets/img/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>document.documentElement.classList.replace('no-js','js');</script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-arrow-right" viewBox="0 0 256 256"><path d="M220.24,132.24l-72,72a6,6,0,0,1-8.48-8.48L201.51,134H40a6,6,0,0,1,0-12H201.51L139.76,60.24a6,6,0,0,1,8.48-8.48l72,72A6,6,0,0,1,220.24,132.24Z"/></symbol>
+  <symbol id="i-arrow-up-right" viewBox="0 0 256 256"><path d="M198,64V168a6,6,0,0,1-12,0V78.48L68.24,196.24a6,6,0,0,1-8.48-8.48L177.52,70H88a6,6,0,0,1,0-12H192A6,6,0,0,1,198,64Z"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 256 256"><path d="M220.07,176.94C214.41,167.2,206,139.73,206,104a78,78,0,1,0-156,0c0,35.74-8.42,63.2-14.08,72.94A14,14,0,0,0,48,198H90.48a38,38,0,0,0,75,0H208a14,14,0,0,0,12.06-21.06ZM128,218a26,26,0,0,1-25.29-20h50.58A26,26,0,0,1,128,218Zm81.71-33a1.9,1.9,0,0,1-1.7,1H48a1.9,1.9,0,0,1-1.7-1,2,2,0,0,1,0-2C53.87,170,62,139.69,62,104a66,66,0,1,1,132,0c0,35.68,8.14,65.95,15.71,79A2,2,0,0,1,209.71,185Z"/></symbol>
+  <symbol id="i-chart-line-up" viewBox="0 0 256 256"><path d="M230,208a6,6,0,0,1-6,6H32a6,6,0,0,1-6-6V48a6,6,0,0,1,12,0V161.52l53.76-53.76a6,6,0,0,1,8.48,0L128,135.51,185.52,78H160a6,6,0,0,1,0-12h40a6,6,0,0,1,6,6v40a6,6,0,0,1-12,0V86.48l-61.76,61.76a6,6,0,0,1-8.48,0L96,120.49l-58,58V202H224A6,6,0,0,1,230,208Z"/></symbol>
+  <symbol id="i-chat-circle" viewBox="0 0 256 256"><path d="M128,26A102,102,0,0,0,38.35,176.69L26.73,211.56a14,14,0,0,0,17.71,17.71l34.87-11.62A102,102,0,1,0,128,26Zm0,192a90,90,0,0,1-45.06-12.08,6.09,6.09,0,0,0-3-.81,6.2,6.2,0,0,0-1.9.31L40.65,217.88a2,2,0,0,1-2.53-2.53L50.58,178a6,6,0,0,0-.5-4.91A90,90,0,1,1,128,218Z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 256 256"><path d="M128,26A102,102,0,1,0,230,128,102.12,102.12,0,0,0,128,26Zm0,192a90,90,0,1,1,90-90A90.1,90.1,0,0,1,128,218Zm62-90a6,6,0,0,1-6,6H128a6,6,0,0,1-6-6V72a6,6,0,0,1,12,0v50h50A6,6,0,0,1,190,128Z"/></symbol>
+  <symbol id="i-download-simple" viewBox="0 0 256 256"><path d="M222,144v64a6,6,0,0,1-6,6H40a6,6,0,0,1-6-6V144a6,6,0,0,1,12,0v58H210V144a6,6,0,0,1,12,0Zm-98.24,4.24a6,6,0,0,0,8.48,0l40-40a6,6,0,0,0-8.48-8.48L134,129.51V32a6,6,0,0,0-12,0v97.51L92.24,99.76a6,6,0,0,0-8.48,8.48Z"/></symbol>
+  <symbol id="i-envelope" viewBox="0 0 256 256"><path d="M224,50H32a6,6,0,0,0-6,6V192a14,14,0,0,0,14,14H216a14,14,0,0,0,14-14V56A6,6,0,0,0,224,50Zm-96,85.86L47.42,62H208.58ZM101.67,128,38,186.36V69.64Zm8.88,8.14L124,148.42a6,6,0,0,0,8.1,0l13.4-12.28L208.58,194H47.43ZM154.33,128,218,69.64V186.36Z"/></symbol>
+  <symbol id="i-equalizer" viewBox="0 0 256 256"><path d="M78,96a6,6,0,0,1-6,6H24a6,6,0,0,1,0-12H72A6,6,0,0,1,78,96Zm-6,26H24a6,6,0,0,0,0,12H72a6,6,0,0,0,0-12Zm0,32H24a6,6,0,0,0,0,12H72a6,6,0,0,0,0-12Zm0,32H24a6,6,0,0,0,0,12H72a6,6,0,0,0,0-12Zm80-64H104a6,6,0,0,0,0,12h48a6,6,0,0,0,0-12Zm0,32H104a6,6,0,0,0,0,12h48a6,6,0,0,0,0-12Zm0,32H104a6,6,0,0,0,0,12h48a6,6,0,0,0,0-12Zm80-96H184a6,6,0,0,0,0,12h48a6,6,0,0,0,0-12ZM184,70h48a6,6,0,0,0,0-12H184a6,6,0,0,0,0,12Zm48,52H184a6,6,0,0,0,0,12h48a6,6,0,0,0,0-12Zm0,32H184a6,6,0,0,0,0,12h48a6,6,0,0,0,0-12Zm0,32H184a6,6,0,0,0,0,12h48a6,6,0,0,0,0-12Z"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 256 256"><path d="M128,26A102,102,0,1,0,230,128,102.12,102.12,0,0,0,128,26Zm81.57,64H169.19a132.58,132.58,0,0,0-25.73-50.67A90.29,90.29,0,0,1,209.57,90ZM218,128a89.7,89.7,0,0,1-3.83,26H171.81a155.43,155.43,0,0,0,0-52h42.36A89.7,89.7,0,0,1,218,128Zm-90,87.83a110,110,0,0,1-15.19-19.45A124.24,124.24,0,0,1,99.35,166h57.3a124.24,124.24,0,0,1-13.46,30.38A110,110,0,0,1,128,215.83ZM96.45,154a139.18,139.18,0,0,1,0-52h63.1a139.18,139.18,0,0,1,0,52ZM38,128a89.7,89.7,0,0,1,3.83-26H84.19a155.43,155.43,0,0,0,0,52H41.83A89.7,89.7,0,0,1,38,128Zm90-87.83a110,110,0,0,1,15.19,19.45A124.24,124.24,0,0,1,156.65,90H99.35a124.24,124.24,0,0,1,13.46-30.38A110,110,0,0,1,128,40.17Zm-15.46-.84A132.58,132.58,0,0,0,86.81,90H46.43A90.29,90.29,0,0,1,112.54,39.33ZM46.43,166H86.81a132.58,132.58,0,0,0,25.73,50.67A90.29,90.29,0,0,1,46.43,166Zm97,50.67A132.58,132.58,0,0,0,169.19,166h40.38A90.29,90.29,0,0,1,143.46,216.67Z"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 256 256"><path d="M178,42c-21,0-39.26,9.47-50,25.34C117.26,51.47,99,42,78,42a60.07,60.07,0,0,0-60,60c0,29.2,18.2,59.59,54.1,90.31a334.68,334.68,0,0,0,53.06,37,6,6,0,0,0,5.68,0,334.68,334.68,0,0,0,53.06-37C219.8,161.59,238,131.2,238,102A60.07,60.07,0,0,0,178,42ZM128,217.11C111.59,207.64,30,157.72,30,102A48.05,48.05,0,0,1,78,54c20.28,0,37.31,10.83,44.45,28.27a6,6,0,0,0,11.1,0C140.69,64.83,157.72,54,178,54a48.05,48.05,0,0,1,48,48C226,157.72,144.41,207.64,128,217.11Z"/></symbol>
+  <symbol id="i-image" viewBox="0 0 256 256"><path d="M216,42H40A14,14,0,0,0,26,56V200a14,14,0,0,0,14,14H216a14,14,0,0,0,14-14V56A14,14,0,0,0,216,42ZM40,54H216a2,2,0,0,1,2,2V163.57L188.53,134.1a14,14,0,0,0-19.8,0l-21.42,21.42L101.9,110.1a14,14,0,0,0-19.8,0L38,154.2V56A2,2,0,0,1,40,54ZM38,200V171.17l52.58-52.58a2,2,0,0,1,2.84,0L176.83,202H40A2,2,0,0,1,38,200Zm178,2H193.8l-38-38,21.41-21.42a2,2,0,0,1,2.83,0l38,38V200A2,2,0,0,1,216,202ZM146,100a10,10,0,1,1,10,10A10,10,0,0,1,146,100Z"/></symbol>
+  <symbol id="i-linkedin-logo" viewBox="0 0 256 256"><path d="M216,26H40A14,14,0,0,0,26,40V216a14,14,0,0,0,14,14H216a14,14,0,0,0,14-14V40A14,14,0,0,0,216,26Zm2,190a2,2,0,0,1-2,2H40a2,2,0,0,1-2-2V40a2,2,0,0,1,2-2H216a2,2,0,0,1,2,2ZM94,112v64a6,6,0,0,1-12,0V112a6,6,0,0,1,12,0Zm88,28v36a6,6,0,0,1-12,0V140a22,22,0,0,0-44,0v36a6,6,0,0,1-12,0V112a6,6,0,0,1,12,0v2.11A34,34,0,0,1,182,140ZM98,84A10,10,0,1,1,88,74,10,10,0,0,1,98,84Z"/></symbol>
+  <symbol id="i-lightning" viewBox="0 0 256 256"><path d="M213.84,118.63a6,6,0,0,0-3.73-4.25L150.88,92.17l15-75a6,6,0,0,0-10.27-5.27l-112,120a6,6,0,0,0,2.28,9.71l59.23,22.21-15,75a6,6,0,0,0,3.14,6.52A6.07,6.07,0,0,0,96,246a6,6,0,0,0,4.39-1.91l112-120A6,6,0,0,0,213.84,118.63ZM106,220.46l11.85-59.28a6,6,0,0,0-3.77-6.8l-55.6-20.85,91.46-98L138.12,94.82a6,6,0,0,0,3.77,6.8l55.6,20.85Z"/></symbol>
+  <symbol id="i-magnifying-glass" viewBox="0 0 256 256"><path d="M228.24,219.76l-51.38-51.38a86.15,86.15,0,1,0-8.48,8.48l51.38,51.38a6,6,0,0,0,8.48-8.48ZM38,112a74,74,0,1,1,74,74A74.09,74.09,0,0,1,38,112Z"/></symbol>
+  <symbol id="i-map-pin" viewBox="0 0 256 256"><path d="M128,66a38,38,0,1,0,38,38A38,38,0,0,0,128,66Zm0,64a26,26,0,1,1,26-26A26,26,0,0,1,128,130Zm0-112a86.1,86.1,0,0,0-86,86c0,30.91,14.34,63.74,41.47,94.94a252.32,252.32,0,0,0,41.09,38,6,6,0,0,0,6.88,0,252.32,252.32,0,0,0,41.09-38c27.13-31.2,41.47-64,41.47-94.94A86.1,86.1,0,0,0,128,18Zm0,206.51C113,212.93,54,163.62,54,104a74,74,0,0,1,148,0C202,163.62,143,212.93,128,224.51Z"/></symbol>
+  <symbol id="i-megaphone" viewBox="0 0 256 256"><path d="M246,120a46.05,46.05,0,0,0-46-46H160.15c-2.58-.15-54.1-3.57-103.15-44.71A14,14,0,0,0,34,40V200a13.85,13.85,0,0,0,8.07,12.68A14.16,14.16,0,0,0,48,214a13.9,13.9,0,0,0,9-3.3c40-33.52,81.57-42,97-44.07v34a14,14,0,0,0,6.23,11.65l11,7.33a14,14,0,0,0,21.32-8.17l12.13-45.71A46.07,46.07,0,0,0,246,120ZM49.29,201.52A2,2,0,0,1,46,200V40a1.9,1.9,0,0,1,1.15-1.8A2.08,2.08,0,0,1,48,38a1.91,1.91,0,0,1,1.26.48c44,36.92,89,45.19,104.71,47v69C138.29,156.33,93.3,164.61,49.29,201.52Zm131.64,7a2,2,0,0,1-3.05,1.18l-11-7.33a2,2,0,0,1-.89-1.67V166h26.2ZM200,154H166V86h34a34,34,0,1,1,0,68Z"/></symbol>
+  <symbol id="i-money" viewBox="0 0 256 256"><path d="M128,166a38,38,0,1,0-38-38A38,38,0,0,0,128,166Zm0-64a26,26,0,1,1-26,26A26,26,0,0,1,128,102ZM240,58H16a6,6,0,0,0-6,6V192a6,6,0,0,0,6,6H240a6,6,0,0,0,6-6V64A6,6,0,0,0,240,58ZM22,108.82A54.73,54.73,0,0,0,60.82,70H195.18A54.73,54.73,0,0,0,234,108.82v38.36A54.73,54.73,0,0,0,195.18,186H60.82A54.73,54.73,0,0,0,22,147.18ZM234,96.29A42.8,42.8,0,0,1,207.71,70H234ZM48.29,70A42.8,42.8,0,0,1,22,96.29V70ZM22,159.71A42.8,42.8,0,0,1,48.29,186H22ZM207.71,186A42.8,42.8,0,0,1,234,159.71V186Z"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 256 256"><path d="M196.89,130.94,144.4,111.6,125.06,59.11a13.92,13.92,0,0,0-26.12,0L79.6,111.6,27.11,130.94a13.92,13.92,0,0,0,0,26.12L79.6,176.4l19.34,52.49a13.92,13.92,0,0,0,26.12,0L144.4,176.4l52.49-19.34a13.92,13.92,0,0,0,0-26.12Zm-4.15,14.86-55.08,20.3a6,6,0,0,0-3.56,3.56l-20.3,55.08a1.92,1.92,0,0,1-3.6,0L89.9,169.66a6,6,0,0,0-3.56-3.56L31.26,145.8a1.92,1.92,0,0,1,0-3.6l55.08-20.3a6,6,0,0,0,3.56-3.56l20.3-55.08a1.92,1.92,0,0,1,3.6,0l20.3,55.08a6,6,0,0,0,3.56,3.56l55.08,20.3a1.92,1.92,0,0,1,0,3.6ZM146,40a6,6,0,0,1,6-6h18V16a6,6,0,0,1,12,0V34h18a6,6,0,0,1,0,12H182V64a6,6,0,0,1-12,0V46H152A6,6,0,0,1,146,40ZM246,88a6,6,0,0,1-6,6H230v10a6,6,0,0,1-12,0V94H208a6,6,0,0,1,0-12h10V72a6,6,0,0,1,12,0V82h10A6,6,0,0,1,246,88Z"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 256 256"><path d="M232,102a6,6,0,0,0,6-6V64a14,14,0,0,0-14-14H32A14,14,0,0,0,18,64V96a6,6,0,0,0,6,6,26,26,0,0,1,0,52,6,6,0,0,0-6,6v32a14,14,0,0,0,14,14H224a14,14,0,0,0,14-14V160a6,6,0,0,0-6-6,26,26,0,0,1,0-52ZM30,192V165.53a38,38,0,0,0,0-75.06V64a2,2,0,0,1,2-2H90V194H32A2,2,0,0,1,30,192Zm196-26.47V192a2,2,0,0,1-2,2H102V62H224a2,2,0,0,1,2,2V90.47a38,38,0,0,0,0,75.06Z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 256 256"><path d="M229.19,213c-15.81-27.32-40.63-46.49-69.47-54.62a70,70,0,1,0-63.44,0C67.44,166.5,42.62,185.67,26.81,213a6,6,0,1,0,10.38,6C56.4,185.81,90.34,166,128,166s71.6,19.81,90.81,53a6,6,0,1,0,10.38-6ZM70,96a58,58,0,1,1,58,58A58.07,58.07,0,0,1,70,96Z"/></symbol>
+  <symbol id="i-users" viewBox="0 0 256 256"><path d="M112.6,158.43a58,58,0,1,0-57.2,0A93.83,93.83,0,0,0,5.21,196.72a6,6,0,0,0,10.05,6.56,82,82,0,0,1,137.48,0,6,6,0,0,0,10-6.56A93.83,93.83,0,0,0,112.6,158.43ZM38,108a46,46,0,1,1,46,46A46.06,46.06,0,0,1,38,108Zm211,97a6,6,0,0,1-8.3-1.74A81.8,81.8,0,0,0,172,166a6,6,0,0,1,0-12,46,46,0,1,0-17.08-88.73,6,6,0,1,1-4.46-11.14,58,58,0,0,1,50.14,104.3,93.83,93.83,0,0,1,50.19,38.29A6,6,0,0,1,249,205Z"/></symbol>
+  <symbol id="i-users-three" viewBox="0 0 256 256"><path d="M243.6,148.8a6,6,0,0,1-8.4-1.2A53.58,53.58,0,0,0,192,126a6,6,0,0,1,0-12,26,26,0,1,0-25.18-32.5,6,6,0,0,1-11.62-3,38,38,0,1,1,59.91,39.63A65.69,65.69,0,0,1,244.8,140.4,6,6,0,0,1,243.6,148.8ZM189.19,213a6,6,0,0,1-2.19,8.2,5.9,5.9,0,0,1-3,.81,6,6,0,0,1-5.2-3,59,59,0,0,0-101.62,0,6,6,0,1,1-10.38-6A70.1,70.1,0,0,1,103,182.55a46,46,0,1,1,50.1,0A70.1,70.1,0,0,1,189.19,213ZM128,178a34,34,0,1,0-34-34A34,34,0,0,0,128,178ZM70,120a6,6,0,0,0-6-6A26,26,0,1,1,89.18,81.49a6,6,0,1,0,11.62-3,38,38,0,1,0-59.91,39.63A65.69,65.69,0,0,0,11.2,140.4a6,6,0,1,0,9.6,7.2A53.58,53.58,0,0,1,64,126,6,6,0,0,0,70,120Z"/></symbol>
+</svg>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="mark" viewBox="0 0 169.58 224.95">
+    <path d="M0 0H36.86V107.29H0Z"/>
+    <path class="mark-i" d="M0 117.67H36.86V224.95H0Z"/>
+    <path d="M46.03 0H85.82L107.8 35.65L129.43 0H169.58V107.29H132.55V55.03L107.8 89.29L83.06 55.03V107.29H46.03Z"/>
+    <path d="M46.03 117.67H87.9L124.59 167.16V117.67H169.58V224.95H128.22L90.32 178.23V224.95H46.03Z"/>
+  </symbol>
+</svg>
+
+<!-- Preloader -->
+<div class="loader" aria-hidden="true">
+  <div class="loader__bar"></div>
+  <div class="loader__meta">
+    <span>Doors open</span>
+    <span class="loader__count">00</span>
+  </div>
+</div>
+
+<div class="wipe" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"><span class="cursor__label"></span></div>
+<div class="progress" aria-hidden="true"><span></span></div>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="header">
+  <div class="header__inner">
+    <a class="brand" href="#top" aria-label="IMIN — home">
+      <svg class="mark" aria-hidden="true"><use href="#mark"/></svg>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#problem" data-nav>Problem</a>
+      <a href="#product" data-nav>Product</a>
+      <a href="#app" data-nav>App</a>
+      <a href="#vision" data-nav>Vision</a>
+      <a href="#team" data-nav>Team</a>
+    </nav>
+    <div class="header__cta">
+      <a class="link-quiet hide-sm" href="https://dashboard.imin.wtf" target="_blank" rel="noopener">Dashboard<svg class="i"><use href="#i-arrow-up-right"/></svg></a>
+      <a class="btn btn--door btn--sm" href="#apply"><span>Let’s talk</span></a>
+      <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="menu" id="menu" aria-hidden="true">
+  <nav class="menu__nav" aria-label="Mobile">
+    <a href="#problem"><small>01</small>Problem</a>
+    <a href="#product"><small>02</small>Product</a>
+    <a href="#app"><small>03</small>App</a>
+    <a href="#vision"><small>04</small>Vision</a>
+    <a href="#team"><small>05</small>Team</a>
+    <a href="#apply"><small>06</small>Let’s talk</a>
+  </nav>
+  <div class="menu__beat beat" data-beat data-rows="2"></div>
+</div>
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top">
+    <div class="hero__media" aria-hidden="true">
+      <div class="hero__photo"><img src="assets/img/photos/hero.jpg" srcset="assets/img/photos/hero-m.jpg 1000w, assets/img/photos/hero.jpg 2000w" sizes="100vw" alt="" fetchpriority="high"></div>
+      <div class="hero__shade"></div>
+      <div class="hero__dusk"></div>
+    </div>
+
+    <div class="wrap hero__inner">
+      <p class="eyebrow hero__eyebrow"><span class="dot"></span>The two-sided platform for nightlife</p>
+      <h1 class="display hero__title">
+        <span class="line"><span>The night has</span></span>
+        <span class="line"><span>two problems.</span></span>
+        <span class="line"><span class="haze">We solve both.</span></span>
+      </h1>
+      <div class="hero__bottom">
+        <p class="lead hero__lead">The operating system that runs the night, for organizers. And the app that helps people find an event, and someone to go with.</p>
+        <div class="hero__actions">
+          <a class="btn btn--door" href="#apply"><span>Let’s talk</span><svg class="i"><use href="#i-arrow-right"/></svg></a>
+          <a class="btn btn--ghost" href="https://dashboard.imin.wtf" target="_blank" rel="noopener"><span>Open the dashboard</span><svg class="i"><use href="#i-arrow-up-right"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__foot wrap">
+      <span class="scroll-hint" aria-hidden="true"><span>Scroll</span><i></i></span>
+    </div>
+  </section>
+
+  <!-- ============ MARQUEE ============ -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span>Organizers</span><b></b><span>Guests</span><b></b><span class="door-word">The two-sided platform for nightlife</span><b></b>
+      <span>Organizers</span><b></b><span>Guests</span><b></b><span class="door-word">The two-sided platform for nightlife</span><b></b>
+    </div>
+  </div>
+
+  <!-- ============ THE NIGHT (photo collage) ============ -->
+  <section class="night" aria-label="Nightlife">
+    <div class="night__grid">
+      <figure class="ph ph--1"><img src="assets/img/photos/night-1.jpg" alt="A DJ smiling behind the decks, hands up in the crowd"></figure>
+      <figure class="ph ph--2"><img src="assets/img/photos/night-2.jpg" alt="A woman dancing under the lights"></figure>
+      <figure class="ph ph--3"><img src="assets/img/photos/night-3.jpg" alt="A crowd in front of a lit stage"></figure>
+      <figure class="ph ph--4"><img src="assets/img/photos/night-4.jpg" alt="A hand on a DJ controller"></figure>
+      <figure class="ph ph--5"><img src="assets/img/photos/night-5.jpg" alt="A DJ raising a hand to a packed festival crowd"></figure>
+    </div>
+  </section>
+
+  <!-- ============ PROBLEM ============ -->
+  <section class="problem" id="problem" aria-labelledby="problem-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">01 — Problem</span>
+        <h2 class="display sec-title" id="problem-title" data-split>Two sides.<br>Two problems.</h2>
+      </div>
+
+      <div class="sides">
+        <article class="side side--a" data-tilt>
+          <div class="side__top">
+            <span class="side__tag"><i class="sq sq--ultra"></i>Side A · The organizer</span>
+            <svg class="i i--lg"><use href="#i-megaphone"/></svg>
+          </div>
+          <figure class="side__photo"><img src="assets/img/photos/organizer.jpg" alt="A DJ playing to a packed club"></figure>
+          <h3 class="display side__title">A 2-person crew vs. a marketing team.</h3>
+          <ul class="side__list">
+            <li><span>01</span>A 2-person crew can’t run ads, email, SMS and design like a company with a marketing team.</li>
+            <li><span>02</span>A weak night shows up too late, when the ad budget is already spent.</li>
+          </ul>
+        </article>
+
+        <div class="sides__vs" aria-hidden="true"><span>×</span></div>
+
+        <article class="side side--b" data-tilt>
+          <div class="side__top">
+            <span class="side__tag"><i class="sq sq--door"></i>Side B · The guest</span>
+            <svg class="i i--lg"><use href="#i-users"/></svg>
+          </div>
+          <figure class="side__photo"><img src="assets/img/photos/guests.jpg" alt="A crowd in front of a glowing stage"></figure>
+          <h3 class="display side__title">An event. And someone to go with.</h3>
+          <ul class="side__list">
+            <li><span>01</span>Find an event nearby, and someone to go with.</li>
+            <li><span>02</span>Company for a night out, not a romantic match. Dating apps don’t fit.</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRODUCT: ORGANIZER OS ============ -->
+  <section class="product" id="product" aria-labelledby="product-title">
+    <div class="wrap product__intro">
+      <div class="sec-head">
+        <span class="sec-num">02 — Product · Side A</span>
+        <h2 class="display sec-title" id="product-title" data-split>The operating system<br>that runs the night.</h2>
+      </div>
+      <p class="lead product__lead" data-reveal>For organizers. Live today at <a class="haze-link" href="https://dashboard.imin.wtf" target="_blank" rel="noopener">dashboard.imin.wtf</a>.</p>
+    </div>
+
+    <div class="hscroll">
+      <div class="hscroll__track">
+
+        <!-- 01 Forecast -->
+        <article class="feat">
+          <div class="feat__copy">
+            <span class="feat__num">01</span>
+            <span class="feat__icon"><svg class="i i--lg"><use href="#i-chart-line-up"/></svg></span>
+            <h3 class="display feat__title">Forecast</h3>
+            <p>IMIN flags a weak night about two weeks out, so you can act before the ad budget is spent.</p>
+          </div>
+          <div class="feat__visual card fc">
+            <div class="fc__top">
+              <div class="fc__name">
+                <span>Warehouse 02 · Sat 23:00</span>
+                <b>Ticket pace</b>
+              </div>
+              <span class="fc__status"><i></i>At risk · 14 days out</span>
+            </div>
+            <div class="fc__kpis">
+              <div class="fc__kpi"><span>Sold</span><b class="display" data-count="238">238</b></div>
+              <div class="fc__kpi"><span>Target today</span><b class="display">289</b></div>
+              <div class="fc__kpi fc__kpi--proj"><span>Projected</span><b class="display"><span data-count="412">412</span><small>/600</small></b></div>
+            </div>
+            <div class="fc__plot">
+              <svg class="fc__chart" viewBox="0 0 560 260" role="img" aria-label="Ticket sales against target pace: 238 sold with 14 days to go, projected 412 of 600"></svg>
+              <div class="fc__tip" aria-hidden="true"></div>
+            </div>
+            <div class="fc__legend">
+              <span><i class="fc__sw fc__sw--target"></i>Target pace</span>
+              <span><i class="fc__sw fc__sw--actual"></i>Sold</span>
+              <span><i class="fc__sw fc__sw--proj"></i>Projected</span>
+            </div>
+            <div class="fc__actions">
+              <div class="fc__action"><svg class="i"><use href="#i-globe"/></svg><div><b>Boost Meta Ads</b><span>Lookalike of past buyers</span></div><em>+60</em></div>
+              <div class="fc__action"><svg class="i"><use href="#i-chat-circle"/></svg><div><b>SMS drop</b><span>To last night’s buyers</span></div><em>+35</em></div>
+            </div>
+            <span class="demo-note">Illustrative data</span>
+          </div>
+        </article>
+
+        <!-- 02 Dashboard -->
+        <article class="feat">
+          <div class="feat__copy">
+            <span class="feat__num">02</span>
+            <span class="feat__icon"><svg class="i i--lg"><use href="#i-ticket"/></svg></span>
+            <h3 class="display feat__title">Live dashboard</h3>
+            <p>A live event overview: tickets sold, revenue and cycle metrics.</p>
+          </div>
+          <div class="feat__visual card live-card">
+            <div class="toast" aria-hidden="true"><svg class="i"><use href="#i-ticket"/></svg><span>+1 ticket · Tier 2</span></div>
+            <div class="card__head"><span>Event overview</span><span class="badge"><span class="live"></span>Live</span></div>
+            <div class="stats">
+              <div class="stat"><span class="stat__label">Tickets sold</span><span class="stat__val display"><span data-count="412">0</span><small>/600</small></span></div>
+              <div class="stat"><span class="stat__label">Revenue</span><span class="stat__val display">€<span data-count="6180" data-sep>0</span></span></div>
+              <div class="stat"><span class="stat__label">Sell-through</span><span class="stat__val display"><span data-count="69">0</span>%</span></div>
+            </div>
+            <div class="bars" aria-hidden="true">
+              <span style="--h:.32"></span><span style="--h:.45"></span><span style="--h:.38"></span><span style="--h:.56"></span><span style="--h:.5"></span><span style="--h:.64"></span><span style="--h:.6"></span><span style="--h:.72"></span><span style="--h:.68"></span><span style="--h:.84"></span><span style="--h:.78"></span><span class="is-door" style="--h:.95"></span>
+            </div>
+            <div class="card__row"><span>Early bird</span><span>Sold out</span></div>
+            <div class="card__row"><span>Tier 2</span><span><b class="tier2">212</b> / 300</span></div>
+            <span class="demo-note">Illustrative data</span>
+          </div>
+        </article>
+
+        <!-- 03 Marketing -->
+        <article class="feat">
+          <div class="feat__copy">
+            <span class="feat__num">03</span>
+            <span class="feat__icon"><svg class="i i--lg"><use href="#i-megaphone"/></svg></span>
+            <h3 class="display feat__title">Marketing</h3>
+            <p>Meta Ads, email, SMS and AI posters — built from your own buyer data and launched from the same place you sell tickets.</p>
+          </div>
+          <div class="feat__visual card channels">
+            <div class="card__head"><span>Campaign</span><span class="badge mk__badge">Ready</span></div>
+            <div class="channel"><svg class="i i--lg"><use href="#i-globe"/></svg><div><b>Meta Ads</b><span>From your buyer data</span></div><i class="toggle on"></i></div>
+            <div class="channel"><svg class="i i--lg"><use href="#i-envelope"/></svg><div><b>Email</b><span>From your buyer data</span></div><i class="toggle on"></i></div>
+            <div class="channel"><svg class="i i--lg"><use href="#i-chat-circle"/></svg><div><b>SMS</b><span>From your buyer data</span></div><i class="toggle on"></i></div>
+            <div class="channel"><svg class="i i--lg"><use href="#i-image"/></svg><div><b>AI poster</b><span>3 export-ready variants</span></div><i class="toggle on"></i></div>
+            <div class="mk__send">
+              <div class="mk__bar"><i></i></div>
+              <div class="mk__status"><span class="mk__text">Ready to launch</span><b class="mk__reach"><span class="mk__n">0</span> reached</b></div>
+            </div>
+            <span class="demo-note">Illustrative data</span>
+          </div>
+        </article>
+
+        <!-- 04 Poster Studio -->
+        <article class="feat feat--wide">
+          <div class="feat__copy">
+            <span class="feat__num">04</span>
+            <span class="feat__icon"><svg class="i i--lg"><use href="#i-sparkle"/></svg></span>
+            <h3 class="display feat__title">Poster Studio</h3>
+            <p>Describe the night, pick a vibe matched to the genre, and get three on-brand, export-ready variants.</p>
+          </div>
+          <div class="feat__visual studio">
+            <div class="studio__prompt">
+              <svg class="i"><use href="#i-sparkle"/></svg>
+              <span class="studio__typed" data-typed="Warehouse techno. Doors at midnight. Strobes, no phones."></span><i class="caret"></i>
+            </div>
+            <div class="studio__vibes" role="group" aria-label="Choose a vibe">
+              <button class="vibe is-active" data-vibe="techno">Techno</button>
+              <button class="vibe" data-vibe="house">House</button>
+              <button class="vibe" data-vibe="disco">Disco</button>
+              <button class="vibe" data-vibe="hiphop">Hip-hop</button>
+            </div>
+            <div class="posters" data-vibe-current="techno">
+              <div class="poster poster--1"><img class="poster__img" src="assets/img/photos/crowd.jpg" alt="" loading="lazy"><div class="poster__beat"></div><span class="poster__date">SAT · 23:00</span><b class="poster__title">Warehouse<br>02</b><span class="poster__foot">IMIN presents</span></div>
+              <div class="poster poster--2"><img class="poster__img" src="assets/img/photos/dj.jpg" alt="" loading="lazy"><div class="poster__beat"></div><span class="poster__date">SAT · 23:00</span><b class="poster__title">Doors at<br>midnight</b><span class="poster__foot">Metz · FR</span></div>
+              <div class="poster poster--3"><img class="poster__img" src="assets/img/photos/lights.jpg" alt="" loading="lazy"><div class="poster__beat"></div><span class="poster__date">SAT · 23:00</span><b class="poster__title">No<br>phones</b><span class="poster__foot">Strobes only</span></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 05 Audience -->
+        <article class="feat feat--ultra">
+          <div class="feat__copy">
+            <span class="feat__num">05</span>
+            <span class="feat__icon"><svg class="i i--lg"><use href="#i-users-three"/></svg></span>
+            <h3 class="display feat__title">Your audience</h3>
+            <p>Every ticket buyer is added to your email, Meta Ads and SMS audiences automatically. Export the list any time.</p>
+          </div>
+          <div class="feat__visual owner">
+            <p class="display owner__big">Your fans’ data belongs to you.<br><span>Not to us.</span></p>
+            <a class="btn btn--paper" href="https://dashboard.imin.wtf" target="_blank" rel="noopener"><span>Open the dashboard</span><svg class="i"><use href="#i-arrow-up-right"/></svg></a>
+          </div>
+        </article>
+
+      </div>
+      <nav class="hnav" aria-label="Product features">
+        <button type="button" class="hnav__item is-active" data-i="0"><b>01</b>Forecast</button>
+        <button type="button" class="hnav__item" data-i="1"><b>02</b>Live dashboard</button>
+        <button type="button" class="hnav__item" data-i="2"><b>03</b>Marketing</button>
+        <button type="button" class="hnav__item" data-i="3"><b>04</b>Poster Studio</button>
+        <button type="button" class="hnav__item" data-i="4"><b>05</b>Your audience</button>
+        <div class="hscroll__progress" aria-hidden="true"><span></span></div>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ============ APP: SIDE B ============ -->
+  <section class="app" id="app" aria-labelledby="app-title">
+    <div class="wrap app__grid">
+      <div class="app__copy">
+        <div class="sec-head">
+          <span class="sec-num">03 — Product · Side B</span>
+          <h2 class="display sec-title" id="app-title" data-split>Find an event.<br>And someone<br>to go with.</h2>
+        </div>
+        <p class="lead" data-reveal>Not a dating app. Company for a night out.</p>
+
+        <ol class="app__list">
+          <li data-reveal>
+            <svg class="i i--lg"><use href="#i-map-pin"/></svg>
+            <div><h3>Find an event nearby</h3></div>
+          </li>
+          <li data-reveal>
+            <svg class="i i--lg"><use href="#i-users"/></svg>
+            <div><h3>Find someone to go with</h3></div>
+          </li>
+          <li data-reveal>
+            <svg class="i i--lg"><use href="#i-money"/></svg>
+            <div><h3>Earn</h3><p>Host exclusive experiences and get paid.</p></div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="app__stage" aria-hidden="true">
+        <div class="app__halo"></div>
+        <div class="phone" data-depth="0.25">
+          <div class="phone__screen">
+            <div class="phone__status"><span>23:41</span><span class="phone__notch"></span><span>●●●</span></div>
+            <div class="phone__head">
+              <span class="phone__hello">Tonight near you</span>
+              <svg class="i"><use href="#i-magnifying-glass"/></svg>
+            </div>
+            <div class="phone__feed"><div class="phone__track">
+            <div class="ev ev--hero">
+              <div class="ev__art"><img src="assets/img/photos/dancefloor.jpg" alt="" loading="lazy"></div>
+              <div class="ev__meta"><b>Warehouse 02</b><span>Techno · 1.2 km · 23:00</span></div>
+              <div class="ev__going"><i></i><i></i><i></i><i class="ev__me"></i><span class="ev__count">+18 going</span></div>
+            </div>
+            <div class="ev">
+              <div class="ev__thumb"><img src="assets/img/photos/dj.jpg" alt="" loading="lazy"></div>
+              <div class="ev__meta"><b>Rooftop House</b><span>House · 2.4 km · 22:00</span></div>
+              <svg class="i"><use href="#i-heart"/></svg>
+            </div>
+            <div class="ev">
+              <div class="ev__thumb"><img src="assets/img/photos/lights.jpg" alt="" loading="lazy"></div>
+              <div class="ev__meta"><b>Disco Basement</b><span>Disco · 3.1 km · 00:00</span></div>
+              <svg class="i"><use href="#i-heart"/></svg>
+            </div>
+            <div class="ev ev--hero" aria-hidden="true">
+              <div class="ev__art"><img src="assets/img/photos/dancefloor.jpg" alt="" loading="lazy"></div>
+              <div class="ev__meta"><b>Warehouse 02</b><span>Techno · 1.2 km · 23:00</span></div>
+              <div class="ev__going"><i></i><i></i><i></i><span>+18 going</span></div>
+            </div>
+            <div class="ev">
+              <div class="ev__thumb"><img src="assets/img/photos/dj.jpg" alt="" loading="lazy"></div>
+              <div class="ev__meta"><b>Rooftop House</b><span>House · 2.4 km · 22:00</span></div>
+              <svg class="i"><use href="#i-heart"/></svg>
+            </div>
+            <div class="ev">
+              <div class="ev__thumb"><img src="assets/img/photos/lights.jpg" alt="" loading="lazy"></div>
+              <div class="ev__meta"><b>Disco Basement</b><span>Disco · 3.1 km · 00:00</span></div>
+              <svg class="i"><use href="#i-heart"/></svg>
+            </div>
+            </div></div>
+            <div class="phone__cta"><span class="phone__cta-a">I’m in</span><span class="phone__cta-b">You’re in ✓</span></div>
+          </div>
+        </div>
+        <div class="float float--1" data-depth="0.6"><svg class="i"><use href="#i-chat-circle"/></svg><span><b>Léa</b> is going too</span></div>
+        <div class="float float--3" data-depth="0.45"><svg class="i"><use href="#i-ticket"/></svg><span>Ticket saved · Sat 23:00</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WEDGE / MOAT (ultra block) ============ -->
+  <section class="wedge" aria-labelledby="wedge-title">
+    <div class="wedge__beat beat" data-beat data-rows="6" data-tone="ultra" aria-hidden="true"></div>
+    <div class="wrap">
+      <h2 class="visually-hidden" id="wedge-title">Strategy</h2>
+      <div class="wedge__row">
+        <span class="label">Side A</span>
+        <p class="display wedge__line">The organizer OS<br>is the wedge.</p>
+      </div>
+      <div class="wedge__row wedge__row--r">
+        <span class="label">Side B</span>
+        <p class="display wedge__line">The consumer app<br>is the moat.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROOF ============ -->
+  <section class="proof" aria-labelledby="proof-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">04 — Proof</span>
+        <h2 class="display sec-title" id="proof-title" data-split>Where we are.</h2>
+      </div>
+      <div class="proof__grid">
+        <div class="tile tile--big" data-reveal>
+          <img class="tile__photo" src="assets/img/photos/metz.jpg" alt="A house and techno night" loading="lazy">
+          <svg class="i i--lg"><use href="#i-equalizer"/></svg>
+          <span class="tile__k display">Customer zero</span>
+          <p>Our founder’s own house &amp; techno night in Metz runs on IMIN.</p>
+        </div>
+        <div class="tile" data-reveal>
+          <span class="tile__k display">’24 <i>&amp;</i> ’25</span>
+          <p>Tested at Web Summit.</p>
+        </div>
+        <div class="tile" data-reveal>
+          <span class="tile__k display">Winner</span>
+          <p>Metz Startup Challenge.</p>
+        </div>
+        <div class="tile" data-reveal>
+          <span class="tile__k display">Alumni</span>
+          <p>University of Luxembourg Incubator, summer school.</p>
+        </div>
+        <div class="tile tile--live" data-reveal>
+          <span class="tile__k display">Live</span>
+          <p>The organizer product is live today at <a class="haze-link" href="https://dashboard.imin.wtf" target="_blank" rel="noopener">dashboard.imin.wtf</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VISION ============ -->
+  <section class="vision" id="vision" aria-labelledby="vision-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">05 — Vision</span>
+        <h2 class="display sec-title" id="vision-title" data-split>France.<br>Spain. Portugal.</h2>
+      </div>
+      <p class="lead vision__lead" data-reveal>We’re raising our first round to build the consumer app and grow the organizer cohort across France, Spain and Portugal.</p>
+
+      <div class="expand">
+        <ol class="expand__steps">
+          <li class="xstep is-active" data-step="0">
+            <span class="xstep__code display">FR</span>
+            <div class="xstep__body">
+              <h3>France</h3>
+              <p>The beachhead. Starting from Metz.</p>
+            </div>
+            <span class="xstep__tag">Now</span>
+            <i class="xstep__bar"><b></b></i>
+          </li>
+          <li class="xstep" data-step="1">
+            <span class="xstep__code display">ES</span>
+            <div class="xstep__body">
+              <h3>Spain</h3>
+              <p>Founding cohort.</p>
+            </div>
+            <span class="xstep__tag">Next</span>
+            <i class="xstep__bar"><b></b></i>
+          </li>
+          <li class="xstep" data-step="2">
+            <span class="xstep__code display">PT</span>
+            <div class="xstep__body">
+              <h3>Portugal</h3>
+              <p>Founding cohort.</p>
+            </div>
+            <span class="xstep__tag">Next</span>
+            <i class="xstep__bar"><b></b></i>
+          </li>
+        </ol>
+        <div class="expand__map">
+          <svg class="xmap" role="img" aria-label="Map of France, Spain and Portugal with a route from Metz to Spain and Portugal"></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TEAM (paper) ============ -->
+  <section class="team paper" id="team" aria-labelledby="team-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">06 — Team</span>
+        <h2 class="display sec-title" id="team-title" data-split>Team.</h2>
+      </div>
+      <div class="team__grid">
+        <article class="person" data-reveal>
+          <div class="avatar avatar--photo"><img src="assets/img/photos/bohdan.jpg" alt="Bohdan Shostak" loading="lazy" width="400" height="400"></div>
+          <span class="person__role">CEO / Founder</span>
+          <h3 class="display person__name">Bohdan Shostak</h3>
+          <p>Serial founder with a background in marketing. Lives in nightlife and knows the organizer’s pain firsthand. Taught himself and built the first app alone in 2024.</p>
+          <a class="person__link" href="https://www.linkedin.com/in/bohdan-shostak-653006212/" target="_blank" rel="noopener"><svg class="i"><use href="#i-linkedin-logo"/></svg>LinkedIn<svg class="i"><use href="#i-arrow-up-right"/></svg></a>
+        </article>
+        <article class="person" data-reveal>
+          <div class="avatar avatar--photo"><img src="assets/img/photos/ivan.jpg" alt="Ivan" loading="lazy" width="400" height="400"></div>
+          <span class="person__role">CTO / Co-founder</span>
+          <h3 class="display person__name">Ivan</h3>
+          <a class="person__link" href="https://www.linkedin.com/in/ivan-kozmulyak-a72b2120a/" target="_blank" rel="noopener"><svg class="i"><use href="#i-linkedin-logo"/></svg>LinkedIn<svg class="i"><use href="#i-arrow-up-right"/></svg></a>
+        </article>
+        <article class="person person--open" data-reveal>
+          <div class="avatar avatar--open"><span>?</span></div>
+          <span class="person__role">Growth / Co-founder</span>
+          <h3 class="display person__name">Open role</h3>
+          <p>We’re looking for a growth co-founder.</p>
+          <a class="arrow-link" href="#apply" data-topic="team">Is it you? Let’s talk<svg class="i"><use href="#i-arrow-right"/></svg></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ APPLY / CONTACT ============ -->
+  <section class="apply" id="apply" aria-labelledby="apply-title">
+    <div class="apply__photo" aria-hidden="true"><img src="assets/img/photos/apply.jpg" alt="" loading="lazy"></div>
+    <div class="wrap apply__grid">
+      <div class="apply__copy">
+        <span class="sec-num">07 — Let’s talk</span>
+        <h2 class="display apply__title" id="apply-title" data-split>Join the<br>founding<br>cohort.</h2>
+        <p class="lead">We’re admitting a small founding cohort across <b>FR · ES · PT</b>. Every application is read by hand. Expect a reply within 48 hours.</p>
+        <ul class="apply__points">
+          <li><svg class="i"><use href="#i-clock"/></svg>Reply within 48 hours</li>
+          <li><svg class="i"><use href="#i-user"/></svg>Every application read by hand</li>
+        </ul>
+      </div>
+
+      <form class="form" id="apply-form" novalidate data-endpoint="" data-email="hello@imin.wtf">
+        <fieldset class="form__topic">
+          <legend class="label">I’m reaching out as</legend>
+          <label><input type="radio" name="topic" value="organizer" checked><span>Organizer</span></label>
+          <label><input type="radio" name="topic" value="investor"><span>Investor</span></label>
+          <label><input type="radio" name="topic" value="team"><span>Future teammate</span></label>
+        </fieldset>
+
+        <div class="field">
+          <input id="f-name" name="name" type="text" autocomplete="name" required placeholder=" ">
+          <label for="f-name">Your name</label>
+        </div>
+        <div class="field">
+          <input id="f-email" name="email" type="email" autocomplete="email" required placeholder=" ">
+          <label for="f-email">Email</label>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <input id="f-org" name="organization" type="text" autocomplete="organization" placeholder=" ">
+            <label for="f-org" data-label-organizer="Collective / event name" data-label-investor="Fund / company" data-label-team="LinkedIn or portfolio">Collective / event name</label>
+          </div>
+          <div class="field field--select">
+            <select id="f-country" name="country">
+              <option value="FR">France</option>
+              <option value="ES">Spain</option>
+              <option value="PT">Portugal</option>
+              <option value="Other">Elsewhere</option>
+            </select>
+            <label for="f-country">Country</label>
+          </div>
+        </div>
+        <div class="field">
+          <textarea id="f-msg" name="message" rows="3" placeholder=" "></textarea>
+          <label for="f-msg">Tell us about your nights</label>
+        </div>
+
+        <div class="form__foot">
+          <button class="btn btn--door btn--lg" type="submit"><span>I’m in</span><svg class="i"><use href="#i-arrow-right"/></svg></button>
+          <p class="form__status" role="status" aria-live="polite"></p>
+        </div>
+        <div class="form__done" hidden>
+          <div class="form__mark"></div>
+          <b class="display">You’re in.</b>
+          <p>Every application is read by hand. Expect a reply within 48 hours.</p>
+        </div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap footer__top">
+    <p class="display footer__claim">The two-sided<br>platform for nightlife.</p>
+    <nav class="footer__nav" aria-label="Footer">
+      <div>
+        <span class="label">Site</span>
+        <a href="#problem">Problem</a><a href="#product">Product</a><a href="#app">App</a><a href="#vision">Vision</a><a href="#team">Team</a>
+      </div>
+      <div>
+        <span class="label">Organizers</span>
+        <a href="https://dashboard.imin.wtf" target="_blank" rel="noopener">Dashboard ↗</a>
+        <a href="#apply">Founding cohort</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap footer__bottom">
+    <span>© <span data-year>2026</span> IMIN</span>
+    <span>imin.wtf · <a href="credits.html" class="footer__small">Photo credits</a></span>
+    <a href="#top" class="to-top">Back to top ↑</a>
+  </div>
+</footer>
+
+<script src="assets/vendor/gsap.min.js" defer></script>
+<script src="assets/vendor/ScrollTrigger.min.js" defer></script>
+<script src="assets/vendor/SplitText.min.js" defer></script>
+<script src="assets/vendor/lenis.min.js" defer></script>
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>

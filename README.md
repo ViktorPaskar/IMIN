@@ -68,3 +68,16 @@ assets/img/             favicon.svg, og.png (превью для соцсете�
 Фото лежат в `assets/img/photos/`: `hero.jpg`, `night-1…5.jpg` (коллаж после hero), `crowd.jpg`, `dj.jpg`, `dancefloor.jpg`, `lights.jpg`, `organizer.jpg`, `guests.jpg`, `metz.jpg`, `apply.jpg`.
 Сейчас это фото с Flickr из датасета Google Open Images под лицензией CC BY 2.0. Лицензия требует указывать авторов, поэтому они перечислены в футере.
 Чтобы заменить фото своими, положите файл с тем же именем. Если файла нет, блок с ним просто скрывается.
+
+---
+
+# Guest page (October 2026)
+
+`index.html` is now the guest page (spec: "Гостьова сторінка imin.wtf", 13.10.2026).
+The previous organizer/investor page lives at `investors.html` (noindex, not linked from the menu).
+
+- **Content** comes from `assets/js/config.js`: upcoming nights, the last night, formats, links, flags. Edit that file, not the HTML.
+- **Hero states** A / B / C switch automatically (`state: 'auto'`). Preview any state with `#state-a`, `#state-b`, `#state-c` in the URL.
+- **Fonts** are self-hosted in `assets/fonts` (latin + latin-ext). Barlow Condensed and DM Sans have no Cyrillic; the UA version will need a decision.
+- **Analytics** events go to `window.dataLayer` only after consent in the cookie banner.
+- **Still needed:** the event page URL, the "I'm in" channel link, the Friday playlist link, `subscribeEndpoint`, /pro, translations (FR, ES, UA).
