@@ -544,12 +544,24 @@
   else ScrollTrigger.batch('[data-reveal]', { start: 'top 90%', onEnter: els => gsap.to(els, { opacity: 1, y: 0, duration: 1.1, stagger: .08, overwrite: true }) });
 
   // the idea: thoughts get crossed out as you scroll, answers light up
-  $$('.qa__row').forEach(row => {
-    const q = $('.qa__q', row), a = $('.qa__a', row);
-    if (reduced) return;
-    gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 82%', end: 'top 52%', scrub: .6 } })
-      .fromTo(q, { '--strike': 0 }, { '--strike': 1, ease: 'none' }, 0)
-      .fromTo(a, { opacity: .12, x: -12 }, { opacity: 1, x: 0, ease: 'none' }, .2);
+  // the idea: each card opens, the thought gets crossed out and fades back, the answer rises word by word
+  if (!reduced) document.fonts?.ready.then(() => {
+    $$('.qa__row').forEach((row, i) => {
+      const q = $('.qa__q', row), a = $('.qa__a', row);
+      const words = SplitText.create(a, { type: 'words', mask: 'words' }).words;
+      gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 84%' }, delay: (i % 2) * .12 })
+        .from(row, { clipPath: 'inset(0 0 100% 0)', y: 30, duration: 1.1, ease: 'expo.out' })
+        .fromTo(row, { '--glow': 1 }, { '--glow': 0, duration: 1.6, ease: 'power2.out' }, .1)
+        .from(q, { y: 12, opacity: 0, duration: .6 }, .2)
+        .fromTo(q, { '--strike': 0 }, { '--strike': 1, duration: .55, ease: 'power2.inOut' }, .65)
+        .to(q, { opacity: .55, duration: .5 }, 1.05)
+        .from(words, { yPercent: 110, duration: .9, stagger: .05, ease: 'expo.out' }, .95);
+    });
+    ScrollTrigger.refresh();
+  });
+  // a soft light follows the pointer across the cards
+  if (finePointer && !reduced) $$('.qa__row').forEach(row => {
+    row.addEventListener('pointermove', e => { const r = row.getBoundingClientRect(); row.style.setProperty('--px', `${e.clientX - r.left}px`); row.style.setProperty('--py', `${e.clientY - r.top}px`); });
   });
 
   // setlist rows and tiles
