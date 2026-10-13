@@ -434,14 +434,18 @@
 
   /* The beat breathes like a sound wave once the page is up */
   const wave = (() => {
-    let on = false, visible = true;
+    let on = false, visible = true, prm = [];
+    // every stick gets its own tempo and phase, so each one moves on its own like a level meter
+    const seed = () => { prm = beatNodes.map(() => [1.8 + Math.random() * 2.6, 3.1 + Math.random() * 3.4, Math.random() * 6.28, Math.random() * 6.28]); };
+    const prep = () => { seed(); beatNodes.forEach(nd => { nd.style.transformBox = 'fill-box'; nd.style.transformOrigin = '50% 50%'; }); };
     const run = () => {
       if (!visible) return;
       const t = gsap.ticker.time;
       const n = beatNodes.length;
       for (let i = 0; i < n; i++) {
-        const x = i / 9;
-        const v = .58 + .42 * Math.abs(Math.sin(t * 2.1 + x * .9) * .6 + Math.sin(t * 3.3 - x * 1.7) * .4);
+        const [f1, f2, p1, p2] = prm[i];
+        const swell = .78 + .22 * Math.sin(t * 1.6 - i * .22); // a slow pulse travels along the line
+        const v = Math.max(.3, Math.min(1, swell * (.3 + .7 * Math.abs(.6 * Math.sin(t * f1 + p1) + .4 * Math.sin(t * f2 + p2)))));
         const nd = beatNodes[i];
         nd.style.transform = `${nd.dataset.tx ? `translate(${nd.dataset.tx}px,0) ` : ''}scaleY(${v.toFixed(3)})`;
       }
@@ -449,11 +453,11 @@
     return {
       start() {
         if (on || reduced) return; on = true;
-        beatNodes.forEach(nd => { nd.style.transformBox = 'fill-box'; nd.style.transformOrigin = '50% 100%'; });
+        prep();
         gsap.ticker.add(run);
         ScrollTrigger.create({ trigger: '.g-hero', start: 'top top', end: 'bottom top', onToggle: st => { visible = st.isActive; } });
       },
-      redraw() { if (on) beatNodes.forEach(nd => { nd.style.transformBox = 'fill-box'; nd.style.transformOrigin = '50% 100%'; }); }
+      redraw() { if (on) prep(); }
     };
   })();
   addEventListener('resize', () => setTimeout(() => wave.redraw(), 260));
