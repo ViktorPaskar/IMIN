@@ -157,7 +157,7 @@ body.guest {
 
 /* ---------- 2. The idea: two columns, thoughts as cards ---------- */
 .idea2__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px 64px; align-items: start; }
-.idea2__head { position: sticky; top: calc(var(--header-h) + 32px); }
+.idea2__head { position: relative; }
 .idea2__text { color: var(--paper); max-width: 40ch; }
 .idea2__cities { display: block; margin-top: 24px; color: var(--haze); }
 .qa { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
