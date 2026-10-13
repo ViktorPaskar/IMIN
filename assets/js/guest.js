@@ -110,6 +110,15 @@
   }
   renderInvite();
 
+  // ticket cut-outs follow the tear line
+  const perf = $('.invite__perf');
+  if (card && perf) {
+    const place = () => { card.style.setProperty('--cut-y', `${perf.offsetTop + perf.offsetParent.clientTop + .5}px`); card.classList.add('has-cut'); };
+    place();
+    if ('ResizeObserver' in window) new ResizeObserver(place).observe(card);
+    document.fonts?.ready.then(place);
+  }
+
   // sticky bar content
   if (next) { $('[data-sticky-date]').textContent = `${dayDate(parse(next.date))} · ${time(parse(next.date))}`; $('[data-sticky-name]').textContent = next.name; }
 

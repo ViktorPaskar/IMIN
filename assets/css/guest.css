@@ -137,8 +137,12 @@ body.guest {
 .invite__when b { color: var(--paper); font-weight: 600; }
 .invite__text { font-size: var(--t20); line-height: 1.4; color: var(--paper); max-width: 28ch; }
 .invite__perf { position: relative; height: 1px; margin: 4px -28px; background: repeating-linear-gradient(90deg, var(--paper-40) 0 6px, transparent 6px 12px); }
-.invite__perf::before, .invite__perf::after { content: ""; position: absolute; top: -9px; width: 18px; height: 18px; border-radius: 50%; background: var(--midnight); border: 1px solid var(--paper-14); }
-.invite__perf::before { left: -10px; } .invite__perf::after { right: -10px; }
+/* real cut-outs: the card is masked with two holes on the tear line; thin rims trace their edges */
+.invite.has-cut { -webkit-mask: radial-gradient(circle 12px at 0 var(--cut-y), transparent 11.5px, #000 12px) left / 51% 100% no-repeat, radial-gradient(circle 12px at 100% var(--cut-y), transparent 11.5px, #000 12px) right / 51% 100% no-repeat;
+                  mask: radial-gradient(circle 12px at 0 var(--cut-y), transparent 11.5px, #000 12px) left / 51% 100% no-repeat, radial-gradient(circle 12px at 100% var(--cut-y), transparent 11.5px, #000 12px) right / 51% 100% no-repeat; }
+.invite__perf::before, .invite__perf::after { content: ""; position: absolute; top: -12.5px; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--paper-14); box-sizing: border-box; }
+.invite__perf::before { left: -26px; clip-path: inset(0 0 0 50%); } .invite__perf::after { right: -26px; clip-path: inset(0 50% 0 0); }
+.invite__perf { margin-inline: -16px; }
 .invite__row { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
 .invite__ask { font-size: var(--t49); line-height: .9; }
 .cd { display: flex; gap: 10px; font-variant-numeric: tabular-nums; }
@@ -422,7 +426,7 @@ body.guest {
   .g-hero__sub { margin-top: 12px; font-size: 18px; }
   .g-hero__inner { gap: 20px; }
   .invite__body { padding: 18px; gap: 12px; }
-  .invite__perf { margin: 2px -18px; }
+  .invite__perf { margin: 2px -6px; }
   .invite__day { font-size: 61px; }
   .invite__ask { font-size: 31px; }
   .cd { gap: 6px; } .cd span { min-width: 28px; font-size: 9px; } .cd b { font-size: 20px; }
