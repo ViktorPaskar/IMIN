@@ -132,23 +132,15 @@
     <div class="g-hero__beat" aria-hidden="true"></div>
   </section>
 
-  <!-- Thoughts → answers band -->
-  <div class="tband" aria-hidden="true">
-    <div class="tband__track">
-      <span class="tband__q">What if I don't know anyone?</span><span class="tband__a">That's kind of the point.</span><i></i>
-      <span class="tband__q">What do I wear?</span><span class="tband__a">Whatever you dance in.</span><i></i>
-      <span class="tband__q">Is it even worth it?</span><span class="tband__a">Come for one track. Stay if it's good.</span><i></i>
-      <span class="tband__q">Who else is going?</span><span class="tband__a">People who came for the music.</span><i></i>
-    </div>
-  </div>
-
   <!-- 2. The idea -->
   <section class="idea2" id="idea" data-section="idea">
-    <div class="wrap">
-      <span class="label sec-label">The idea</span>
-      <h2 class="display h1" data-split>Going out shouldn't feel like a first date.</h2>
-      <p class="lead idea2__text" data-reveal data-copy="idea"></p>
-      <span class="label idea2__cities" data-cities data-reveal>Nights in: Metz</span>
+    <div class="wrap idea2__grid">
+      <div class="idea2__head">
+        <span class="label sec-label">The idea</span>
+        <h2 class="display h1" data-split>Going out shouldn't feel like a first date.</h2>
+        <p class="lead idea2__text" data-reveal data-copy="idea"></p>
+        <span class="label idea2__cities" data-cities data-reveal>Nights in: Metz</span>
+      </div>
 
       <ol class="qa" aria-label="What you might be thinking, and our answers">
         <li class="qa__row"><span class="qa__q">What if I don't know anyone?</span><span class="qa__a">That's kind of the point.</span></li>
@@ -160,21 +152,24 @@
       <figure class="note">
         <div class="note__photo"><img src="assets/img/photos/bohdan.jpg" alt="Bohdan, IMIN" width="400" height="400" loading="lazy"></div>
         <div class="note__body">
-          <span class="note__mark" aria-hidden="true">“</span>
-          <blockquote class="note__text" data-words>Finding a night is easy. Finding someone to go with is harder. That's what we're working on.</blockquote>
-          <figcaption class="note__by"><i></i><span><b>Bohdan Shostak</b><em>CEO / Founder, IMIN</em></span></figcaption>
+          <blockquote class="note__text" data-words>“Finding a night is easy. Finding someone to go with is harder. That's what we're working on.”</blockquote>
+          <figcaption class="note__by"><span><b>Bohdan Shostak</b><em>CEO / Founder, IMIN</em></span></figcaption>
         </div>
+        <a class="text-link note__link" href="#top" data-track="see_next_night_click" data-section-name="idea">See the next night <svg class="i"><use href="#i-arrow-up"/></svg></a>
       </figure>
-      <a class="text-link" href="#top" data-track="see_next_night_click" data-section-name="idea">See the next night <svg class="i"><use href="#i-arrow-up"/></svg></a>
     </div>
   </section>
 
-  <!-- 3. The nights -->
-  <section class="nights" id="nights" data-section="nights">
+  <!-- 3. The nights (a Paper block) -->
+  <section class="nights is-paper" id="nights" data-section="nights">
     <div class="wrap">
-      <span class="label sec-label">The nights</span>
-      <h2 class="display h1" data-split>Nights worth saying yes to.</h2>
-      <p class="lead" data-reveal data-copy="nights"></p>
+      <div class="nights__head">
+        <div>
+          <span class="label sec-label">The nights</span>
+          <h2 class="display h1" data-split>Nights worth saying yes to.</h2>
+        </div>
+        <p class="lead" data-reveal data-copy="nights"></p>
+      </div>
 
       <div class="nights__grid">
         <figure class="setlist" data-reveal>
@@ -189,18 +184,17 @@
         <div class="formats" data-formats></div>
       </div>
 
-      <a class="text-link" href="#" data-link="allNights" data-track="see_all_nights_click" data-section-name="nights">See all nights <svg class="i"><use href="#i-arrow-right"/></svg></a>
-    </div>
-  </section>
-
-  <!-- Photo strip: one opens under the cursor -->
-  <section class="night strip" aria-label="Photos from the night">
-    <div class="night__grid">
+      <div class="strip">
+  <div class="night__grid">
       <figure class="ph ph--1"><img src="assets/img/photos/night-1.jpg" alt="A DJ smiling behind the decks, hands up in the crowd" loading="lazy"></figure>
       <figure class="ph ph--2"><img src="assets/img/photos/night-2.jpg" alt="Dancing under the lights" loading="lazy"></figure>
       <figure class="ph ph--3"><img src="assets/img/photos/night-3.jpg" alt="A crowd in front of a lit stage" loading="lazy"></figure>
       <figure class="ph ph--4"><img src="assets/img/photos/night-4.jpg" alt="A hand on a DJ controller" loading="lazy"></figure>
       <figure class="ph ph--5"><img src="assets/img/photos/night-5.jpg" alt="A DJ raising a hand to a packed crowd" loading="lazy"></figure>
+    </div>
+      </div>
+
+      <a class="text-link" href="#" data-link="allNights" data-track="see_all_nights_click" data-section-name="nights">See all nights <svg class="i"><use href="#i-arrow-right"/></svg></a>
     </div>
   </section>
 
@@ -227,11 +221,6 @@
       </div>
     </div>
   </section>
-
-  <div class="bigband" aria-hidden="true">
-    <div class="bigband__row"><span>Music first</span><i></i><span class="is-out">Come as you are</span><i></i><span>Music first</span><i></i><span class="is-out">Come as you are</span><i></i></div>
-    <div class="bigband__row bigband__row--rev"><span class="is-out">Don't overthink</span><i></i><span>The night</span><i></i><span class="is-out">Don't overthink</span><i></i><span>The night</span><i></i></div>
-  </div>
 
   <!-- 6. FAQ -->
   <section class="faq" id="faq" data-section="faq">

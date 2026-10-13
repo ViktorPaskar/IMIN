@@ -507,28 +507,22 @@
     }
   }
 
-  // thoughts → answers band and the big type rows move with scroll speed
-  if (!reduced) {
-    const loops = [];
-    const loop = (track, dir, speed) => {
-      track.innerHTML += track.innerHTML; // seamless
-      const st = { x: 0, w: 0 };
-      const measure = () => { st.w = track.scrollWidth / 2; };
-      measure(); addEventListener('resize', measure);
-      loops.push(() => { st.x = (st.x + dir * speed * (1 + Math.min(6, Math.abs(vel) / 220))) % st.w; gsap.set(track, { x: st.x > 0 ? st.x - st.w : st.x }); });
-    };
-    let vel = 0;
-    ScrollTrigger.create({ start: 0, end: 'max', onUpdate: s => { vel = s.getVelocity(); } });
-    const tb = $('.tband__track'); if (tb) loop(tb, -1, .6);
-    gsap.ticker.add(() => { vel *= .92; loops.forEach(f => f()); });
-
-    $$('.bigband__row').forEach((row, i) => {
-      gsap.fromTo(row, { xPercent: i % 2 ? -32 : 0 }, { xPercent: i % 2 ? 0 : -32, ease: 'none', scrollTrigger: { trigger: '.bigband', start: 'top bottom', end: 'bottom top', scrub: .3 } });
+  // the Ultra block: big outline words assemble letter by letter, drift apart and fill as you pass
+  const room = $('.room');
+  if (room && !reduced) {
+    $$('.room__bg span', room).forEach((w, i) => {
+      w.innerHTML = [...w.textContent].map(c => `<i>${esc(c)}</i>`).join('');
+      const ch = $$('i', w);
+      gsap.fromTo(w, { xPercent: i ? 16 : -16 }, { xPercent: i ? -6 : 6, ease: 'none', scrollTrigger: { trigger: room, start: 'top bottom', end: 'bottom top', scrub: .8 } });
+      gsap.fromTo(ch, { yPercent: i ? -70 : 70, rotate: i ? -8 : 8, opacity: 0 }, { yPercent: 0, rotate: 0, opacity: 1, ease: 'power3.out', stagger: .06, scrollTrigger: { trigger: room, start: 'top 90%', end: 'top 30%', scrub: .8 } });
+      gsap.fromTo(ch, { '--fill': 0 }, { '--fill': 1, ease: 'none', stagger: .08, scrollTrigger: { trigger: room, start: 'top 40%', end: 'bottom 60%', scrub: .8 } });
     });
-    gsap.from('.bigband span', { yPercent: 40, opacity: 0, duration: 1.2, stagger: .05, scrollTrigger: { trigger: '.bigband', start: 'top 85%' } });
-    $$('.room__bg span').forEach((w, i) => {
-      gsap.fromTo(w, { xPercent: i ? 20 : -20 }, { xPercent: i ? -10 : 10, ease: 'none', scrollTrigger: { trigger: '.room', start: 'top bottom', end: 'bottom top', scrub: true } });
-    });
+    const sl = $('.room__slogan');
+    gsap.timeline({ scrollTrigger: { trigger: room, start: 'top 70%' } })
+      .from('.room__done', { y: 20, opacity: 0, duration: .8 })
+      .from('.room__done .i', { scale: 0, rotate: -45, duration: .6, ease: 'back.out(3)' }, '-=.3')
+      .from('.room__next', { y: 20, opacity: 0, filter: 'blur(6px)', duration: .8, stagger: .2 }, '-=.2')
+      .add(() => sl.classList.add('is-lit'));
   }
 
   // titles: masked line reveal
@@ -559,7 +553,6 @@
     gsap.from('.setlist li', { y: 18, opacity: 0, stagger: .08, duration: .9, scrollTrigger: { trigger: '.setlist', start: 'top 82%' } });
     gsap.from('.tile2', { y: 30, opacity: 0, stagger: .08, duration: 1, scrollTrigger: { trigger: '.tiles', start: 'top 85%' } });
     gsap.from('.qd', { y: 16, opacity: 0, stagger: .04, duration: .8, scrollTrigger: { trigger: '.faq__list', start: 'top 85%' } });
-    gsap.from('.room__slogan > *', { y: 20, opacity: 0, stagger: .1, duration: 1, scrollTrigger: { trigger: '.room', start: 'top 75%' } });
     gsap.from('.room', { clipPath: 'inset(6% 3% 6% 3%)', ease: 'none', scrollTrigger: { trigger: '.room', start: 'top bottom', end: 'top 35%', scrub: true } });
   }
 
@@ -575,7 +568,6 @@
     const ph = $('.note__photo', note);
     gsap.from(ph, { clipPath: 'inset(100% 0 0 0)', duration: 1.6, ease: 'expo.inOut', scrollTrigger: { trigger: note, start: 'top 80%' } });
     gsap.fromTo($('img', ph), { yPercent: -8, scale: 1.15 }, { yPercent: 8, scale: 1, ease: 'none', scrollTrigger: { trigger: note, start: 'top bottom', end: 'bottom top', scrub: true } });
-    gsap.from('.note__mark', { yPercent: 60, opacity: 0, duration: 1.2, scrollTrigger: { trigger: note, start: 'top 75%' } });
     const q = $('[data-words]', note);
     q.innerHTML = q.textContent.split(' ').map(w => `<span class="w">${esc(w)}</span>`).join(' ');
     gsap.fromTo($$('.w', q), { opacity: .16 }, { opacity: 1, stagger: .1, ease: 'none', scrollTrigger: { trigger: q, start: 'top 80%', end: 'bottom 45%', scrub: .5 } });
