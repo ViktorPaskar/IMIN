@@ -350,6 +350,7 @@ body.guest {
   .setlist li { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .tiles { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .sub__row { flex-direction: column; }
+  .sub__row input { flex: none; }
   .sub__row .btn-paper { width: 100%; }
   .ticket a { grid-template-columns: minmax(0, 1fr) auto; }
   .ticket__date { grid-column: 1 / -1; }

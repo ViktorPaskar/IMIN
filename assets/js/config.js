@@ -67,6 +67,13 @@ window.IMIN = {
     quotes: []                                       // { text, name } — real, with permission
   },
 
+  /* chat.html: Bohdan's voice note in "The idea". Put the recording in src (mp3/m4a, ~20 s);
+     until then the play button reads the text along. */
+  voiceNote: { src: '', duration: 20, text: "Finding a night is easy. Finding someone to go with is harder. That's what we're working on." },
+
+  /* chat.html: photos IMIN "drops in the chat" in "The nights". Only real, approved photos from IMIN nights. */
+  nightPhotos: ['assets/img/photos/night-1.jpg', 'assets/img/photos/night-2.jpg', 'assets/img/photos/night-3.jpg', 'assets/img/photos/night-4.jpg', 'assets/img/photos/night-5.jpg'],
+
   /* Formats for "The nights". */
   formats: [
     { name: 'CoffeeShop Rave', by: 'IMIN', text: 'Daytime. A DJ, coffee, daylight. A café turns into a dance floor for an afternoon.', photo: 'assets/img/photos/night-4.jpg' }

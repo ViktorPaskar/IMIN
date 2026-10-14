@@ -1,0 +1,176 @@
+/* =========================================================
+   IMIN — guest page, chat version (chat.html)
+   The page reads like a conversation you were invited into.
+   Builds on style.css + guest.css; brand colours and type only.
+   IMIN writes in Paper bubbles; your side is Haze.
+   ========================================================= */
+.chat { --bubble-max: 520px; }
+.chat .c-head .label { color: var(--paper-64); }
+
+/* ---------- Thread ---------- */
+.thread { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: var(--bubble-max); }
+.msg { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; max-width: 86%; }
+.msg + .msg--in:not(.msg--set), .msg + .msg--out, .msg--set:first-of-type { margin-top: 6px; }
+.msg--out { align-self: flex-end; align-items: flex-end; }
+.msg--wide { max-width: 100%; width: 100%; }
+.msg--wide > .bubble { align-self: stretch; }
+.msg__from { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; letter-spacing: .02em; color: var(--paper-64); }
+.msg__from b { font-weight: 600; color: var(--paper); }
+.ava { flex: none; width: 28px; height: 28px; overflow: hidden; display: grid; place-items: center; background: var(--midnight-2); border: 1px solid var(--paper-14); }
+.ava img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); }
+.ava--imin svg { width: 13px; height: 17px; fill: var(--paper); }
+
+.bubble { position: relative; padding: 12px 16px; font-size: 17px; line-height: 1.45; }
+/* IMIN: Paper bubble, a square tail on the bottom left */
+.msg--in .bubble { background: var(--paper); color: var(--midnight); }
+.msg--in .bubble::after { content: ""; position: absolute; left: 0; bottom: -9px; border-left: 12px solid var(--paper); border-bottom: 9px solid transparent; }
+/* You: Haze, tail on the bottom right */
+.msg--out .bubble { background: rgba(156, 140, 255, .14); border: 1px solid rgba(156, 140, 255, .38); color: var(--haze); }
+.msg--out .bubble::after { content: ""; position: absolute; right: -1px; bottom: -10px; border-right: 12px solid rgba(156, 140, 255, .38); border-bottom: 9px solid transparent; }
+.bubble--loud { font-family: var(--f-display); font-weight: 800; font-size: var(--t25); line-height: 1.05; text-transform: uppercase; letter-spacing: .005em; padding: 14px 18px 12px; }
+
+/* system line: like a date divider */
+.sys { display: flex; align-items: center; gap: 12px; margin: 14px 0 6px; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--paper-40); }
+.sys::before, .sys::after { content: ""; flex: 1; height: 1px; background: var(--paper-14); }
+.sys--note { margin: 10px 0 0; text-transform: none; letter-spacing: 0; }
+.sys--note::before, .sys--note::after { display: none; }
+
+/* typing: three sticks from the beat */
+.typing { display: inline-flex; align-items: flex-end; gap: 4px; height: 38px; padding: 10px 14px; background: var(--paper); align-self: flex-start; position: relative; }
+.typing::after { content: ""; position: absolute; left: 0; bottom: -9px; border-left: 12px solid var(--paper); border-bottom: 9px solid transparent; }
+.typing i { width: 5px; height: 18px; border-radius: 3px; background: var(--midnight); transform-origin: 50% 100%; animation: tick .9s ease-in-out infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes tick { 0%, 100% { transform: scaleY(.35); } 50% { transform: scaleY(1); } }
+
+/* reply options: your side of the chat */
+.replies { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+.chip { border-radius: 0; background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border: 1px solid rgba(156, 140, 255, .5); color: var(--haze); font-size: 15px; font-weight: 600; transition: background-color .3s, border-color .3s, color .3s; }
+.chip .i { width: 16px; height: 16px; }
+@media (hover: hover) { .chip:hover { background: rgba(156, 140, 255, .14); border-color: var(--haze); color: var(--paper); } }
+.chip:focus-visible { outline: 2px solid var(--paper); outline-offset: 3px; }
+
+/* ---------- 1. Hero ---------- */
+.c-hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--header-h) + 48px) 0 clamp(112px, 11vw, 150px); overflow: hidden; }
+.c-hero__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 40px 64px; align-items: center; }
+.c-hero__title { font-size: clamp(76px, 8.3vw, 119px); line-height: .84; letter-spacing: -.01em; }
+.c-hero__title .line { display: block; overflow: hidden; padding: .02em 0 .04em; margin-bottom: -.06em; }
+.c-hero__title .line > span { display: inline-block; }
+.c-hero__sub { margin-top: 28px; font-size: var(--t20); font-weight: 500; color: var(--paper); }
+.thread--hero { justify-self: end; }
+.thread--hero .msg { max-width: 100%; width: 100%; }
+.thread--hero .bubble { align-self: stretch; }
+.bubble--invite { padding: 0; }
+.bubble--invite .invite__photo { aspect-ratio: 16 / 9; overflow: hidden; }
+.bubble--invite .invite__photo img { width: 100%; height: 100%; object-fit: cover; }
+.bubble--invite .invite__body { display: flex; flex-direction: column; gap: 12px; padding: 20px 22px 22px; }
+.bubble--invite .invite__top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.bubble--invite .invite__label { color: rgba(11, 10, 20, .64); }
+.bubble--invite .by { color: var(--ultra); border-color: rgba(75, 43, 255, .4); }
+.bubble--invite .invite__text { font-size: var(--t20); line-height: 1.4; color: var(--midnight); max-width: 30ch; }
+.bubble--invite .invite__ask { font-size: var(--t39); line-height: .95; color: var(--midnight); }
+.bubble--invite .invite__count { font-family: var(--f-display); font-weight: 800; font-size: var(--t39); line-height: .95; text-transform: uppercase; color: var(--midnight); }
+.thread--hero .replies { margin-top: 18px; }
+.thread--hero .replies .btn-im { flex: 1 0 100%; }
+.c-hero__entry { align-self: flex-end; margin-top: 2px; }
+
+/* a doubt gets typed where the headline will be, then deleted */
+.c-hero__copy { position: relative; }
+.c-hero__draft { position: absolute; left: 0; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 3px; font-size: var(--t39); font-weight: 500; line-height: 1.2; color: var(--haze); white-space: nowrap; }
+.c-hero__draft[hidden] { display: none; }
+.composer__caret { width: 2px; height: 1.1em; background: var(--haze); animation: caret 1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+
+/* ---------- Two-column sections: heading left, thread right ---------- */
+.c-split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px 64px; align-items: start; }
+.c-split .thread { justify-self: end; }
+.c-cities { display: block; margin-top: 24px; color: var(--haze) !important; }
+
+/* ---------- 2. The idea: Bohdan's voice note ---------- */
+.msg--voice { max-width: 100%; margin-top: 18px !important; }
+.bubble--voice { display: flex; align-items: center; gap: 14px; padding: 12px 18px 12px 12px; min-width: min(360px, 100%); }
+.voice__btn { flex: none; display: grid; place-items: center; width: 44px; height: 44px; background: var(--midnight); color: var(--paper); transition: transform .2s var(--ease); }
+.voice__btn:active { transform: scale(.94); }
+.voice__btn:focus-visible { outline: 2px solid var(--ultra); outline-offset: 2px; }
+.voice__btn .i { width: 18px; height: 18px; }
+.voice__wave { flex: 1; display: flex; align-items: center; gap: 3px; height: 32px; }
+.voice__wave i { flex: 1; min-width: 2px; border-radius: 2px; background: rgba(11, 10, 20, .28); height: calc(var(--h) * 100%); transition: background-color .2s; }
+.voice__wave i.is-on { background: var(--midnight); }
+.voice__time { flex: none; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: rgba(11, 10, 20, .64); }
+.voice__text { max-width: 44ch; margin-top: 6px; font-size: var(--t20); line-height: 1.45; color: var(--paper); }
+.voice__text .w { transition: opacity .25s; }
+.msg--voice.is-playing .voice__text .w { opacity: .4; }
+.msg--voice.is-playing .voice__text .w.is-said { opacity: 1; }
+
+/* ---------- 3. The nights on Paper ---------- */
+.c-nights.is-paper { padding-block: var(--section); background: var(--paper); color: var(--midnight); }
+.c-nights .c-head .label { color: rgba(11, 10, 20, .6); }
+.c-nights .lead { color: rgba(11, 10, 20, .72); }
+.c-nights .msg__from, .c-nights .msg__from b { color: var(--midnight); }
+.c-nights .ava { background: var(--midnight); border-color: var(--midnight); }
+.c-nights .msg--in .bubble, .c-nights .typing { background: var(--midnight); color: var(--paper); }
+.c-nights .msg--in .bubble::after, .c-nights .typing::after { border-left-color: var(--midnight); }
+.c-nights .typing i { background: var(--paper); }
+.c-nights .sys { color: rgba(11, 10, 20, .5); }
+.c-nights .sys::before, .c-nights .sys::after { background: rgba(11, 10, 20, .14); }
+.c-nights .caption { color: rgba(11, 10, 20, .6); }
+.c-nights .chip { color: var(--midnight); border-color: rgba(11, 10, 20, .3); }
+@media (hover: hover) { .c-nights .chip:hover { background: var(--midnight); color: var(--paper); border-color: var(--midnight); } }
+.bubble--photos { width: 100%; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: 4px; padding: 4px !important; aspect-ratio: 16 / 10; }
+.bubble--photos figure { position: relative; min-width: 0; min-height: 0; margin: 0; overflow: hidden; background: var(--midnight-2); }
+.bubble--photos figure:first-child { grid-row: span 2; }
+.bubble--photos img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+@media (hover: hover) { .bubble--photos figure:hover img { transform: scale(1.06); } }
+.bubble--photos .more { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(11, 10, 20, .55); font-family: var(--f-display); font-weight: 800; font-size: var(--t31); color: var(--paper); }
+/* format as a link preview */
+.bubble--link { display: flex; flex-direction: column; gap: 10px; padding: 18px 20px !important; border-left: 3px solid var(--haze); }
+.bubble--link .format__top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.bubble--link .label { color: var(--paper-64) !important; }
+.bubble--link h3 { font-family: var(--f-display); font-weight: 800; font-size: var(--t31); line-height: .95; text-transform: uppercase; }
+.bubble--link p { color: rgba(244, 239, 231, .75); font-size: 15px; }
+.msg--set .bubble { display: flex; align-items: baseline; gap: 20px; }
+.msg--set b { font-family: var(--f-display); font-weight: 800; font-size: var(--t25); line-height: 1; text-transform: uppercase; }
+.msg--set time { margin-left: auto; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--paper-64); white-space: nowrap; }
+
+/* ---------- 7. Stay close ---------- */
+.thread--stay { margin: 8px 0 40px; }
+.thread--stay .msg { max-width: 100%; }
+
+/* ---------- Sticky bar on phones: a reply line ---------- */
+.sticky--reply { gap: 10px; padding-top: 8px; }
+.sticky--reply .sticky__info { flex: 1; min-width: 0; gap: 2px; }
+.sticky__quote { display: flex; flex-direction: column; padding-left: 10px; border-left: 2px solid var(--haze); min-width: 0; }
+.sticky__quote b { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sticky__hint { display: none; }
+
+/* ---------- Room: calmer, no assembly effect ---------- */
+.chat .room__bg span { -webkit-text-stroke-color: rgba(244, 239, 231, .14); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1023px) {
+  .c-hero__grid, .c-split { grid-template-columns: minmax(0, 1fr); }
+  .thread--hero, .c-split .thread { justify-self: stretch; max-width: 560px; }
+}
+@media (max-width: 820px) {
+  .c-hero { min-height: 0; justify-content: flex-start; padding: calc(var(--header-h) + 16px) 0 64px; }
+  .c-hero__grid { gap: 18px; }
+  .c-hero__title { font-size: clamp(56px, 18.4vw, 76px); }
+  .c-hero__sub { margin-top: 12px; font-size: 18px; }
+  .bubble--invite .invite__body { padding: 14px 16px 16px; gap: 8px; }
+  .bubble--invite .invite__text { font-size: 16px; }
+  .bubble--invite .invite__ask { font-size: 28px; }
+  .thread--hero .msg__from { display: none; }
+  .thread--hero .replies { margin-top: 12px; gap: 6px; }
+  .thread--hero .replies .btn-im { height: 52px; }
+  .thread--hero .chip { flex: 1; justify-content: center; height: 40px; padding: 0 10px; font-size: 14px; }
+  .c-hero__draft { font-size: 25px; top: 30%; }
+  .msg { max-width: 92%; }
+  .bubble { font-size: 16px; }
+  .bubble--loud { font-size: 22px; }
+  .msg--set .bubble { flex-direction: column; gap: 4px; }
+  .msg--set time { margin-left: 0; order: -1; }
+  .voice__text { font-size: 17px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .typing i, .composer__caret { animation: none; }
+  .c-hero__draft { display: none; }
+}
