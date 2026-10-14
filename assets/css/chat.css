@@ -186,7 +186,7 @@
 .t-box { position: absolute; inset: 0; z-index: 0; transform-style: preserve-3d; will-change: transform; }
 .t-wall { position: absolute; backface-visibility: hidden; }
 .t-wall svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.t-wall text { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; stroke: rgba(156, 140, 255, .5); stroke-linejoin: round; }
+.t-wall text { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; stroke: rgba(244, 239, 231, .28); stroke-linejoin: round; }
 .t-wall--top    { left: 0; top: 0;    width: 100%; height: var(--L); transform-origin: 50% 0;    transform: rotateX(-90deg); }
 .t-wall--bottom { left: 0; bottom: 0; width: 100%; height: var(--L); transform-origin: 50% 100%; transform: rotateX(90deg); }
 .t-wall--left   { left: 0; top: 0;    width: var(--L); height: 100%; transform-origin: 0 50%;    transform: rotateY(90deg); }
