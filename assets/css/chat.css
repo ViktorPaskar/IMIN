@@ -23,10 +23,10 @@
 .bubble { position: relative; padding: 12px 16px; font-size: 17px; line-height: 1.45; }
 /* IMIN: Paper bubble, a square tail on the bottom left */
 .msg--in .bubble { background: var(--paper); color: var(--midnight); }
-.msg--in .bubble::after { content: ""; position: absolute; left: 0; bottom: -9px; border-left: 12px solid var(--paper); border-bottom: 9px solid transparent; }
+.msg--in .bubble::after { content: ""; position: absolute; left: 0; bottom: -8px; border-left: 12px solid var(--paper); border-bottom: 9px solid transparent; }
 /* You: Haze, tail on the bottom right */
 .msg--out .bubble { background: rgba(156, 140, 255, .14); border: 1px solid rgba(156, 140, 255, .38); color: var(--haze); }
-.msg--out .bubble::after { content: ""; position: absolute; right: -1px; bottom: -10px; border-right: 12px solid rgba(156, 140, 255, .38); border-bottom: 9px solid transparent; }
+.msg--out .bubble::after { content: ""; position: absolute; right: -1px; bottom: -9px; border-right: 12px solid rgba(156, 140, 255, .38); border-bottom: 9px solid transparent; }
 .bubble--loud { font-family: var(--f-display); font-weight: 800; font-size: var(--t25); line-height: 1.05; text-transform: uppercase; letter-spacing: .005em; padding: 14px 18px 12px; }
 
 /* system line: like a date divider */
@@ -37,7 +37,7 @@
 
 /* typing: three sticks from the beat */
 .typing { display: inline-flex; align-items: flex-end; gap: 4px; height: 38px; padding: 10px 14px; background: var(--paper); align-self: flex-start; position: relative; }
-.typing::after { content: ""; position: absolute; left: 0; bottom: -9px; border-left: 12px solid var(--paper); border-bottom: 9px solid transparent; }
+.typing::after { content: ""; position: absolute; left: 0; bottom: -8px; border-left: 12px solid var(--paper); border-bottom: 9px solid transparent; }
 .typing i { width: 5px; height: 18px; border-radius: 3px; background: var(--midnight); transform-origin: 50% 100%; animation: tick .9s ease-in-out infinite; }
 .typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
 @keyframes tick { 0%, 100% { transform: scaleY(.35); } 50% { transform: scaleY(1); } }
