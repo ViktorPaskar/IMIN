@@ -389,7 +389,7 @@
       const R = Math.max(pw, ph) * .32;
       w.innerHTML = `<svg viewBox="0 0 ${pw} ${ph}" preserveAspectRatio="none"><defs><radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="${pw / 2}" cy="${ph / 2}" r="${R.toFixed(0)}">
           <stop offset="0" stop-color="#9C8CFF" stop-opacity=".95"/><stop offset=".45" stop-color="#9C8CFF" stop-opacity=".35"/><stop offset="1" stop-color="#9C8CFF" stop-opacity="0"/></radialGradient></defs>${lines.map((t, i) =>
-        `<text x="${pw * .01}" y="${(i + 1) * lh - lh * .02}" font-size="${fs.toFixed(1)}" textLength="${(pw * .98).toFixed(1)}" lengthAdjust="spacingAndGlyphs" fill="url(#${id})" stroke-width="${(fs * .012).toFixed(2)}">${esc(t)}</text>`).join('')}</svg>`;
+        `<text x="${pw * .01}" y="${(i + 1) * lh - lh * .02}" font-size="${fs.toFixed(1)}" textLength="${(pw * .98).toFixed(1)}" lengthAdjust="spacingAndGlyphs" fill="url(#${id})" stroke-width="${(fs * .007).toFixed(2)}">${esc(t)}</text>`).join('')}</svg>`;
       tun.beams.push({ g: $('radialGradient', w), pw, ph, R, s1: .23 + Math.random() * .2, s2: .17 + Math.random() * .2, p: Math.random() * 6.28 });
     });
   }
