@@ -186,7 +186,7 @@
 .t-box { position: absolute; inset: 0; z-index: 0; transform-style: preserve-3d; will-change: transform; }
 .t-wall { position: absolute; backface-visibility: hidden; }
 .t-wall svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.t-wall text { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; fill: var(--haze); }
+.t-wall text { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; stroke: rgba(156, 140, 255, .5); stroke-linejoin: round; }
 .t-wall--top    { left: 0; top: 0;    width: 100%; height: var(--L); transform-origin: 50% 0;    transform: rotateX(-90deg); }
 .t-wall--bottom { left: 0; bottom: 0; width: 100%; height: var(--L); transform-origin: 50% 100%; transform: rotateX(90deg); }
 .t-wall--left   { left: 0; top: 0;    width: var(--L); height: 100%; transform-origin: 0 50%;    transform: rotateY(90deg); }
@@ -201,6 +201,9 @@
 .t-center { position: relative; z-index: 2; height: 100%; display: grid; place-items: center; padding: calc(var(--header-h) + 8px) var(--gutter) 24px; }
 .t-center .thread--hero { justify-self: center; width: min(440px, 100%); }
 .t-center .bubble--invite { box-shadow: 0 30px 80px -20px rgba(0, 0, 0, .9); }
+/* the answer options stay readable over the letters */
+.t-center .chip { background: rgba(11, 10, 20, .9); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-color: rgba(156, 140, 255, .6); }
+.t-center .c-hero__entry { padding: 2px 8px; background: rgba(11, 10, 20, .85); color: var(--paper-64); }
 
 /* the beat now runs along the bottom of the footer */
 .g-footer.has-beat { position: relative; padding-bottom: calc(32px + clamp(44px, 5vw, 72px)); overflow: hidden; }

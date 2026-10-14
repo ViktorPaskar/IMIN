@@ -368,9 +368,10 @@
      The tunnel of words: four planes in perspective, text stretched to fill each one
      --------------------------------------------------------- */
   const tHero = $('.t-hero'), tBox = $('.t-box');
-  const tun = { P: 900, L: 900 };
+  const tun = { P: 900, L: 900, n: 0, beams: [] };
   function buildTunnel() {
     if (!tHero) return;
+    tun.beams = [];
     const W = tHero.clientWidth, H = tHero.clientHeight;
     const r = W < 821 ? .4 : .5;               // how big the far end looks
     tun.P = Math.round(Math.max(H, W * .6) * .95);
@@ -383,8 +384,13 @@
       const lines = ((W < 821 && w.dataset.wordsM) || w.dataset.words).split('|');
       const lh = ph / lines.length;
       const fs = lh / .74;
-      w.innerHTML = `<svg viewBox="0 0 ${pw} ${ph}" preserveAspectRatio="none">${lines.map((t, i) =>
-        `<text x="${pw * .01}" y="${(i + 1) * lh - lh * .02}" font-size="${fs.toFixed(1)}" textLength="${(pw * .98).toFixed(1)}" lengthAdjust="spacingAndGlyphs">${esc(t)}</text>`).join('')}</svg>`;
+      // hollow letters; a torch-like pool of Haze light wanders inside them
+      const id = 'tl' + (++tun.n);
+      const R = Math.max(pw, ph) * .32;
+      w.innerHTML = `<svg viewBox="0 0 ${pw} ${ph}" preserveAspectRatio="none"><defs><radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="${pw / 2}" cy="${ph / 2}" r="${R.toFixed(0)}">
+          <stop offset="0" stop-color="#9C8CFF" stop-opacity=".95"/><stop offset=".45" stop-color="#9C8CFF" stop-opacity=".35"/><stop offset="1" stop-color="#9C8CFF" stop-opacity="0"/></radialGradient></defs>${lines.map((t, i) =>
+        `<text x="${pw * .01}" y="${(i + 1) * lh - lh * .02}" font-size="${fs.toFixed(1)}" textLength="${(pw * .98).toFixed(1)}" lengthAdjust="spacingAndGlyphs" fill="url(#${id})" stroke-width="${(fs * .012).toFixed(2)}">${esc(t)}</text>`).join('')}</svg>`;
+      tun.beams.push({ g: $('radialGradient', w), pw, ph, s1: .23 + Math.random() * .2, s2: .17 + Math.random() * .2, p: Math.random() * 6.28 });
     });
   }
   buildTunnel();
@@ -480,6 +486,20 @@
     where.insertBefore(t, before);
     return t;
   };
+
+  /* the torch beams drift through the letters and flicker now and then */
+  let beamsOn = true;
+  gsap.ticker.add(() => {
+    if (!beamsOn) return;
+    const t = gsap.ticker.time;
+    tun.beams.forEach(b => {
+      b.g.setAttribute('cx', (b.pw * (.5 + .48 * Math.sin(t * b.s1 * 2.2 + b.p))).toFixed(0));
+      b.g.setAttribute('cy', (b.ph * (.5 + .45 * Math.sin(t * b.s2 * 2.6 + b.p * 1.7))).toFixed(0));
+      const f = Math.random() < .04 ? .35 + Math.random() * .4 : 1;   // a quick flicker
+      b.g.firstElementChild.setAttribute('stop-opacity', (.95 * f).toFixed(2));
+    });
+  });
+  ScrollTrigger.create({ trigger: tHero, start: 'top top', end: 'bottom top', onToggle: st => { beamsOn = st.isActive; } });
 
   /* ---------- Hero: the tunnel arrives, IMIN writes; on scroll we fly through ---------- */
   const inv = $('.thread--hero [data-invite]');
