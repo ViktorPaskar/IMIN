@@ -174,3 +174,42 @@
   .typing i, .composer__caret { animation: none; }
   .c-hero__draft { display: none; }
 }
+
+/* =========================================================
+   Hero: a tunnel of words (ceiling, floor, two walls) in perspective;
+   IMIN's message waits in the middle. On scroll we fly through it
+   and the doubts rush past.
+   Sizes come from JS as --W, --H (viewport) and --L (tunnel depth), --P (perspective).
+   ========================================================= */
+.t-hero { position: relative; height: 100vh; height: 100svh; min-height: 560px; overflow: hidden; background: var(--midnight); }
+.t-stage { position: absolute; inset: 0; perspective: var(--P, 900px); perspective-origin: 50% 50%; overflow: hidden; pointer-events: none; }
+.t-box { position: absolute; inset: 0; z-index: 0; transform-style: preserve-3d; will-change: transform; }
+.t-wall { position: absolute; backface-visibility: hidden; }
+.t-wall svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.t-wall text { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; fill: var(--haze); }
+.t-wall--top    { left: 0; top: 0;    width: 100%; height: var(--L); transform-origin: 50% 0;    transform: rotateX(-90deg); }
+.t-wall--bottom { left: 0; bottom: 0; width: 100%; height: var(--L); transform-origin: 50% 100%; transform: rotateX(90deg); }
+.t-wall--left   { left: 0; top: 0;    width: var(--L); height: 100%; transform-origin: 0 50%;    transform: rotateY(90deg); }
+.t-wall--right  { right: 0; top: 0;   width: var(--L); height: 100%; transform-origin: 100% 50%; transform: rotateY(-90deg); }
+/* depth fog: the far end of the tunnel fades into the night */
+.t-stage::after { content: ""; position: absolute; inset: 0; z-index: 0; background: radial-gradient(ellipse 34% 34% at 50% 50%, var(--midnight) 0%, rgba(11, 10, 20, .85) 55%, rgba(11, 10, 20, 0) 100%); pointer-events: none; }
+
+/* the doubts that rush past on scroll */
+.t-fly { position: absolute; inset: 0; z-index: 1; transform-style: preserve-3d; }
+.t-thought { position: absolute; left: var(--x); top: var(--y); padding: 12px 16px; background: rgba(28, 22, 58, .92); border: 1px solid rgba(156, 140, 255, .45); color: var(--haze); font-size: 18px; white-space: nowrap; opacity: 0; transform: translate(-50%, -50%); }
+
+.t-center { position: relative; z-index: 2; height: 100%; display: grid; place-items: center; padding: calc(var(--header-h) + 8px) var(--gutter) 24px; }
+.t-center .thread--hero { justify-self: center; width: min(440px, 100%); }
+.t-center .bubble--invite { box-shadow: 0 30px 80px -20px rgba(0, 0, 0, .9); }
+
+/* the beat now runs along the bottom of the footer */
+.g-footer.has-beat { position: relative; padding-bottom: calc(32px + clamp(44px, 5vw, 72px)); overflow: hidden; }
+
+@media (max-width: 820px) {
+  .t-center { align-items: end; padding-bottom: 28px; }
+  .t-center .thread--hero .msg__from { display: flex; }
+  .t-thought { font-size: 15px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-fly { display: none; }
+}

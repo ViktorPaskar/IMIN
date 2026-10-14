@@ -365,6 +365,33 @@
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
   /* ---------------------------------------------------------
+     The tunnel of words: four planes in perspective, text stretched to fill each one
+     --------------------------------------------------------- */
+  const tHero = $('.t-hero'), tBox = $('.t-box');
+  const tun = { P: 900, L: 900 };
+  function buildTunnel() {
+    if (!tHero) return;
+    const W = tHero.clientWidth, H = tHero.clientHeight;
+    const r = W < 821 ? .4 : .5;               // how big the far end looks
+    tun.P = Math.round(Math.max(H, W * .6) * .95);
+    tun.L = Math.round(tun.P * (1 / r - 1));
+    tHero.style.setProperty('--P', tun.P + 'px');
+    tHero.style.setProperty('--L', tun.L + 'px');
+    $$('.t-wall', tHero).forEach(w => {
+      const side = /top|bottom/.test(w.className);
+      const pw = side ? W : tun.L, ph = side ? tun.L : H;
+      const lines = ((W < 821 && w.dataset.wordsM) || w.dataset.words).split('|');
+      const lh = ph / lines.length;
+      const fs = lh / .74;
+      w.innerHTML = `<svg viewBox="0 0 ${pw} ${ph}" preserveAspectRatio="none">${lines.map((t, i) =>
+        `<text x="${pw * .01}" y="${(i + 1) * lh - lh * .02}" font-size="${fs.toFixed(1)}" textLength="${(pw * .98).toFixed(1)}" lengthAdjust="spacingAndGlyphs">${esc(t)}</text>`).join('')}</svg>`;
+    });
+  }
+  buildTunnel();
+  let tr; addEventListener('resize', () => { clearTimeout(tr); tr = setTimeout(() => { buildTunnel(); window.ScrollTrigger && ScrollTrigger.refresh(); }, 200); });
+  document.fonts?.ready.then(buildTunnel);
+
+  /* ---------------------------------------------------------
      Bohdan's voice note: plays the recording when there is one;
      the words light up along with it
      --------------------------------------------------------- */
@@ -454,38 +481,35 @@
     return t;
   };
 
-  /* ---------- Hero: a doubt gets typed and deleted, then IMIN writes first ---------- */
-  const hero = $('.c-hero');
+  /* ---------- Hero: the tunnel arrives, IMIN writes; on scroll we fly through ---------- */
   const inv = $('.thread--hero [data-invite]');
   const replies = $$('.thread--hero .replies > *');
-  const draftBox = $('.c-hero__draft'), draft = $('[data-draft]');
-  const lines = $$('.c-hero__title .line > span');
   const thr = $('.thread--hero');
   const dots = typingEl(thr, inv);
   gsap.set(inv, { autoAlpha: 0, y: 14 }); gsap.set(replies, { autoAlpha: 0, y: 10 }); gsap.set('.c-hero__entry', { autoAlpha: 0 });
-  const tl = gsap.timeline();
-  let titleAt = .05, inviteAt = .35;
-  if (firstVisit && draftBox) {
-    // you start typing a doubt; IMIN writes first; you delete it; the headline answers
-    const doubt = "what if I don't know anyone…";
-    const o = { n: 0 };
-    const show = () => { draft.textContent = doubt.slice(0, Math.round(o.n)); };
-    draftBox.hidden = false;
-    tl.set(lines, { yPercent: 110 })
-      .to(o, { n: doubt.length, duration: .85, ease: 'none', onUpdate: show }, .15)
-      .to(o, { n: 0, duration: .35, ease: 'power1.in', onUpdate: show }, 1.3)
-      .set(draftBox, { autoAlpha: 0 }, 1.68);
-    titleAt = 1.62; inviteAt = 1.0;
-  }
-  tl.fromTo(lines, { yPercent: 110 }, { yPercent: 0, duration: 1.1, stagger: .09 }, titleAt)
-    .from('.c-hero__sub', { y: 12, opacity: 0, duration: .8 }, titleAt + .3)
-    .fromTo(dots, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: .3 }, inviteAt - .55)
-    .call(() => dots.remove(), null, inviteAt)
-    .to(inv, { autoAlpha: 1, y: 0, duration: .7 }, inviteAt)
-    .to(replies, { autoAlpha: 1, y: 0, duration: .6, stagger: .08 }, inviteAt + .3)
-    .to('.c-hero__entry', { autoAlpha: 1, duration: .6 }, inviteAt + .5)
-    .from(beatNodes, { scaleY: 0, transformOrigin: '50% 100%', transformBox: 'fill-box', duration: .9, stagger: { each: .006 } }, .1)
-    .add(() => wave.start(), 1.2);
+  const walls = $$('.t-wall');
+  gsap.timeline()
+    .fromTo(tBox, { z: () => -tun.P * .9, opacity: 0 }, { z: 0, opacity: 1, duration: 1.8, ease: 'expo.out' }, 0)
+    .from(walls, { opacity: 0, duration: 1, stagger: .12, ease: 'power2.out' }, .05)
+    .fromTo(dots, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: .3 }, .25)
+    .call(() => dots.remove(), null, .8)
+    .to(inv, { autoAlpha: 1, y: 0, duration: .7 }, .8)
+    .to(replies, { autoAlpha: 1, y: 0, duration: .6, stagger: .08 }, 1.05)
+    .to('.c-hero__entry', { autoAlpha: 1, duration: .6 }, 1.25);
+
+  // scroll: the camera flies through the tunnel, the doubts rush past and vanish
+  const thoughts = $$('.t-thought');
+  const SPOTS = [[18, 26], [80, 22], [14, 70], [84, 72], [50, 14]];
+  thoughts.forEach((t, i) => { t.style.setProperty('--x', SPOTS[i % 5][0] + '%'); t.style.setProperty('--y', SPOTS[i % 5][1] + '%'); });
+  const fly = gsap.timeline({ scrollTrigger: { trigger: tHero, start: 'top top', end: () => '+=' + Math.round(innerHeight * 1.1), pin: true, scrub: .6, invalidateOnRefresh: true } });
+  fly.fromTo(tBox, { z: 0 }, { z: () => tun.P * .92, ease: 'power2.in', duration: 1, immediateRender: false }, 0)
+    .fromTo(tBox, { opacity: 1 }, { opacity: 0, duration: .25, ease: 'none', immediateRender: false }, .75);
+  thoughts.forEach((t, i) => {
+    fly.fromTo(t, { z: () => -tun.P * 3, opacity: 0 }, { z: () => tun.P * .7, ease: 'none', duration: .55 }, .12 + i * .1)
+      .to(t, { opacity: 1, duration: .08, ease: 'none' }, .12 + i * .1)
+      .to(t, { opacity: 0, duration: .1, ease: 'none' }, .57 + i * .1);
+  });
+  fly.to('.t-center', { y: () => -innerHeight * .08, opacity: .0, ease: 'power1.in', duration: .25 }, .9);
 
   /* ---------- The beat: only the Paper sticks move ---------- */
   const wave = (() => {
@@ -510,12 +534,14 @@
         if (on || reduced) return; on = true;
         prep();
         gsap.ticker.add(run);
-        ScrollTrigger.create({ trigger: '.c-hero', start: 'top top', end: 'bottom top', onToggle: st => { visible = st.isActive; } });
+        ScrollTrigger.create({ trigger: '.g-footer', start: 'top bottom', end: 'bottom top', onToggle: st => { visible = st.isActive; } });
       },
       redraw() { if (on) prep(); }
     };
   })();
   addEventListener('resize', () => setTimeout(() => wave.redraw(), 260));
+
+  ScrollTrigger.create({ trigger: '.g-footer', start: 'top 85%', once: true, onEnter: () => { gsap.from(beatNodes, { scaleY: 0, transformOrigin: '50% 100%', transformBox: 'fill-box', duration: .9, stagger: { each: .006 }, onComplete: () => wave.start() }); } });
 
   /* ---------- Threads: messages arrive as you reach them ---------- */
   $$('[data-chat]').forEach(th => {

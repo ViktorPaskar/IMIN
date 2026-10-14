@@ -86,19 +86,26 @@
 
 <main id="main">
 
-  <!-- 1. Hero: someone types a doubt, deletes it; IMIN writes first -->
-  <section class="c-hero" id="top" data-section="hero">
-    <div class="wrap c-hero__grid">
-      <div class="c-hero__copy">
-        <p class="c-hero__draft" aria-hidden="true" hidden><span data-draft></span><i class="composer__caret"></i></p>
-        <h1 class="display c-hero__title">
-          <span class="line"><span>Don't</span></span>
-          <span class="line"><span>overthink</span></span>
-          <span class="line"><span>the night.</span></span>
-        </h1>
-        <p class="c-hero__sub">Music first. Come as you are.</p>
+  <!-- 1. Hero: a tunnel of words; in the middle, IMIN's message -->
+  <section class="t-hero" id="top" data-section="hero">
+    <h1 class="visually-hidden">Don't overthink the night.</h1>
+    <p class="visually-hidden">Music first. Come as you are.</p>
+    <div class="t-stage" aria-hidden="true">
+      <div class="t-box">
+        <div class="t-wall t-wall--top" data-words="Don't overthink" data-words-m="Don't|overthink"></div>
+        <div class="t-wall t-wall--bottom" data-words="The night." data-words-m="The|night."></div>
+        <div class="t-wall t-wall--left" data-words="Music|first" data-words-m="Music first"></div>
+        <div class="t-wall t-wall--right" data-words="Come as|you are" data-words-m="Come as you are"></div>
       </div>
-
+      <div class="t-fly">
+        <span class="t-thought">What if I don't know anyone?</span>
+        <span class="t-thought">What do I wear?</span>
+        <span class="t-thought">Who else is going?</span>
+        <span class="t-thought">Is it even worth it?</span>
+        <span class="t-thought">Maybe I'll just stay in.</span>
+      </div>
+    </div>
+    <div class="t-center">
       <div class="thread thread--hero">
         <div class="msg msg--in" data-invite>
           <div class="msg__from"><span class="ava ava--imin" aria-hidden="true"><svg><use href="#mark-s"/></svg></span><b>IMIN</b></div>
@@ -119,7 +126,6 @@
         <p class="caption c-hero__entry" data-entry>Entry: free with sign-up</p>
       </div>
     </div>
-    <div class="g-hero__beat" aria-hidden="true"></div>
   </section>
 
   <!-- 2. The idea: your doubts as your messages, our answers as replies -->
@@ -295,7 +301,7 @@
 </main>
 
 <!-- 9. Footer -->
-<footer class="g-footer">
+<footer class="g-footer has-beat">
   <div class="wrap">
     <div class="g-footer__top">
       <div class="g-footer__brand">
@@ -315,6 +321,7 @@
       <span class="g-footer__lang">Language: <b>EN</b> · FR, ES, UA soon</span>
     </div>
   </div>
+  <div class="g-hero__beat" aria-hidden="true"></div>
 </footer>
 
 <!-- Sticky bar on phones (state A, visitor in the region) -->
