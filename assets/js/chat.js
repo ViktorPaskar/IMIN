@@ -369,6 +369,7 @@
      --------------------------------------------------------- */
   const tHero = $('.t-hero'), tBox = $('.t-box');
   const tun = { P: 900, L: 900, n: 0, beams: [] };
+  const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
   function buildTunnel() {
     if (!tHero) return;
     tun.beams = [];
@@ -391,7 +392,7 @@
       w.innerHTML = `<svg viewBox="0 0 ${pw} ${ph}" preserveAspectRatio="none"><defs><radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="${pw / 2}" cy="${ph / 2}" r="${R.toFixed(0)}">
           <stop offset="0" stop-color="${c}" stop-opacity=".95"/><stop offset=".45" stop-color="${c}" stop-opacity=".35"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient></defs>${lines.map((t, i) =>
         `<text x="${pw * .01}" y="${(i + 1) * lh - lh * .02}" font-size="${fs.toFixed(1)}" textLength="${(pw * .98).toFixed(1)}" lengthAdjust="spacingAndGlyphs" fill="url(#${id})" stroke-width="${(fs * .007).toFixed(2)}">${esc(t)}</text>`).join('')}</svg>`;
-      tun.beams.push({ g: $('radialGradient', w), pw, ph, R, s1: .23 + Math.random() * .2, s2: .17 + Math.random() * .2, p: Math.random() * 6.28 });
+      tun.beams.push({ g: $('radialGradient', w), stops: $$('stop', w), pw, ph, R, col: hex(c).slice(), from: hex(c).slice(), to: hex(c).slice(), t0: -9, s1: .23 + Math.random() * .2, s2: .17 + Math.random() * .2, p: Math.random() * 6.28 });
     });
   }
   buildTunnel();
@@ -491,12 +492,24 @@
   /* the torch beams drift through the letters and hit on the kick (four on the floor, 124 BPM) */
   let beamsOn = true;
   const BEAT = 60 / 124;
+  const LIGHTS = ['#9C8CFF', '#16B877', '#4B2BFF'].map(hex);   // Haze, Doorlight, Ultra
   gsap.ticker.add(() => {
     if (!beamsOn) return;
     const t = gsap.ticker.time;
     const ph = (t % BEAT) / BEAT;                       // 0 on the kick, 1 just before the next
     const k = Math.exp(-ph * 5.5);                      // sharp hit, quick decay
+    const bar = Math.floor(t / BEAT);
+    const onKick = bar !== tun.lastBeat; tun.lastBeat = bar;
     tun.beams.forEach(b => {
+      // now and then, on a kick, a beam slides to another brand colour
+      if (onKick && Math.random() < .22) {
+        const opts = LIGHTS.filter(c => c.join() !== b.to.join());
+        b.from = b.col.slice(); b.to = opts[Math.floor(Math.random() * opts.length)]; b.t0 = t;
+      }
+      const m = Math.min(1, (t - b.t0) / 1.2), e = m * m * (3 - 2 * m);
+      b.col = b.from.map((v, i) => Math.round(v + (b.to[i] - v) * e));
+      const rgb = `rgb(${b.col.join(',')})`;
+      b.stops.forEach(st => st.setAttribute('stop-color', rgb));
       b.g.setAttribute('cx', (b.pw * (.5 + .48 * Math.sin(t * b.s1 * 2.2 + b.p))).toFixed(0));
       b.g.setAttribute('cy', (b.ph * (.5 + .45 * Math.sin(t * b.s2 * 2.6 + b.p * 1.7))).toFixed(0));
       b.g.setAttribute('r', (b.R * (.8 + .35 * k)).toFixed(0));
