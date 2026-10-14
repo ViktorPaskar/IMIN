@@ -400,6 +400,57 @@
   document.fonts?.ready.then(buildTunnel);
 
   /* ---------------------------------------------------------
+     Halftone light behind the dark sections: fine dots; a pool of brand light
+     wanders over them and the dots inside swell on the kick (124 BPM)
+     --------------------------------------------------------- */
+  (function dots() {
+    const BEAT = 60 / 124;
+    const COLS = [[156, 140, 255], [22, 184, 119], [75, 43, 255]];   // Haze, Doorlight, Ultra
+    const items = $$('.c-idea, .faq, .stay').map((sec, i) => {
+      const c = document.createElement('canvas');
+      c.className = 'dots-bg'; c.setAttribute('aria-hidden', 'true');
+      sec.prepend(c);
+      return { sec, c, x: c.getContext('2d'), on: false, col: COLS[i % 3].slice(), from: COLS[i % 3].slice(), to: COLS[i % 3].slice(), t0: -9, seed: i * 1.7 };
+    });
+    const dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    const fit = it => { it.c.width = Math.round(it.c.clientWidth * dpr); it.c.height = Math.round(it.c.clientHeight * dpr); };
+    let lastBeat = -1;
+    function draw(it, t, k) {
+      const { x, c } = it, W = c.width, H = c.height, d = 14 * dpr;
+      x.clearRect(0, 0, W, H);
+      const lx = W * (.5 + .42 * Math.sin(t * .23 + it.seed)), ly = H * (.5 + .38 * Math.sin(t * .31 + it.seed * 2));
+      const R = Math.min(Math.max(W, H) * .45, 900 * dpr) * (.92 + .12 * k);
+      const rgb = it.col.join(',');
+      for (let y = d / 2; y < H; y += d) for (let px = d / 2; px < W; px += d) {
+        const l = Math.max(0, 1 - Math.hypot(px - lx, y - ly) / R);
+        if (l > .01) { x.fillStyle = `rgba(${rgb},${(.1 + .45 * l).toFixed(3)})`; }
+        else { x.fillStyle = 'rgba(244,239,231,.045)'; }
+        const r = (.6 + 2.8 * l * l * (.7 + .3 * k)) * dpr;
+        x.beginPath(); x.arc(px, y, r, 0, 6.2832); x.fill();
+      }
+    }
+    items.forEach(fit);
+    let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => items.forEach(it => { fit(it); if (reduced) draw(it, 1, .4); }), 200); });
+    if (reduced) { items.forEach(it => draw(it, 1, .4)); return; }
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(es => es.forEach(en => { const it = items.find(i => i.sec === en.target); if (it) it.on = en.isIntersecting; }));
+      items.forEach(it => io.observe(it.sec));
+    } else items.forEach(it => { it.on = true; });
+    (function loop(ms) {
+      const t = ms / 1000, k = Math.exp(-((t % BEAT) / BEAT) * 5.5);
+      const beat = Math.floor(t / BEAT), onKick = beat !== lastBeat; lastBeat = beat;
+      items.forEach(it => {
+        if (!it.on) return;
+        if (onKick && Math.random() < .15) { const o = COLS.filter(c => c.join() !== it.to.join()); it.from = it.col.slice(); it.to = o[Math.floor(Math.random() * o.length)]; it.t0 = t; }
+        const m = Math.min(1, (t - it.t0) / 1.2), e = m * m * (3 - 2 * m);
+        it.col = it.from.map((v, j) => Math.round(v + (it.to[j] - v) * e));
+        draw(it, t, k);
+      });
+      requestAnimationFrame(loop);
+    })(performance.now());
+  })();
+
+  /* ---------------------------------------------------------
      Bohdan's voice note: plays the recording when there is one;
      the words light up along with it
      --------------------------------------------------------- */

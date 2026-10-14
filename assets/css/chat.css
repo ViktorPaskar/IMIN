@@ -217,30 +217,8 @@
   .t-fly { display: none; }
 }
 
-/* ---------- Soft club light behind the dark sections after the hero ----------
-   Two or three big blurred pools of Ultra and Haze drift very slowly, like light
-   spilling from the room next door. No pattern, nothing to read. */
-.chat .c-idea, .chat .faq, .chat .stay { position: relative; isolation: isolate; overflow: hidden; }
-.chat .c-idea::before, .chat .faq::before, .chat .stay::before,
-.chat .c-idea::after, .chat .faq::after, .chat .stay::after {
-  content: ""; position: absolute; z-index: -1; pointer-events: none; border-radius: 50%;
-  filter: blur(90px); will-change: transform;
-}
-.chat .c-idea::before, .chat .faq::before, .chat .stay::before {
-  width: 62vw; height: 62vw; max-width: 900px; max-height: 900px; right: -18vw; top: -12%;
-  background: radial-gradient(circle, rgba(75, 43, 255, .34), rgba(75, 43, 255, .12) 40%, rgba(75, 43, 255, 0) 68%);
-  animation: pool-a 26s ease-in-out infinite alternate;
-}
-.chat .c-idea::after, .chat .faq::after, .chat .stay::after {
-  width: 48vw; height: 48vw; max-width: 720px; max-height: 720px; left: -14vw; bottom: -18%;
-  background: radial-gradient(circle, rgba(156, 140, 255, .2), rgba(156, 140, 255, .07) 40%, rgba(156, 140, 255, 0) 68%);
-  animation: pool-b 32s ease-in-out infinite alternate;
-}
-.chat .faq::before { right: auto; left: -20vw; top: 20%; }
-.chat .faq::after { left: auto; right: -12vw; bottom: -10%; }
-@keyframes pool-a { to { transform: translate(-8vw, 10vh) scale(1.12); } }
-@keyframes pool-b { to { transform: translate(10vw, -8vh) scale(.92); } }
-@media (prefers-reduced-motion: reduce) {
-  .chat .c-idea::before, .chat .faq::before, .chat .stay::before,
-  .chat .c-idea::after, .chat .faq::after, .chat .stay::after { animation: none; }
-}
+/* ---------- Halftone light behind the dark sections after the hero ----------
+   A grid of fine dots, like light through a grille. A pool of brand-coloured light
+   wanders across it; the dots inside it swell and pulse on the kick. Drawn in chat.js. */
+.chat .c-idea, .chat .faq, .chat .stay { position: relative; isolation: isolate; }
+.dots-bg { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }
