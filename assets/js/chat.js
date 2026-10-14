@@ -385,14 +385,19 @@
       const lines = ((W < 821 && w.dataset.wordsM) || w.dataset.words).split('|');
       const lh = ph / lines.length;
       const fs = lh / .74;
-      // hollow letters; a torch-like pool of Haze light wanders inside them
-      const id = 'tl' + (++tun.n);
+      // hollow letters: a night-coloured stencil with the letters cut out, drawn once;
+      // a pool of light moves behind it (transform only, no repaint), outlines on top
+      const id = 'tm' + (++tun.n);
       const R = Math.max(pw, ph) * .32;
-      const c = w.dataset.light || '#9C8CFF';   // ceiling and floor in Haze, the walls in Doorlight
-      w.innerHTML = `<svg viewBox="0 0 ${pw} ${ph}" preserveAspectRatio="none"><defs><radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="${pw / 2}" cy="${ph / 2}" r="${R.toFixed(0)}">
-          <stop offset="0" stop-color="${c}" stop-opacity=".95"/><stop offset=".45" stop-color="${c}" stop-opacity=".35"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient></defs>${lines.map((t, i) =>
-        `<text x="${pw * .01}" y="${(i + 1) * lh - lh * .02}" font-size="${fs.toFixed(1)}" textLength="${(pw * .98).toFixed(1)}" lengthAdjust="spacingAndGlyphs" fill="url(#${id})" stroke-width="${(fs * .007).toFixed(2)}">${esc(t)}</text>`).join('')}</svg>`;
-      tun.beams.push({ g: $('radialGradient', w), stops: $$('stop', w), pw, ph, R, col: hex(c).slice(), from: hex(c).slice(), to: hex(c).slice(), t0: -9, s1: .23 + Math.random() * .2, s2: .17 + Math.random() * .2, p: Math.random() * 6.28 });
+      const c = w.dataset.light || '#9C8CFF';
+      const texts = (attrs) => lines.map((t, i) => `<text x="${pw * .01}" y="${(i + 1) * lh - lh * .02}" font-size="${fs.toFixed(1)}" textLength="${(pw * .98).toFixed(1)}" lengthAdjust="spacingAndGlyphs" ${attrs}>${esc(t)}</text>`).join('');
+      // the light is rasterised small and scaled up: a soft gradient loses nothing, the GPU does a quarter of the work
+      w.innerHTML = `<i class="t-light" style="width:${(R / 2).toFixed(0)}px;height:${(R / 2).toFixed(0)}px"></i>
+        <svg viewBox="0 0 ${pw} ${ph}" preserveAspectRatio="none"><defs><mask id="${id}" maskUnits="userSpaceOnUse" x="0" y="0" width="${pw}" height="${ph}"><rect width="${pw}" height="${ph}" fill="#fff"/>${texts('fill="#000"')}</mask></defs>
+        <rect width="${pw}" height="${ph}" fill="#0B0A14" mask="url(#${id})"/>${texts(`fill="none" class="t-out" stroke-width="${(fs * .007).toFixed(2)}"`)}</svg>`;
+      const light = $('.t-light', w);
+      light.style.setProperty('--c', hex(c).join(' '));
+      tun.beams.push({ el: light, pw, ph, R, col: hex(c).slice(), from: hex(c).slice(), to: hex(c).slice(), t0: -9, s1: .23 + Math.random() * .2, s2: .17 + Math.random() * .2, p: Math.random() * 6.28 });
     });
   }
   buildTunnel();
@@ -406,45 +411,40 @@
   (function dots() {
     const BEAT = 60 / 124;
     const COLS = [[156, 140, 255], [22, 184, 119], [75, 43, 255]];   // Haze, Doorlight, Ultra
+    // the dots are a stencil drawn once in CSS; only the light behind it moves (transform, opacity)
     const items = $$('.c-idea, .faq, .stay').map((sec, i) => {
-      const c = document.createElement('canvas');
-      c.className = 'dots-bg'; c.setAttribute('aria-hidden', 'true');
-      sec.prepend(c);
-      return { sec, c, x: c.getContext('2d'), on: false, col: COLS[i % 3].slice(), from: COLS[i % 3].slice(), to: COLS[i % 3].slice(), t0: -9, seed: i * 1.7 };
+      const box = document.createElement('div');
+      box.className = 'dots-bg'; box.setAttribute('aria-hidden', 'true');
+      box.innerHTML = '<i class="dots-bg__light"></i>';
+      sec.prepend(box);
+      const el = box.firstChild;
+      el.style.setProperty('--c', COLS[i % 3].join(' '));
+      return { sec, box, el, on: false, col: COLS[i % 3].slice(), from: COLS[i % 3].slice(), to: COLS[i % 3].slice(), t0: -9, seed: i * 1.7 };
     });
-    const dpr = Math.min(1.5, window.devicePixelRatio || 1);
-    const fit = it => { it.c.width = Math.round(it.c.clientWidth * dpr); it.c.height = Math.round(it.c.clientHeight * dpr); };
-    let lastBeat = -1;
-    function draw(it, t, k) {
-      const { x, c } = it, W = c.width, H = c.height, d = 14 * dpr;
-      x.clearRect(0, 0, W, H);
-      const lx = W * (.5 + .42 * Math.sin(t * .23 + it.seed)), ly = H * (.5 + .38 * Math.sin(t * .31 + it.seed * 2));
-      const R = Math.min(Math.max(W, H) * .45, 900 * dpr) * (.92 + .12 * k);
-      const rgb = it.col.join(',');
-      for (let y = d / 2; y < H; y += d) for (let px = d / 2; px < W; px += d) {
-        const l = Math.max(0, 1 - Math.hypot(px - lx, y - ly) / R);
-        if (l > .01) { x.fillStyle = `rgba(${rgb},${(.1 + .45 * l).toFixed(3)})`; }
-        else { x.fillStyle = 'rgba(244,239,231,.045)'; }
-        const r = (.6 + 2.8 * l * l * (.7 + .3 * k)) * dpr;
-        x.beginPath(); x.arc(px, y, r, 0, 6.2832); x.fill();
-      }
-    }
-    items.forEach(fit);
-    let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => items.forEach(it => { fit(it); if (reduced) draw(it, 1, .4); }), 200); });
-    if (reduced) { items.forEach(it => draw(it, 1, .4)); return; }
+    const place = (it, t, k) => {
+      const W = it.box.clientWidth, H = it.box.clientHeight, S = it.el.offsetWidth;
+      const x = W * (.5 + .42 * Math.sin(t * .23 + it.seed)) - S / 2, y = H * (.5 + .38 * Math.sin(t * .31 + it.seed * 2)) - S / 2;
+      it.el.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) scale(${(.92 + .12 * k).toFixed(3)})`;
+      it.el.style.opacity = (.7 + .3 * k).toFixed(3);
+    };
+    if (reduced) { items.forEach(it => place(it, 1, .4)); return; }
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver(es => es.forEach(en => { const it = items.find(i => i.sec === en.target); if (it) it.on = en.isIntersecting; }));
       items.forEach(it => io.observe(it.sec));
     } else items.forEach(it => { it.on = true; });
+    let lastBeat = -1;
     (function loop(ms) {
       const t = ms / 1000, k = Math.exp(-((t % BEAT) / BEAT) * 5.5);
       const beat = Math.floor(t / BEAT), onKick = beat !== lastBeat; lastBeat = beat;
       items.forEach(it => {
         if (!it.on) return;
         if (onKick && Math.random() < .15) { const o = COLS.filter(c => c.join() !== it.to.join()); it.from = it.col.slice(); it.to = o[Math.floor(Math.random() * o.length)]; it.t0 = t; }
-        const m = Math.min(1, (t - it.t0) / 1.2), e = m * m * (3 - 2 * m);
-        it.col = it.from.map((v, j) => Math.round(v + (it.to[j] - v) * e));
-        draw(it, t, k);
+        if (t - it.t0 < 1.25) {
+          const m = Math.min(1, (t - it.t0) / 1.2), e = m * m * (3 - 2 * m);
+          it.col = it.from.map((v, j) => Math.round(v + (it.to[j] - v) * e));
+          it.el.style.setProperty('--c', it.col.join(' '));
+        }
+        place(it, t, k);
       });
       requestAnimationFrame(loop);
     })(performance.now());
@@ -557,14 +557,15 @@
         const opts = LIGHTS.filter(c => c.join() !== b.to.join());
         b.from = b.col.slice(); b.to = opts[Math.floor(Math.random() * opts.length)]; b.t0 = t;
       }
-      const m = Math.min(1, (t - b.t0) / 1.2), e = m * m * (3 - 2 * m);
-      b.col = b.from.map((v, i) => Math.round(v + (b.to[i] - v) * e));
-      const rgb = `rgb(${b.col.join(',')})`;
-      b.stops.forEach(st => st.setAttribute('stop-color', rgb));
-      b.g.setAttribute('cx', (b.pw * (.5 + .48 * Math.sin(t * b.s1 * 2.2 + b.p))).toFixed(0));
-      b.g.setAttribute('cy', (b.ph * (.5 + .45 * Math.sin(t * b.s2 * 2.6 + b.p * 1.7))).toFixed(0));
-      b.g.setAttribute('r', (b.R * (.8 + .35 * k)).toFixed(0));
-      b.g.firstElementChild.setAttribute('stop-opacity', (.3 + .68 * k).toFixed(2));
+      if (t - b.t0 < 1.25) {
+        const m = Math.min(1, (t - b.t0) / 1.2), e = m * m * (3 - 2 * m);
+        b.col = b.from.map((v, i) => Math.round(v + (b.to[i] - v) * e));
+        b.el.style.setProperty('--c', b.col.join(' '));
+      }
+      const x = b.pw * (.5 + .48 * Math.sin(t * b.s1 * 2.2 + b.p)) - b.R;
+      const y = b.ph * (.5 + .45 * Math.sin(t * b.s2 * 2.6 + b.p * 1.7)) - b.R;
+      b.el.style.transform = `translate3d(${(x + .75 * b.R).toFixed(1)}px,${(y + .75 * b.R).toFixed(1)}px,0) scale(${(4 * (.8 + .35 * k)).toFixed(3)})`;
+      b.el.style.opacity = (.32 + .68 * k).toFixed(3);
     });
   });
   ScrollTrigger.create({ trigger: tHero, start: 'top top', end: 'bottom top', onToggle: st => { beamsOn = st.isActive; } });
