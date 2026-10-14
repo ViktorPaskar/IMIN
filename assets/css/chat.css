@@ -217,13 +217,30 @@
   .t-fly { display: none; }
 }
 
-/* ---------- A quiet wallpaper behind the conversation (dark sections after the hero) ---------- */
-.chat .c-idea, .chat .faq, .chat .stay {
-  background-color: var(--midnight);
-  background-image:
-    radial-gradient(ellipse 50% 40% at 85% 20%, rgba(156, 140, 255, .07), transparent 70%),
-    radial-gradient(ellipse 45% 35% at 10% 85%, rgba(75, 43, 255, .06), transparent 70%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220' fill='%23F4EFE7' fill-opacity='.035'%3E %3Crect x='22' y='26' width='6' height='30' rx='3'/%3E%3Crect x='36' y='26' width='6' height='30' rx='3' transform='rotate(-20 39 41)'/%3E%3Crect x='50' y='26' width='6' height='30' rx='3'/%3E %3Cg transform='translate(130 34) scale(.11)'%3E%3Cpath d='M0 0H36.86V107.29H0Z'/%3E%3Cpath d='M46.03 0H85.82L107.8 35.65L129.43 0H169.58V107.29H132.55V55.03L107.8 89.29L83.06 55.03V107.29H46.03Z'/%3E%3Cpath d='M0 117.67H36.86V224.95H0Z'/%3E%3Cpath d='M46.03 117.67H87.9L124.59 167.16V117.67H169.58V224.95H128.22L90.32 178.23V224.95H46.03Z'/%3E%3C/g%3E %3Cpath d='M80 150l9 9 19-19' fill='none' stroke='%23F4EFE7' stroke-opacity='.035' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E %3Crect x='168' y='128' width='6' height='30' rx='3' transform='rotate(20 171 143)'/%3E%3Crect x='182' y='128' width='6' height='30' rx='3'/%3E %3Ccircle cx='30' cy='160' r='3'/%3E%3Ccircle cx='110' cy='96' r='2.5'/%3E%3Ccircle cx='196' cy='70' r='2'/%3E %3C/svg%3E");
-  background-size: auto, auto, 220px 220px;
+/* ---------- Soft club light behind the dark sections after the hero ----------
+   Two or three big blurred pools of Ultra and Haze drift very slowly, like light
+   spilling from the room next door. No pattern, nothing to read. */
+.chat .c-idea, .chat .faq, .chat .stay { position: relative; isolation: isolate; overflow: hidden; }
+.chat .c-idea::before, .chat .faq::before, .chat .stay::before,
+.chat .c-idea::after, .chat .faq::after, .chat .stay::after {
+  content: ""; position: absolute; z-index: -1; pointer-events: none; border-radius: 50%;
+  filter: blur(90px); will-change: transform;
 }
-@media (hover: hover) and (min-width: 821px) { .chat .c-idea, .chat .faq, .chat .stay { background-attachment: scroll, scroll, fixed; } }
+.chat .c-idea::before, .chat .faq::before, .chat .stay::before {
+  width: 62vw; height: 62vw; max-width: 900px; max-height: 900px; right: -18vw; top: -12%;
+  background: radial-gradient(circle, rgba(75, 43, 255, .34), rgba(75, 43, 255, .12) 40%, rgba(75, 43, 255, 0) 68%);
+  animation: pool-a 26s ease-in-out infinite alternate;
+}
+.chat .c-idea::after, .chat .faq::after, .chat .stay::after {
+  width: 48vw; height: 48vw; max-width: 720px; max-height: 720px; left: -14vw; bottom: -18%;
+  background: radial-gradient(circle, rgba(156, 140, 255, .2), rgba(156, 140, 255, .07) 40%, rgba(156, 140, 255, 0) 68%);
+  animation: pool-b 32s ease-in-out infinite alternate;
+}
+.chat .faq::before { right: auto; left: -20vw; top: 20%; }
+.chat .faq::after { left: auto; right: -12vw; bottom: -10%; }
+@keyframes pool-a { to { transform: translate(-8vw, 10vh) scale(1.12); } }
+@keyframes pool-b { to { transform: translate(10vw, -8vh) scale(.92); } }
+@media (prefers-reduced-motion: reduce) {
+  .chat .c-idea::before, .chat .faq::before, .chat .stay::before,
+  .chat .c-idea::after, .chat .faq::after, .chat .stay::after { animation: none; }
+}
