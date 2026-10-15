@@ -45,8 +45,10 @@ window.IMIN = {
     {
       id: 'halloween-coffeeshop-rave',
       date: '2026-10-31T15:00',
+      end: '2026-10-31T18:00',                       // optional, shown on the poster (sms.html)
       name: 'Halloween CoffeeShop Rave',
       line: 'DJ, coffee, daylight.',
+      tags: ['DJ', 'Pumpkin spice', 'Costume contest'], // poster tags (sms.html)
       city: 'Metz',
       format: 'CoffeeShop Rave',
       by: 'IMIN',                                    // or the creator's name
