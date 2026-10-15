@@ -29,15 +29,12 @@
   };
   /* ---------------------------------------------------------
      Loading screen: a short chat, then the night.
-     Once per visit; tap to skip; off with reduced motion.
+     Tap to skip; off with reduced motion.
      --------------------------------------------------------- */
   const introEl = $('[data-intro]');
   const intro = (() => {
     if (!introEl) return Promise.resolve();
-    let seen = false;
-    try { seen = sessionStorage.getItem('imin-intro') === '1'; } catch (e) {}
-    if (reduce || seen) { introEl.classList.add('gone'); return Promise.resolve(); }
-    try { sessionStorage.setItem('imin-intro', '1'); } catch (e) {}
+    if (reduce) { introEl.classList.add('gone'); return Promise.resolve(); }
     const root = document.documentElement;
     root.classList.add('intro-lock');
     const thread = $('[data-intro-thread]', introEl);
