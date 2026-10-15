@@ -220,6 +220,17 @@
   }
 
   /* hero thoughts without GSAP: the dashboard simply stays answered */
+  /* the pile of tool windows is drawn at a fixed size and scaled to fit the browser frame */
+  const view = $('[data-view]');
+  if (view) {
+    const fit = () => {
+      const W = +getComputedStyle(view).getPropertyValue('--W');
+      view.style.setProperty('--s', Math.min(1, (view.clientWidth - 24) / W).toFixed(4));
+    };
+    fit();
+    addEventListener('resize', fit);
+  }
+
   if (reduce || !window.gsap || !window.ScrollTrigger) {
     if (!reduce) { const raf = t => { meter(t / 1000); requestAnimationFrame(raf); }; requestAnimationFrame(raf); }
     return;
@@ -334,12 +345,13 @@
     gsap.from(el, { y: 20, opacity: 0, duration: 1, scrollTrigger: { trigger: el, start: 'top 98%' } });
   });
 
-  /* ---------- Six browser tabs: scroll flicks through them, then they close and IMIN stays, forward only ---------- */
+  /* ---------- Six browser tabs: their windows pile up as you scroll, then get swept away and IMIN stays, forward only ---------- */
   const brw = $('[data-brw]');
   if (brw) {
     const tabs = $$('.bt:not(.bt-imin)', brw);
     const imin = $('.bt-imin', brw);
-    const views = $$('.bv', brw);
+    const wins = $$('.cw', brw);
+    const iminView = $('.bv-imin', brw);
     const url = $('[data-url]', $('.brw-url', brw));
     const count = $('[data-count]', brw);
     let shown = -1;
@@ -348,24 +360,24 @@
       shown = i;
       const tab = i < 6 ? tabs[i] : imin;
       [...tabs, imin].forEach(t => t.classList.toggle('is-on', t === tab));
-      views.forEach((v, k) => v.classList.toggle('is-on', k === i));
-      url.textContent = tab.dataset.url;
+      iminView.classList.toggle('is-on', i === 6);
+      url.innerHTML = tab.dataset.url;
     };
     gsap.set(imin, { display: 'flex', maxWidth: 0, paddingLeft: 0, paddingRight: 0, opacity: 0 });
-    const flick = gsap.timeline({
+    const pile = gsap.timeline({
       paused: true,
       onUpdate: () => {
-        const t = flick.time();
-        show(t >= 6.75 ? 6 : Math.min(5, Math.floor(t)));
-        const open = t < 6 ? 6 : Math.max(1, 6 - Math.floor((t - 6) / .12));
-        count.textContent = t >= 6.75 ? '1 tab for the whole night' : open + ' tabs for one night';
+        const t = pile.time();
+        show(t >= 6.6 ? 6 : Math.min(5, Math.floor(t + .35)));
+        count.textContent = t >= 6.6 ? '1 tab for the whole night' : '6 tabs for one night';
       }
-    })
-      .to({}, { duration: 6 })
-      .to(tabs, { maxWidth: 0, paddingLeft: 0, paddingRight: 0, opacity: 0, duration: .45, ease: 'power2.in', stagger: { each: .1, from: 'end' } }, 6)
-      .to(imin, { maxWidth: 260, paddingLeft: 10, paddingRight: 10, opacity: 1, duration: .5, ease: 'power3.out' }, 6.7)
-      .to({}, { duration: .4 });
-    oneWay(flick, { trigger: brw, start: () => innerWidth < 560 ? 'center 52%' : 'center 54%', end: () => '+=' + Math.round(innerHeight * 1.8), pin: true, anticipatePin: 1 });
+    });
+    wins.slice(1).forEach((w, i) => pile.fromTo(w, { y: 90, scale: .9, opacity: 0, rotation: 4 }, { y: 0, scale: 1, opacity: 1, rotation: 0, duration: .55, ease: 'back.out(1.4)' }, i + .65));
+    pile.to(wins, { y: 140, scale: .55, opacity: 0, duration: .5, ease: 'power2.in', stagger: { each: .05, from: 'end' } }, 6)
+      .to(tabs, { maxWidth: 0, paddingLeft: 0, paddingRight: 0, opacity: 0, duration: .4, ease: 'power2.in', stagger: { each: .06, from: 'end' } }, 6)
+      .to(imin, { maxWidth: 260, paddingLeft: 12, paddingRight: 12, opacity: 1, duration: .45, ease: 'power3.out' }, 6.5)
+      .to({}, { duration: .5 });
+    oneWay(pile, { trigger: brw, start: 'center 54%', end: () => '+=' + Math.round(innerHeight * 1.8), pin: true, anticipatePin: 1 });
     gsap.from('.brw', { y: 60, opacity: 0, duration: 1.1, ease: 'power4.out', scrollTrigger: { trigger: brw, start: 'top 92%' } });
   }
 
