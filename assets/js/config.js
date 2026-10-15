@@ -34,6 +34,24 @@ window.IMIN = {
     }
   },
 
+  /* Creators page (pro/). Empty = not ready yet: the page hides that channel or falls back to the form. */
+  pro: {
+    links: {
+      signUp: 'https://dashboard.imin.wtf/signup',    // TODO: the dashboard sign-up URL (CREATE YOUR NIGHT, Sign up)
+      signIn: 'https://dashboard.imin.wtf/',           // SIGN IN
+      nights: '../',                                   // the guest page
+      instagramCreators: 'https://www.instagram.com/imin.wtf/', // TODO: @imin.pro or the creators account once it exists
+      instagram: 'https://www.instagram.com/imin.wtf/',
+      whatsapp: '',                                    // TODO: https://wa.me/<Bohdan's number>
+      telegram: '',                                    // TODO: https://t.me/<username>
+      call: '',                                        // TODO: booking link for the 20-minute call (cal.com or similar)
+      privacy: 'https://app.imin.wtf/legal/privacy'
+    },
+    /* POST endpoint for "Send us your night" (JSON: type, name, contact, what, when, link, consent, lang).
+       Empty = the form only shows the confirmation on the page. */
+    pitchEndpoint: ''
+  },
+
   contact: 'contact@imin.support',
 
   /* POST endpoint for "Keep me posted" (JSON: email, consent, source, lang, consent_text).
