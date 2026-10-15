@@ -27,6 +27,55 @@
     parent.insertBefore(li, before || null);
     return li;
   };
+  /* ---------------------------------------------------------
+     Loading screen: a short chat, then the night.
+     Once per visit; tap to skip; off with reduced motion.
+     --------------------------------------------------------- */
+  const introEl = $('[data-intro]');
+  const intro = (() => {
+    if (!introEl) return Promise.resolve();
+    let seen = false;
+    try { seen = sessionStorage.getItem('imin-intro') === '1'; } catch (e) {}
+    if (reduce || seen) { introEl.classList.add('gone'); return Promise.resolve(); }
+    try { sessionStorage.setItem('imin-intro', '1'); } catch (e) {}
+    const root = document.documentElement;
+    root.classList.add('intro-lock');
+    const thread = $('[data-intro-thread]', introEl);
+    const load = v => introEl.style.setProperty('--load', v);
+    let skip;
+    const skipped = new Promise(res => { skip = res; });
+    introEl.addEventListener('click', () => skip(), { once: true });
+    addEventListener('keydown', () => skip(), { once: true });
+    const pause = ms => Promise.race([wait(ms), skipped]);
+    const say = async (cls, text, typing) => {
+      if (typing) {
+        const t = add(thread, 'b in typing', DOTS);
+        await pause(typing);
+        t.remove();
+      }
+      add(thread, cls, '<p>' + text + '</p>');
+    };
+    const pageLoaded = document.readyState === 'complete' ? Promise.resolve() : new Promise(r => addEventListener('load', r, { once: true }));
+    const chat = (async () => {
+      await pause(350);  load(.2);
+      await say('b out', 'should I go out tonight?');
+      await pause(250);  load(.4);
+      await say('b in', 'Don’t overthink it.', 750);
+      load(.6);
+      await say('b in', 'Music first. Come as you are.', 450);
+      await pause(450);  load(.85);
+      await say('b out yes', 'I’m in');
+      await pause(550);
+    })();
+    return Promise.race([Promise.all([chat, pageLoaded]), skipped.then(() => pageLoaded)]).then(() => {
+      load(1);
+      introEl.classList.add('out');
+      root.classList.remove('intro-lock');
+      setTimeout(() => introEl.classList.add('gone'), 950);
+      return wait(250);
+    });
+  })();
+
   const iminSays = async (parent, text) => {
     const t = add(parent, 'b in typing', DOTS);
     t.setAttribute('aria-label', 'IMIN is typing');
@@ -208,6 +257,7 @@
   /* smooth scroll */
   if (window.Lenis) {
     const lenis = new Lenis({ lerp: .12 });
+    if (introEl && !introEl.classList.contains('gone')) { lenis.stop(); intro.then(() => lenis.start()); }
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add(t => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
@@ -226,7 +276,7 @@
   notifBox.style.animation = 'none';
   $('.sticker').style.animation = 'none';
   gsap.set(['.hero-copy > *', '.flyer-back', '.poster', '.tape', '.sticker', notifBox], { autoAlpha: 0 });
-  const intro = () => {
+  const heroIn = () => {
     const still = $$('.poster, .hero .btn-door');
     still.forEach(el => { el.style.transition = 'none'; });
     gsap.set(['.hero-copy > *', '.flyer-back', '.poster', '.tape', '.sticker', notifBox], { autoAlpha: 1 });
@@ -251,7 +301,7 @@
       .to(notifBox, { keyframes: { x: [0, -3, 3, -3, 3, -2, 2, 0], ease: 'none' }, duration: .5 }, 3.1)
       .call(() => { $('.sticker').style.animation = ''; still.forEach(el => { el.style.transition = ''; }); }, null, 2.2);
   };
-  (document.fonts ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]) : Promise.resolve()).then(intro);
+  Promise.all([intro, document.fonts ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]) : null]).then(heroIn);
 
   // parallax: the back flyer lags, the poster leads, the message floats off last
   gsap.to('.hero-visual', { y: -60, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } });
