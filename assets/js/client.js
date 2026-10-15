@@ -325,8 +325,8 @@
     if (img) gsap.fromTo(img, { yPercent: -6, scale: 1.14 }, { yPercent: 6, ease: 'none', scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: true } });
     const big = $('.when b', card);
     if (big) {
-      big.innerHTML = `<span>${big.textContent}</span>`;
-      gsap.from($('span', big), { yPercent: 110, duration: 1, ease: 'power4.out', delay: .4 + i * .12, scrollTrigger: { trigger: '#nights .row', start: 'top 82%' } });
+      big.innerHTML = `<i>${big.textContent}</i>`;
+      gsap.from($('i', big), { yPercent: 110, duration: 1, ease: 'power4.out', delay: .4 + i * .12, scrollTrigger: { trigger: '#nights .row', start: 'top 82%' } });
     }
   });
   gsap.from('.np-list li', { x: -16, opacity: 0, duration: .6, stagger: .08, scrollTrigger: { trigger: '.np', start: 'top 85%' } });

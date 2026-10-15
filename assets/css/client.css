@@ -357,7 +357,7 @@ html.lenis,html.lenis body{height:auto}
 .card > img{will-change:transform}
 .card{isolation:isolate}
 .card .when b{display:block;overflow:hidden}
-.card .when b > span{display:inline-block}
+.card .when b > i{display:inline-block;font-style:normal}
 
 /* poster bits that move */
 .flyers{will-change:transform}
