@@ -224,8 +224,12 @@
   const view = $('[data-view]');
   if (view) {
     const fit = () => {
-      const W = +getComputedStyle(view).getPropertyValue('--W');
-      view.style.setProperty('--s', Math.min(1, (view.clientWidth - 24) / W).toFixed(4));
+      // fit both the width and the height of the screen, so the whole browser and its caption are visible at once
+      const cs = getComputedStyle(view), W = +cs.getPropertyValue('--W'), H = +cs.getPropertyValue('--H');
+      const box = view.closest('.brw'), room = box.parentElement.clientWidth;
+      const s = Math.min(1, (room - 26) / W, (innerHeight - (innerWidth < 560 ? 360 : 300)) / H);
+      view.style.setProperty('--s', s.toFixed(4));
+      box.style.maxWidth = Math.round(W * s + 26) + 'px';
     };
     fit();
     addEventListener('resize', fit);
