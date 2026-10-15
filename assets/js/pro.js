@@ -334,34 +334,15 @@
     gsap.from(el, { y: 20, opacity: 0, duration: 1, scrollTrigger: { trigger: el, start: 'top 98%' } });
   });
 
-  /* ---------- Six apps: they close one by one, IMIN is the one that stays ---------- */
-  const toolsBox = $('[data-tools]');
-  if (toolsBox) {
-    const tools = $$('[data-tool]', toolsBox);
-    const one = $('[data-tool-one]', toolsBox);
-    const count = $('[data-count]', toolsBox);
-    const step = .35;
-    const toCenter = (el, axis) => {
-      const b = toolsBox.getBoundingClientRect(), r = el.getBoundingClientRect();
-      const tx = gsap.getProperty(el, 'x'), ty = gsap.getProperty(el, 'y');
-      return axis === 'x' ? b.left + b.width / 2 - (r.left - tx + r.width / 2) : b.top + b.height * .44 - (r.top - ty + r.height / 2);
-    };
-    const tl = gsap.timeline({
-      paused: true,
-      onUpdate: () => {
-        const closed = tools.filter((t, i) => tl.time() >= i * step + .3).length;
-        count.textContent = closed >= tools.length ? '1 app for the whole night' : (tools.length - closed) + ' apps for one night';
-      }
-    });
-    tools.forEach((t, i) => {
-      const at = i * step;
-      tl.fromTo($('.tool-badge', t), { scale: 1 }, { scale: 1.35, duration: .1, yoyo: true, repeat: 1 }, at)
-        .to(t, { x: () => toCenter(t, 'x'), y: () => toCenter(t, 'y'), scale: .3, opacity: 0, duration: .35, ease: 'power2.in' }, at + .1);
-    });
-    const end = tools.length * step + .1;
-    tl.fromTo(one, { scale: .4, opacity: 0 }, { scale: 1, opacity: 1, duration: .45, ease: 'back.out(1.8)' }, end);
-    oneWay(tl, { trigger: toolsBox, start: 'center 55%', end: () => '+=' + Math.round(innerHeight * .7), pin: true, anticipatePin: 1 });
-  }
+  /* ---------- The line-up: each tool is struck through as it passes, forward only ---------- */
+  $$('.strike li').forEach(li => {
+    const strike = gsap.timeline({ paused: true })
+      .to($('.s-line', li), { scaleX: 1, duration: .5, ease: 'power2.inOut' })
+      .to($('.s-name', li), { color: 'rgba(244,239,231,.3)', duration: .4, ease: 'none' }, .2)
+      .to($('.s-note', li), { opacity: .45, duration: .4, ease: 'none' }, .2);
+    oneWay(strike, { trigger: li, start: 'top 38%', end: 'top 24%' });
+  });
+  gsap.from('.strike-end > *', { yPercent: 60, opacity: 0, duration: 1, ease: 'power4.out', stagger: .1, scrollTrigger: { trigger: '.strike-end', start: 'top 85%' } });
 
   /* ---------- people ---------- */
   [['.band img', '.band'], ['.imx-media img', '.imx']].forEach(([sel, trig]) => {
