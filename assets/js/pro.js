@@ -7,6 +7,12 @@
   const C = (window.IMIN && window.IMIN.pro) || {};
   const L = C.links || {};
 
+  /* images: resolve once decoded, so a reveal never animates an empty frame */
+  const ready = img => !img ? Promise.resolve() : (img.complete && img.naturalWidth ? (img.decode ? img.decode().catch(() => {}) : Promise.resolve())
+    : new Promise(res => { img.addEventListener('load', () => res(img.decode ? img.decode().catch(() => {}) : null), { once: true }); img.addEventListener('error', res, { once: true }); setTimeout(res, 4000); }));
+  // after the page has loaded, fetch the lazy images in the background so they are there before the reader is
+  addEventListener('load', () => setTimeout(() => { $$('img[loading="lazy"]').forEach(i => { i.loading = 'eager'; }); }, 600), { once: true });
+
   /* analytics: events from the spec, pushed to a dataLayer for whatever reads it */
   const track = (event, params = {}) => { (window.dataLayer = window.dataLayer || []).push({ event, ...params }); };
 
@@ -291,7 +297,7 @@
     tl.to(thoughts, { autoAlpha: 0, y: -14, duration: .5, stagger: .06, ease: 'power2.in' }, t0 + thoughts.length * .6 + .9)
       .to(spots, { autoAlpha: 0, duration: .6, stagger: .06 }, '<');
   };
-  (document.fonts ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]) : Promise.resolve()).then(heroIn);
+  (document.fonts ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 600))]) : Promise.resolve()).then(heroIn);
 
   gsap.to('.hero-visual', { y: -50, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } });
   gsap.to('.poster-card', { yPercent: -14, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } });
@@ -359,8 +365,12 @@
   }
 
   /* ---------- people ---------- */
-  gsap.from('.band img', { scale: 1.15, duration: 1.8, ease: 'power3.out', scrollTrigger: { trigger: '.band', start: 'top 95%' } });
-  gsap.from('.imx-media img', { scale: 1.12, duration: 1.6, ease: 'power3.out', scrollTrigger: { trigger: '.imx', start: 'top 92%' } });
+  [['.band img', '.band'], ['.imx-media img', '.imx']].forEach(([sel, trig]) => {
+    const img = $(sel);
+    if (!img) return;
+    const zoom = gsap.fromTo(img, { scale: 1.12, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.4, ease: 'power3.out', paused: true });
+    ScrollTrigger.create({ trigger: trig, start: 'top 95%', once: true, onEnter: () => ready(img).then(() => zoom.play()) });
+  });
 
   /* ---------- Steps: each card settles, the one behind steps back ---------- */
   const mm = gsap.matchMedia();
@@ -374,8 +384,9 @@
   });
   steps.forEach(s => {
     gsap.from($$('.step-text > *', s), { y: 24, opacity: 0, duration: .9, stagger: .08, scrollTrigger: { trigger: s, start: 'top 92%' } });
-    gsap.from($('.mock', s), { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', scrollTrigger: { trigger: s, start: 'top 92%' } });
-    gsap.from($('.shot img', s), { scale: 1.06, duration: 1.6, ease: 'power3.out', scrollTrigger: { trigger: s, start: 'top 92%' } });
+    const mock = $('.mock', s);
+    const reveal = gsap.from(mock, { y: 40, opacity: 0, duration: 1, ease: 'expo.out', paused: true });
+    ScrollTrigger.create({ trigger: s, start: 'top 92%', once: true, onEnter: () => ready($('img', mock)).then(() => reveal.play()) });
   });
 
   /* ---------- Why ---------- */
@@ -413,4 +424,9 @@
   gsap.from('.final .btn-door', { scale: .9, y: 16, duration: .9, ease: 'back.out(2)', scrollTrigger: { trigger: '.final', start: 'top 85%' } });
   gsap.from('.way', { y: 36, opacity: 0, duration: 1, ease: 'expo.out', stagger: .1, scrollTrigger: { trigger: '.ways', start: 'top 95%' } });
   gsap.from('.foot-cols > div', { y: 24, opacity: 0, duration: .8, stagger: .06, scrollTrigger: { trigger: '.foot-cols', start: 'top 98%' } });
+
+  /* keep trigger positions right: page order first, then again once everything has loaded */
+  ScrollTrigger.sort();
+  ScrollTrigger.refresh();
+  addEventListener('load', () => { ScrollTrigger.sort(); ScrollTrigger.refresh(); }, { once: true });
 })();
