@@ -334,34 +334,33 @@
     gsap.from(el, { y: 20, opacity: 0, duration: 1, scrollTrigger: { trigger: el, start: 'top 98%' } });
   });
 
-  /* ---------- Six tabs: we close them one by one, IMIN is the tab that stays ---------- */
-  const browser = $('[data-browser]');
-  if (browser) {
-    const tabs = $$('[data-tab]', browser);
-    const apps = $$('[data-app]', browser);
-    const imTab = $('[data-imin-tab]', browser);
-    const one = $('[data-one]', browser);
-    const count = $('[data-count]', browser);
-    const step = .45;
-    gsap.set(imTab, { maxWidth: 0, opacity: 0, paddingLeft: 0, paddingRight: 0, borderWidth: 0 });
+  /* ---------- Six apps: they close one by one, IMIN is the one that stays ---------- */
+  const toolsBox = $('[data-tools]');
+  if (toolsBox) {
+    const tools = $$('[data-tool]', toolsBox);
+    const one = $('[data-tool-one]', toolsBox);
+    const count = $('[data-count]', toolsBox);
+    const step = .35;
+    const toCenter = (el, axis) => {
+      const b = toolsBox.getBoundingClientRect(), r = el.getBoundingClientRect();
+      const tx = gsap.getProperty(el, 'x'), ty = gsap.getProperty(el, 'y');
+      return axis === 'x' ? b.left + b.width / 2 - (r.left - tx + r.width / 2) : b.top + b.height * .44 - (r.top - ty + r.height / 2);
+    };
     const tl = gsap.timeline({
       paused: true,
       onUpdate: () => {
-        const closed = tabs.filter((t, i) => tl.time() >= i * step + .35).length;
-        count.textContent = closed >= tabs.length ? '1 tab' : (tabs.length - closed) + ' tabs open';
+        const closed = tools.filter((t, i) => tl.time() >= i * step + .3).length;
+        count.textContent = closed >= tools.length ? '1 app for the whole night' : (tools.length - closed) + ' apps for one night';
       }
     });
-    tabs.forEach((t, i) => {
+    tools.forEach((t, i) => {
       const at = i * step;
-      tl.to($('.b-x', t), { backgroundColor: '#F4EFE7', color: '#0B0A14', duration: .12 }, at)
-        .to(t, { maxWidth: 0, opacity: 0, paddingLeft: 0, paddingRight: 0, borderWidth: 0, duration: .3, ease: 'power2.in' }, at + .12)
-        .to(apps[i], { opacity: 0, scale: .9, duration: .3, ease: 'power2.in' }, at + .12);
+      tl.fromTo($('.tool-badge', t), { scale: 1 }, { scale: 1.35, duration: .1, yoyo: true, repeat: 1 }, at)
+        .to(t, { x: () => toCenter(t, 'x'), y: () => toCenter(t, 'y'), scale: .3, opacity: 0, duration: .35, ease: 'power2.in' }, at + .1);
     });
-    const end = tabs.length * step + .1;
-    tl.to(imTab, { maxWidth: 260, opacity: 1, paddingLeft: 12, paddingRight: 12, borderWidth: 1, duration: .35, ease: 'power3.out' }, end)
-      .to(one, { opacity: 1, duration: .35 }, end + .1)
-      .from($('.one-card', one), { y: 24, scale: .94, duration: .45, ease: 'back.out(1.6)' }, end + .1);
-    oneWay(tl, { trigger: browser, start: 'center 55%', end: () => '+=' + Math.round(innerHeight * .9), pin: true, anticipatePin: 1 });
+    const end = tools.length * step + .1;
+    tl.fromTo(one, { scale: .4, opacity: 0 }, { scale: 1, opacity: 1, duration: .45, ease: 'back.out(1.8)' }, end);
+    oneWay(tl, { trigger: toolsBox, start: 'center 55%', end: () => '+=' + Math.round(innerHeight * .7), pin: true, anticipatePin: 1 });
   }
 
   /* ---------- people ---------- */
