@@ -166,23 +166,25 @@ button{font:inherit;color:inherit;cursor:pointer}
 
 /* ---------- 2. six tabs, one place ---------- */
 .ask{font:800 clamp(25px,3vw,39px)/1 var(--display);text-transform:uppercase;letter-spacing:.01em;color:var(--haze)}
-/* the orbit: six tools circle the IMIN mark and are pulled into it */
-.orbit{--R:clamp(118px,15vw,196px);--k:1;position:relative;display:grid;place-items:center;height:calc(var(--R) * 2 + 150px);margin-top:clamp(0px,1vw,12px)}
-.o-ring{position:absolute;left:50%;top:50%;translate:-50% -50%;border-radius:50%;pointer-events:none}
-.o-ring--out{width:calc(var(--R) * 2 * var(--k));height:calc(var(--R) * 2 * var(--k));border:1px solid rgba(156,140,255,.28)}
-.o-ring--in{width:calc(var(--R) * 1.25 * var(--k));height:calc(var(--R) * 1.25 * var(--k));border:1px dashed rgba(244,239,231,.12)}
-.o-spin{position:absolute;inset:0;animation:o-spin 60s linear infinite}
-.o-node{position:absolute;left:50%;top:50%;width:0;height:0;transform:rotate(var(--a)) translateX(calc(var(--R) * var(--k))) rotate(calc(var(--a) * -1))}
-.o-node > span{position:absolute;left:-60px;top:-34px;width:120px;display:grid;justify-items:center;gap:10px;animation:o-spin 60s linear infinite reverse}
-.o-ic{display:grid;place-items:center;width:68px;height:68px;border-radius:50%;background:radial-gradient(circle at 50% 30%,#221E33,#120F1C);border:1px solid rgba(244,239,231,.2);box-shadow:0 0 0 8px var(--midnight),0 18px 40px -18px rgba(0,0,0,.9);transition:border-color .3s,translate .3s var(--ease)}
-.o-ic .ico{width:28px;height:28px;color:var(--paper)}
-.o-node:hover .o-ic{border-color:var(--haze);translate:0 -3px}
-.o-n{font:600 12px/1.2 var(--text);color:var(--muted);white-space:nowrap}
-.o-core{position:relative;z-index:2;display:grid;place-items:center;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(156,140,255,calc(.18 + (1 - var(--k)) * .32)),rgba(156,140,255,0) 68%)}
-.o-core svg{height:76px;width:auto;color:var(--paper);transform:scale(calc(1 + (1 - var(--k)) * .18))}
-.o-count{position:absolute;left:0;right:0;bottom:0;text-align:center;font:600 12px/1 var(--text);letter-spacing:.14em;text-transform:uppercase;color:var(--haze);font-variant-numeric:tabular-nums}
-@keyframes o-spin{to{rotate:360deg}}
-@media (max-width:559.98px){.orbit{--R:min(34vw,128px);height:calc(var(--R) * 2 + 130px)}.o-ic{width:54px;height:54px;box-shadow:0 0 0 6px var(--midnight)}.o-ic .ico{width:22px;height:22px}.o-n{font-size:11px}.o-core{width:110px;height:110px}.o-core svg{height:58px}}
+/* the deck: six tool cards fanned like a hand, gathered into one with IMIN on top */
+.deck{--cw:184px;--ch:252px;--dx:min(124px,calc((100vw - 48px - var(--cw)) / 5));--arc:14px;--rot:7deg;position:relative;height:calc(var(--ch) + 150px);margin-top:clamp(8px,2vw,24px)}
+.dk-fan{position:absolute;inset:0}
+.dk-card{position:absolute;left:50%;top:36px;width:var(--cw);height:var(--ch);margin-left:calc(var(--cw) / -2);transform-origin:50% 135%;display:flex;flex-direction:column;align-items:flex-start;padding:18px;border-radius:18px;border:1px solid var(--line-2);background:linear-gradient(160deg,#1E1A33,#100E1A 70%);box-shadow:0 30px 60px -28px #000,inset 0 1px 0 rgba(244,239,231,.06);transform:translate(calc((var(--i) - 2.5) * var(--dx)),calc(max(var(--i) - 2.5,2.5 - var(--i)) * var(--arc))) rotate(calc((var(--i) - 2.5) * var(--rot)))}
+.dk-card .ico{width:54px;height:54px;margin-top:auto;color:var(--paper)}
+.dk-card b{margin-top:18px;max-width:calc(var(--dx) - 22px);font:800 25px/.95 var(--display);text-transform:uppercase;letter-spacing:.005em}
+.dk-n{font:600 12px/1 var(--text);letter-spacing:.14em;color:var(--quiet);font-variant-numeric:tabular-nums}
+.dk-one{z-index:9;align-items:center;justify-content:center;gap:16px;border:0;background:var(--paper);color:var(--midnight);box-shadow:0 0 90px rgba(156,140,255,.38),0 30px 60px -28px #000;transform:translateY(-10px) scale(.88)}
+.dk-one svg{height:42%;width:auto}
+.dk-one b{margin:0;max-width:none;font-size:22px;letter-spacing:.06em}
+.dk-count{position:absolute;left:0;right:0;bottom:0;margin:0;text-align:center;font:600 12px/1 var(--text);letter-spacing:.14em;text-transform:uppercase;color:var(--haze);font-variant-numeric:tabular-nums}
+.motion .dk-one{transform:none;opacity:0}
+@media (max-width:559.98px){
+  .deck{--cw:118px;--ch:168px;--dx:calc((100vw - 32px - var(--cw)) / 6.4);--arc:6px;--rot:4.5deg;height:calc(var(--ch) + 120px)}
+  .dk-card{padding:12px;border-radius:14px}
+  .dk-card .ico{width:30px;height:30px;margin-top:10px}
+  .dk-card b{margin-top:auto;max-width:none;font-size:15px;writing-mode:vertical-rl;rotate:180deg}
+  .dk-one b{writing-mode:horizontal-tb;rotate:none;margin:0;font-size:16px}
+}
 /* people: a crowd band between the hero and the problem */
 .band{position:relative;display:flex;align-items:flex-end;height:clamp(300px,46vw,540px);overflow:hidden;isolation:isolate}
 .band img{position:absolute;inset:0;z-index:-1;width:100%;height:100%;object-fit:cover;object-position:50% 40%}

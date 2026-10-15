@@ -334,24 +334,28 @@
     gsap.from(el, { y: 20, opacity: 0, duration: 1, scrollTrigger: { trigger: el, start: 'top 98%' } });
   });
 
-  /* ---------- The orbit: scrolling pulls the six tools into IMIN, forward only ---------- */
-  const orbit = $('[data-orbit]');
-  if (orbit) {
-    const nodes = $$('.o-node', orbit);
-    const count = $('[data-count]', orbit);
-    const pull = gsap.timeline({
+  /* ---------- The deck: six fanned cards are gathered into one, IMIN lands on top, forward only ---------- */
+  const deck = $('[data-deck]');
+  if (deck) {
+    const cards = $$('.dk-fan .dk-card', deck);
+    const one = $('[data-deck-one]', deck);
+    const count = $('[data-count]', deck);
+    const spread = () => Math.min(124, (deck.clientWidth - cards[0].offsetWidth) / (innerWidth < 560 ? 6.4 : 5));
+    const arc = () => innerWidth < 560 ? 6 : 14;
+    const fan = (i, key) => key === 'x' ? (i - 2.5) * spread() : key === 'y' ? Math.abs(i - 2.5) * arc() : (i - 2.5) * (innerWidth < 560 ? 4.5 : 7);
+    const gather = gsap.timeline({
       paused: true,
       onUpdate: () => {
-        const k = +gsap.getProperty(orbit, '--k');
-        const left = Math.max(2, Math.ceil(k * 6));
-        count.textContent = k < .08 ? '1 tab for the whole night' : left + ' apps for one night';
+        const t = gather.time();
+        count.textContent = t >= .9 ? '1 tab for the whole night' : Math.max(2, 6 - Math.floor(t / .9 * 5)) + ' apps for one night';
       }
     })
-      .fromTo(orbit, { '--k': 1 }, { '--k': 0, duration: 1, ease: 'power2.in' })
-      .to($$('.o-n', orbit), { opacity: 0, duration: .2 }, .15)
-      .to($$('.o-node > span', orbit), { opacity: 0, scale: .4, duration: .3, stagger: .05, ease: 'power2.in' }, .4);
-    oneWay(pull, { trigger: orbit, start: 'center 52%', end: 'center 18%' });
-    gsap.from(nodes.map(n => n.firstElementChild), { opacity: 0, scale: .6, duration: .8, ease: 'back.out(1.8)', stagger: .07, scrollTrigger: { trigger: orbit, start: 'top 90%' } });
+      .fromTo(cards, { x: i => fan(i, 'x'), y: i => fan(i, 'y'), rotation: i => fan(i, 'r') },
+        { x: i => (i - 2.5) * 3, y: i => -i * 3, rotation: i => (i - 2.5) * 1.6, duration: 1, ease: 'power3.inOut' })
+      .to(cards, { opacity: .4, duration: .4, ease: 'none' }, .75)
+      .fromTo(one, { opacity: 0, y: 70, scale: .8, rotation: -6 }, { opacity: 1, y: -10, scale: 1, rotation: 0, duration: .55, ease: 'back.out(1.6)' }, .85);
+    oneWay(gather, { trigger: deck, start: 'center 48%', end: 'center 20%' });
+    gsap.from('.dk-fan', { y: 80, opacity: 0, duration: 1.1, ease: 'power4.out', scrollTrigger: { trigger: deck, start: 'top 92%' } });
   }
 
   /* ---------- people ---------- */
