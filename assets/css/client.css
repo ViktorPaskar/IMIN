@@ -418,7 +418,8 @@ html.lenis,html.lenis body{height:auto}
 .room__next{color:var(--paper);text-shadow:0 0 18px rgba(244,239,231,.55);animation:roomGlow 2.4s ease-in-out infinite}
 .room__next + .room__next{animation-delay:.6s}
 @keyframes roomGlow{50%{text-shadow:0 0 2px rgba(244,239,231,.2);opacity:.8}}
-.room__h{max-width:12ch}
+.room .room__h{font-size:clamp(48px,13vw,95px);max-width:12ch}
+@media (max-width:759.98px){.room .room__h{max-width:none}}
 .room__text{color:rgba(244,239,231,.86);max-width:44ch;margin-top:24px}
 .room__actions{display:flex;flex-wrap:wrap;align-items:center;gap:16px 32px;margin-top:40px}
 .btn-paper--lg{min-height:56px;padding:0 28px;font-size:22px}
