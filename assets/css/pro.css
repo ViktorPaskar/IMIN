@@ -166,18 +166,23 @@ button{font:inherit;color:inherit;cursor:pointer}
 
 /* ---------- 2. six tabs, one place ---------- */
 .ask{font:800 clamp(25px,3vw,39px)/1 var(--display);text-transform:uppercase;letter-spacing:.01em;color:var(--haze)}
-/* the line-up: six tools struck through, IMIN left standing */
-.strike{display:grid;margin-top:clamp(8px,2vw,24px);counter-reset:s}
-.strike li{display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding-block:clamp(6px,1vw,12px);border-top:1px solid var(--line)}
-.s-name{position:relative;font:800 clamp(40px,7.2vw,104px)/.92 var(--display);text-transform:uppercase;letter-spacing:-.005em;color:rgba(244,239,231,.3)}
-.s-line{position:absolute;left:-.06em;right:-.06em;top:48%;height:.085em;border-radius:.05em;background:var(--haze);transform-origin:0 50%}
-.s-note{flex:none;font:500 14px/1.3 var(--text);color:var(--quiet);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-.motion .s-name{color:var(--paper)}
-.motion .s-line{transform:scaleX(0)}
-.strike-end{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:clamp(14px,2vw,24px);border-top:1px solid var(--line-2)}
-.strike-end svg{height:clamp(32px,5.6vw,80px);width:auto;color:var(--paper)}
-.strike-end .s-note{color:var(--haze);font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:12px}
-@media (max-width:759.98px){.strike li{flex-direction:column;align-items:flex-start;gap:2px}.s-note{text-align:left;font-size:12px}}
+/* the orbit: six tools circle the IMIN mark and are pulled into it */
+.orbit{--R:clamp(118px,15vw,196px);--k:1;position:relative;display:grid;place-items:center;height:calc(var(--R) * 2 + 150px);margin-top:clamp(0px,1vw,12px)}
+.o-ring{position:absolute;left:50%;top:50%;translate:-50% -50%;border-radius:50%;pointer-events:none}
+.o-ring--out{width:calc(var(--R) * 2 * var(--k));height:calc(var(--R) * 2 * var(--k));border:1px solid rgba(156,140,255,.28)}
+.o-ring--in{width:calc(var(--R) * 1.25 * var(--k));height:calc(var(--R) * 1.25 * var(--k));border:1px dashed rgba(244,239,231,.12)}
+.o-spin{position:absolute;inset:0;animation:o-spin 60s linear infinite}
+.o-node{position:absolute;left:50%;top:50%;width:0;height:0;transform:rotate(var(--a)) translateX(calc(var(--R) * var(--k))) rotate(calc(var(--a) * -1))}
+.o-node > span{position:absolute;left:-60px;top:-34px;width:120px;display:grid;justify-items:center;gap:10px;animation:o-spin 60s linear infinite reverse}
+.o-ic{display:grid;place-items:center;width:68px;height:68px;border-radius:50%;background:radial-gradient(circle at 50% 30%,#221E33,#120F1C);border:1px solid rgba(244,239,231,.2);box-shadow:0 0 0 8px var(--midnight),0 18px 40px -18px rgba(0,0,0,.9);transition:border-color .3s,translate .3s var(--ease)}
+.o-ic .ico{width:28px;height:28px;color:var(--paper)}
+.o-node:hover .o-ic{border-color:var(--haze);translate:0 -3px}
+.o-n{font:600 12px/1.2 var(--text);color:var(--muted);white-space:nowrap}
+.o-core{position:relative;z-index:2;display:grid;place-items:center;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(156,140,255,calc(.18 + (1 - var(--k)) * .32)),rgba(156,140,255,0) 68%)}
+.o-core svg{height:76px;width:auto;color:var(--paper);transform:scale(calc(1 + (1 - var(--k)) * .18))}
+.o-count{position:absolute;left:0;right:0;bottom:0;text-align:center;font:600 12px/1 var(--text);letter-spacing:.14em;text-transform:uppercase;color:var(--haze);font-variant-numeric:tabular-nums}
+@keyframes o-spin{to{rotate:360deg}}
+@media (max-width:559.98px){.orbit{--R:min(34vw,128px);height:calc(var(--R) * 2 + 130px)}.o-ic{width:54px;height:54px;box-shadow:0 0 0 6px var(--midnight)}.o-ic .ico{width:22px;height:22px}.o-n{font-size:11px}.o-core{width:110px;height:110px}.o-core svg{height:58px}}
 /* people: a crowd band between the hero and the problem */
 .band{position:relative;display:flex;align-items:flex-end;height:clamp(300px,46vw,540px);overflow:hidden;isolation:isolate}
 .band img{position:absolute;inset:0;z-index:-1;width:100%;height:100%;object-fit:cover;object-position:50% 40%}

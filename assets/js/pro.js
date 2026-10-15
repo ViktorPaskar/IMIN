@@ -334,15 +334,25 @@
     gsap.from(el, { y: 20, opacity: 0, duration: 1, scrollTrigger: { trigger: el, start: 'top 98%' } });
   });
 
-  /* ---------- The line-up: each tool is struck through as it passes, forward only ---------- */
-  $$('.strike li').forEach(li => {
-    const strike = gsap.timeline({ paused: true })
-      .to($('.s-line', li), { scaleX: 1, duration: .5, ease: 'power2.inOut' })
-      .to($('.s-name', li), { color: 'rgba(244,239,231,.3)', duration: .4, ease: 'none' }, .2)
-      .to($('.s-note', li), { opacity: .45, duration: .4, ease: 'none' }, .2);
-    oneWay(strike, { trigger: li, start: 'top 38%', end: 'top 24%' });
-  });
-  gsap.from('.strike-end > *', { yPercent: 60, opacity: 0, duration: 1, ease: 'power4.out', stagger: .1, scrollTrigger: { trigger: '.strike-end', start: 'top 85%' } });
+  /* ---------- The orbit: scrolling pulls the six tools into IMIN, forward only ---------- */
+  const orbit = $('[data-orbit]');
+  if (orbit) {
+    const nodes = $$('.o-node', orbit);
+    const count = $('[data-count]', orbit);
+    const pull = gsap.timeline({
+      paused: true,
+      onUpdate: () => {
+        const k = +gsap.getProperty(orbit, '--k');
+        const left = Math.max(2, Math.ceil(k * 6));
+        count.textContent = k < .08 ? '1 tab for the whole night' : left + ' apps for one night';
+      }
+    })
+      .fromTo(orbit, { '--k': 1 }, { '--k': 0, duration: 1, ease: 'power2.in' })
+      .to($$('.o-n', orbit), { opacity: 0, duration: .2 }, .15)
+      .to($$('.o-node > span', orbit), { opacity: 0, scale: .4, duration: .3, stagger: .05, ease: 'power2.in' }, .4);
+    oneWay(pull, { trigger: orbit, start: 'center 52%', end: 'center 18%' });
+    gsap.from(nodes.map(n => n.firstElementChild), { opacity: 0, scale: .6, duration: .8, ease: 'back.out(1.8)', stagger: .07, scrollTrigger: { trigger: orbit, start: 'top 90%' } });
+  }
 
   /* ---------- people ---------- */
   [['.band img', '.band'], ['.imx-media img', '.imx']].forEach(([sel, trig]) => {
