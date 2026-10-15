@@ -334,28 +334,39 @@
     gsap.from(el, { y: 20, opacity: 0, duration: 1, scrollTrigger: { trigger: el, start: 'top 98%' } });
   });
 
-  /* ---------- The deck: six fanned cards are gathered into one, IMIN lands on top, forward only ---------- */
-  const deck = $('[data-deck]');
-  if (deck) {
-    const cards = $$('.dk-fan .dk-card', deck);
-    const one = $('[data-deck-one]', deck);
-    const count = $('[data-count]', deck);
-    const spread = () => Math.min(124, (deck.clientWidth - cards[0].offsetWidth) / (innerWidth < 560 ? 6.4 : 5));
-    const arc = () => innerWidth < 560 ? 6 : 14;
-    const fan = (i, key) => key === 'x' ? (i - 2.5) * spread() : key === 'y' ? Math.abs(i - 2.5) * arc() : (i - 2.5) * (innerWidth < 560 ? 4.5 : 7);
-    const gather = gsap.timeline({
+  /* ---------- Six browser tabs: scroll flicks through them, then they close and IMIN stays, forward only ---------- */
+  const brw = $('[data-brw]');
+  if (brw) {
+    const tabs = $$('.bt:not(.bt-imin)', brw);
+    const imin = $('.bt-imin', brw);
+    const views = $$('.bv', brw);
+    const url = $('[data-url]', $('.brw-url', brw));
+    const count = $('[data-count]', brw);
+    let shown = -1;
+    const show = i => {
+      if (i === shown) return;
+      shown = i;
+      const tab = i < 6 ? tabs[i] : imin;
+      [...tabs, imin].forEach(t => t.classList.toggle('is-on', t === tab));
+      views.forEach((v, k) => v.classList.toggle('is-on', k === i));
+      url.textContent = tab.dataset.url;
+    };
+    gsap.set(imin, { display: 'flex', maxWidth: 0, paddingLeft: 0, paddingRight: 0, opacity: 0 });
+    const flick = gsap.timeline({
       paused: true,
       onUpdate: () => {
-        const t = gather.time();
-        count.textContent = t >= .9 ? '1 tab for the whole night' : Math.max(2, 6 - Math.floor(t / .9 * 5)) + ' apps for one night';
+        const t = flick.time();
+        show(t >= 6.75 ? 6 : Math.min(5, Math.floor(t)));
+        const open = t < 6 ? 6 : Math.max(1, 6 - Math.floor((t - 6) / .12));
+        count.textContent = t >= 6.75 ? '1 tab for the whole night' : open + ' tabs for one night';
       }
     })
-      .fromTo(cards, { x: i => fan(i, 'x'), y: i => fan(i, 'y'), rotation: i => fan(i, 'r') },
-        { x: i => (i - 2.5) * 3, y: i => -i * 3, rotation: i => (i - 2.5) * 1.6, duration: 1, ease: 'power3.inOut' })
-      .to(cards, { opacity: .4, duration: .4, ease: 'none' }, .75)
-      .fromTo(one, { opacity: 0, y: 70, scale: .8, rotation: -6 }, { opacity: 1, y: -10, scale: 1, rotation: 0, duration: .55, ease: 'back.out(1.6)' }, .85);
-    oneWay(gather, { trigger: deck, start: 'center 48%', end: 'center 20%' });
-    gsap.from('.dk-fan', { y: 80, opacity: 0, duration: 1.1, ease: 'power4.out', scrollTrigger: { trigger: deck, start: 'top 92%' } });
+      .to({}, { duration: 6 })
+      .to(tabs, { maxWidth: 0, paddingLeft: 0, paddingRight: 0, opacity: 0, duration: .45, ease: 'power2.in', stagger: { each: .1, from: 'end' } }, 6)
+      .to(imin, { maxWidth: 260, paddingLeft: 10, paddingRight: 10, opacity: 1, duration: .5, ease: 'power3.out' }, 6.7)
+      .to({}, { duration: .4 });
+    oneWay(flick, { trigger: brw, start: () => innerWidth < 560 ? 'center 52%' : 'center 54%', end: () => '+=' + Math.round(innerHeight * 1.8), pin: true, anticipatePin: 1 });
+    gsap.from('.brw', { y: 60, opacity: 0, duration: 1.1, ease: 'power4.out', scrollTrigger: { trigger: brw, start: 'top 92%' } });
   }
 
   /* ---------- people ---------- */
